@@ -29,6 +29,7 @@ interface DownloadStoreState {
   isDirectVideo: boolean
   estimatedSize: number | null
   m3u8Content: string
+  playlistUrl: string
 
   // Download state
   downloadState: DownloadState
@@ -39,7 +40,10 @@ interface DownloadStoreState {
 
   // Flags for progress card
   hasMediaData: boolean
-  hasStreamWriter: boolean
+  /** Every segment is staged; waiting for the user to save (stream formats). */
+  isReadyToSave: boolean
+  /** Staging/persistence id of the current download; '' when none. */
+  taskId: string
 }
 
 interface DownloadStoreActions {
@@ -54,6 +58,7 @@ interface DownloadStoreActions {
   setIsDirectVideo: (v: boolean) => void
   setEstimatedSize: (size: number | null) => void
   setM3u8Content: (content: string) => void
+  setPlaylistUrl: (url: string) => void
   setDownloadState: (patch: Partial<DownloadState>) => void
   setFinishList: (list: FinishItem[]) => void
   updateFinishItem: (index: number, status: FinishItem['status']) => void
@@ -61,7 +66,8 @@ interface DownloadStoreActions {
   setAesConf: (conf: AesConf) => void
   setIsStreamSupported: (v: boolean) => void
   setHasMediaData: (v: boolean) => void
-  setHasStreamWriter: (v: boolean) => void
+  setIsReadyToSave: (v: boolean) => void
+  setTaskId: (id: string) => void
   resetAll: () => void
 }
 
@@ -72,7 +78,6 @@ const INITIAL_DOWNLOAD_STATE: DownloadState = {
   isPaused: false,
   isGetMP4: false,
   downloadIndex: 0,
-  streamDownloadIndex: 0,
 }
 
 const INITIAL_AES_CONF: AesConf = {
@@ -94,13 +99,15 @@ const INITIAL_STATE: DownloadStoreState = {
   isDirectVideo: false,
   estimatedSize: null,
   m3u8Content: '',
+  playlistUrl: '',
   downloadState: INITIAL_DOWNLOAD_STATE,
   finishList: [],
   rangeDownload: { startSegment: '', endSegment: '' },
   aesConf: INITIAL_AES_CONF,
   isStreamSupported: false,
   hasMediaData: false,
-  hasStreamWriter: false,
+  isReadyToSave: false,
+  taskId: '',
 }
 
 export const useDownloadStore = create<DownloadStore>()((set) => ({
@@ -123,6 +130,7 @@ export const useDownloadStore = create<DownloadStore>()((set) => ({
   setIsDirectVideo: (isDirectVideo) => set({ isDirectVideo }),
   setEstimatedSize: (estimatedSize) => set({ estimatedSize }),
   setM3u8Content: (m3u8Content) => set({ m3u8Content }),
+  setPlaylistUrl: (playlistUrl) => set({ playlistUrl }),
   setDownloadState: (patch) =>
     set((s) => ({ downloadState: { ...s.downloadState, ...patch } })),
   setFinishList: (finishList) => set({ finishList }),
@@ -136,7 +144,8 @@ export const useDownloadStore = create<DownloadStore>()((set) => ({
   setAesConf: (aesConf) => set({ aesConf }),
   setIsStreamSupported: (isStreamSupported) => set({ isStreamSupported }),
   setHasMediaData: (hasMediaData) => set({ hasMediaData }),
-  setHasStreamWriter: (hasStreamWriter) => set({ hasStreamWriter }),
+  setIsReadyToSave: (isReadyToSave) => set({ isReadyToSave }),
+  setTaskId: (taskId) => set({ taskId }),
   resetAll: () =>
     set((s) => ({
       ...INITIAL_STATE,

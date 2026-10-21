@@ -27,7 +27,6 @@ export interface DownloadState {
   isPaused: boolean
   isGetMP4: boolean
   downloadIndex: number
-  streamDownloadIndex: number
 }
 
 // ============================================================
@@ -151,7 +150,7 @@ export const estimateFileSize = async (
 }
 
 export const triggerBrowserDownload = (
-  fileDataList: ArrayBuffer[],
+  fileDataList: BlobPart[],
   fileName: string,
   isMp4: boolean,
 ) => {

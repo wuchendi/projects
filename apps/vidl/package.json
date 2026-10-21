@@ -24,6 +24,7 @@
     "@cdlab/driftflake": "catalog:prod",
     "@cdlab/ui": "workspace:*",
     "@cdlab/utils": "workspace:*",
+    "@cdlab/zustand-idb": "catalog:prod",
     "@next/third-parties": "catalog:prod",
     "class-variance-authority": "catalog:prod",
     "clsx": "catalog:prod",

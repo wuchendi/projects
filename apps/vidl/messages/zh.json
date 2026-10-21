@@ -50,7 +50,16 @@
     "retryWarning": "已有 {count} 个片段下载失败，正在自动重试",
     "forceDownload": "下载已完成片段",
     "forceDownloadSuccess": "已触发浏览器下载现有片段",
-    "noSegments": "当前无已下载片段"
+    "noSegments": "当前无已下载片段",
+    "resumed": "已恢复未完成的下载，点击“继续下载”即可接着下载",
+    "readyToSave": "所有分片已下载完成，点击“保存文件”写入磁盘",
+    "save": "保存文件",
+    "taskInOtherTab": "该下载正在另一个标签页中进行",
+    "urlsRefreshed": "分片链接已过期，已从播放列表刷新",
+    "playlistChanged": "分片链接已过期且播放列表已变化，请重新解析",
+    "storageLow": "浏览器存储空间可能不足以完成此下载",
+    "storageFull": "浏览器存储空间已满，请释放空间后重试",
+    "saveFailed": "保存文件失败，分片已保留，请重试保存"
   },
   "progress": {
     "title": "下载进度",

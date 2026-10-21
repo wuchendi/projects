@@ -32,3 +32,7 @@ export const parseMasterPlaylistContent = (
 
   return variants.sort((a, b) => b.bandwidth - a.bandwidth)
 }
+
+/** Raw (untrimmed) media-playlist lines that reference a segment. */
+export const segmentLines = (m3u8Str: string): string[] =>
+  m3u8Str.split('\n').filter((line) => /^[^#]/.test(line) && line.trim())

@@ -6,8 +6,32 @@ import { toast } from 'sonner'
 import type { VariantStream } from '@/lib'
 import type { EngineNotifier } from '@/lib/download-engine'
 import { DownloadEngine } from '@/lib/download-engine'
+import { getAllSegmentStores } from '@/lib/storage/segment-store'
 import { useDownloadStore } from '@/stores/download-store'
 import { useSettingsStore } from '@/stores/settings-store'
+import { ensureTasksHydrated, useTaskStore } from '@/stores/task-store'
+
+/**
+ * Remove staged segments nobody owns: tasks already saved, tasks without a
+ * record, skipping any task another tab still holds a lock on.
+ */
+async function sweepOrphanSegments() {
+  const tasks = useTaskStore.getState().tasks
+  for (const task of Object.values(tasks)) {
+    if (task.status === 'saved') useTaskStore.getState().removeTask(task.id)
+  }
+  const keep = new Set(
+    Object.values(useTaskStore.getState().tasks).map((task) => task.id),
+  )
+  for (const store of await getAllSegmentStores()) {
+    for (const id of await store.listTasks()) {
+      if (keep.has(id)) continue
+      const held = await navigator.locks?.query()
+      if (held?.held?.some((lock) => lock.name === `vidl-task-${id}`)) continue
+      await store.removeTask(id).catch(() => {})
+    }
+  }
+}
 
 function useNotifier(): EngineNotifier {
   const t = useTranslations()
@@ -96,18 +120,36 @@ export function useDownloadActions() {
     engine.retryAll(false)
   })
 
-  // Mount: auto-parse URL param + retry interval
+  // Mount: resume an unfinished task, else auto-parse URL param; retry interval
   // biome-ignore lint/correctness/useExhaustiveDependencies: mount only
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const paramUrl = params.get('url') || params.get('source')
-    if (paramUrl && paramUrl.toLowerCase().includes('m3u8')) {
-      useDownloadStore.getState().setUrl(paramUrl)
-      void engine.parseM3U8(paramUrl)
-    }
+    let cancelled = false
+    void (async () => {
+      await ensureTasksHydrated()
+      if (cancelled) return
+
+      await sweepOrphanSegments()
+      const unfinished = Object.values(useTaskStore.getState().tasks)
+        .filter((task) => task.status !== 'saved')
+        .sort((a, b) => b.createdAt - a.createdAt)[0]
+      if (unfinished) {
+        await engine.resume(unfinished.id)
+        return
+      }
+
+      const params = new URLSearchParams(window.location.search)
+      const paramUrl = params.get('url') || params.get('source')
+      if (paramUrl && paramUrl.toLowerCase().includes('m3u8')) {
+        useDownloadStore.getState().setUrl(paramUrl)
+        void engine.parseM3U8(paramUrl)
+      }
+    })()
 
     const interval = setInterval(onRetryTick, 2000)
-    return () => clearInterval(interval)
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
   }, [])
 
   // Cleanup on unmount
@@ -126,6 +168,7 @@ export function useDownloadActions() {
     togglePause: () => engine.togglePause(),
     retry: (index: number) => engine.retry(index),
     forceDownload: () => engine.forceDownload(),
+    saveTask: () => engine.saveTask(),
     resetState: () => engine.resetState(),
     onStreamSaverReady: () => engine.onStreamSaverReady(),
   }

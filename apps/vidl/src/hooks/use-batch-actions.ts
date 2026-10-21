@@ -37,6 +37,8 @@ export function useBatchActions() {
       useDownloadStore,
       () => useSettingsStore.getState(),
       notify,
+      // Batch items are not resumable yet; stage them but keep no task record.
+      { persist: false },
     )
   }
 
