@@ -119,7 +119,6 @@ Part of the `@cdlab/projects-monorepo`; run all commands from the repo root with
 ```bash
 pnpm --filter @cdlab/clearify dev         # http://clearify.localhost:3355 (via nsl)
 pnpm --filter @cdlab/clearify build       # next build --webpack
-pnpm --filter @cdlab/clearify build:cf    # @cloudflare/next-on-pages build
 pnpm --filter @cdlab/clearify lint        # next lint
 pnpm --filter @cdlab/clearify typecheck   # tsc --noEmit
 ```

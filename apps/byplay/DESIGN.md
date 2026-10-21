@@ -88,7 +88,7 @@ edge/SSR runtime. Consequences that shape the rest of this doc:
 - The only `process.env` read in `src` is `process.env.BUILD_TIME` (the footer
   build stamp), injected at build time via `next.config.ts` `env` — not a
   runtime secret.
-- The `@cloudflare/next-on-pages` target (`build:cf`) is a deployment wrapper
+- The `@cloudflare/next-on-pages` target is a deployment wrapper
   around the same static output.
 
 **Entry points.**
@@ -313,7 +313,6 @@ in the same language.
 | --- | --- | --- |
 | `dev` | `nsl run next dev` | `http://byplay.localhost:3355` (via `@dotns/nsl`). |
 | `build` | `next build` | Static `out/` (`output: 'export'`). |
-| `build:cf` | `next-on-pages` | Cloudflare Pages bundle. |
 | `lint` | `next lint` | — |
 | `typecheck` | `tsc --noEmit` | — |
 

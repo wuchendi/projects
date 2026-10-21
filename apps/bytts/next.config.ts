@@ -12,7 +12,6 @@ const nextConfig: NextConfig = {
   // reactStrictMode: true,
   // poweredByHeader: false,
   allowedDevOrigins: ['bytts.a.wd.ds.cc'],
-  output: 'standalone',
   images: {
     unoptimized: true,
     formats: ['image/avif', 'image/webp'],

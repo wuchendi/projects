@@ -174,7 +174,6 @@ All optional and called directly from the browser — none are proxied by this a
 pnpm --filter @cdlab/bycut lint       # next lint
 pnpm --filter @cdlab/bycut typecheck  # tsc --noEmit
 pnpm --filter @cdlab/bycut build      # next build → static out/
-pnpm --filter @cdlab/bycut build:cf   # @cloudflare/next-on-pages (Cloudflare Pages)
 ```
 
 The live site is a static export on **Cloudflare Pages**

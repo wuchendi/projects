@@ -125,5 +125,4 @@ pnpm dev:bytts                          # http://bytts.localhost:3355
 pnpm --filter @cdlab/bytts typecheck    # tsc --noEmit
 pnpm --filter @cdlab/bytts lint         # next lint
 pnpm --filter @cdlab/bytts build        # next build --webpack
-pnpm --filter @cdlab/bytts run build:cf # next-on-pages (Cloudflare Pages)
 ```

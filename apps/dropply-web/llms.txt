@@ -127,10 +127,8 @@ Header dialog, no separate screen. `?code=` deep links auto-open it.
 - Uploads must stay opaque: `share.enc` + `application/octet-stream`. Don't
   "improve" sharing by attaching real filenames/MIME to the upload.
 - The keystore is base64-obfuscated, NOT encrypted; the PIN gates the UI only.
-- Static export: there is NO server here. Don't add API routes, SSR fetching,
-  or server components expecting a runtime. `middleware.ts` is inert in prod.
-- `nodejs_compat` in `wrangler.jsonc` serves the `next-on-pages` path — do NOT
-  assume Node APIs in the client bundle.
+- Cloudflare Pages via `next-on-pages` (`NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1`, output `.vercel/output/static`). Don't add API routes without `export const runtime = 'edge'`.
+- `nodejs_compat` in `wrangler.jsonc` — do NOT assume Node APIs in the client bundle.
 - Download auth is the `Authorization: Bearer` header only — never reintroduce
   `?token=`.
 - No test script and no test files exist — don't invent `pnpm … test`.
@@ -140,6 +138,5 @@ Header dialog, no separate screen. `?code=` deep links auto-open it.
 ```bash
 pnpm dev:dropply                             # web + api → http://dropply.localhost:3355
 pnpm --filter @cdlab/dropply-web typecheck   # tsc --noEmit
-pnpm --filter @cdlab/dropply-web build       # next build → static out/
-pnpm --filter @cdlab/dropply-web build:cf    # next-on-pages (Cloudflare Pages)
+pnpm --filter @cdlab/dropply-web build       # next build
 ```

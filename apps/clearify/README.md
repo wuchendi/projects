@@ -159,10 +159,9 @@ Next image optimizer), an image `remotePatterns` allow-list
 pnpm --filter @cdlab/clearify lint        # next lint
 pnpm --filter @cdlab/clearify typecheck   # tsc --noEmit
 pnpm --filter @cdlab/clearify build       # next build --webpack (type-check + bundle)
-pnpm --filter @cdlab/clearify build:cf    # @cloudflare/next-on-pages build
 ```
 
-Deploys to **Cloudflare Pages** via `@cloudflare/next-on-pages` (`build:cf`).
+Deploys to **Cloudflare Pages** via `@cloudflare/next-on-pages`.
 There is no `wrangler.jsonc`, no edge-runtime declaration, and **no test suite**
 in this app.
 

@@ -24,8 +24,9 @@ Part of the `@cdlab/projects-monorepo`; run all commands from the repo root with
 - **Two hooks drive everything.** `useExchangeRates` (rate matrix: fetch +
   fallback + refresh) and `useCurrencyConverter(rates)` (board state +
   conversion). `page.tsx` wires them.
-- **Deploy target: Cloudflare Pages** via `@cloudflare/next-on-pages`
-  (`build:cf`). Live at https://values.pages.dev/. No `wrangler.jsonc`, no
+- **Deploy target: Cloudflare Pages** via the build command
+  `NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1`
+  (output `.vercel/output/static`). Live at https://values.pages.dev/. No `wrangler.jsonc`, no
   bindings.
 
 ## Data flow
@@ -110,8 +111,7 @@ User types (`useCurrencyConverter.ts`):
 
 ```bash
 pnpm --filter @cdlab/values dev        # http://values.localhost:3355
-pnpm --filter @cdlab/values build      # next build → static export in out/
-pnpm --filter @cdlab/values build:cf   # @cloudflare/next-on-pages (Pages bundle)
+pnpm --filter @cdlab/values build      # next build
 pnpm --filter @cdlab/values typecheck  # tsc --noEmit
 pnpm --filter @cdlab/values lint       # next lint
 ```

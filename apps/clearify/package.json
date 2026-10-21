@@ -14,7 +14,6 @@
   "scripts": {
     "dev": "nsl run next dev --webpack",
     "build": "next build --webpack",
-    "build:cf": "next-on-pages",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -46,7 +45,6 @@
   },
   "devDependencies": {
     "@cdlab/tsconfig": "workspace:*",
-    "@cloudflare/next-on-pages": "catalog:dev",
     "@types/node": "catalog:dev",
     "@types/react": "catalog:dev",
     "@types/react-dom": "catalog:dev",

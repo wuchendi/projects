@@ -14,7 +14,6 @@ const nextConfig: NextConfig = {
   experimental: {
     useTypeScriptCli: true,
   },
-  output: 'export',
   // Allow the nsl public dev domain to reach the dev server (Next 16 blocks
   // cross-origin dev requests from non-localhost hosts by default).
   allowedDevOrigins: ['dropply.a.wd.ds.cc'],

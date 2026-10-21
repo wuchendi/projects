@@ -152,15 +152,13 @@ llms.txt                 agent-oriented usage guide
 ## Build, deploy & lint
 
 ```bash
-pnpm --filter @cdlab/values build      # next build → static export in out/
-pnpm --filter @cdlab/values build:cf   # @cloudflare/next-on-pages (Pages bundle)
+pnpm --filter @cdlab/values build      # next build
 pnpm --filter @cdlab/values typecheck  # tsc --noEmit
 pnpm --filter @cdlab/values lint       # next lint
 ```
 
-`next.config.ts` sets `output: 'export'`, so `build` emits a fully static site
-(`out/`) with no server runtime; `build:cf` produces the Cloudflare Pages
-bundle. There is **no test suite**. Deploys go to Cloudflare Pages
+Cloudflare Pages builds with `NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1`
+(output `.vercel/output/static`). There is **no test suite**. Deploys go to Cloudflare Pages
 (<https://values.pages.dev/>).
 
 ## Non-goals

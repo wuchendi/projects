@@ -109,7 +109,6 @@ thumbnail strip · `8` blur placeholder · `2560` deep-link OG image.
 ```bash
 pnpm --filter @cdlab/byshot dev        # http://byshot.localhost:3355 (nsl)
 pnpm --filter @cdlab/byshot build      # next build → static export (out/)
-pnpm --filter @cdlab/byshot build:cf   # next-on-pages (Cloudflare Pages deploy build)
 pnpm --filter @cdlab/byshot typecheck  # tsc --noEmit
 pnpm --filter @cdlab/byshot lint       # next lint
 ```

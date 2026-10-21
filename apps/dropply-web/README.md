@@ -178,7 +178,6 @@ llms.txt                      agent-oriented usage guide
 ```bash
 pnpm --filter @cdlab/dropply-web typecheck  # tsc --noEmit
 pnpm --filter @cdlab/dropply-web build       # next build → static out/
-pnpm --filter @cdlab/dropply-web build:cf    # next-on-pages (Cloudflare Pages build)
 ```
 
 There is no test script and no test files in this app. `next build` produces a

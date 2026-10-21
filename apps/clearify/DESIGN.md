@@ -304,6 +304,6 @@ WebAssembly async modules + workers mix requires webpack. `build:cf` runs
 
 ### 7.3 Deploy
 
-Cloudflare Pages via `@cloudflare/next-on-pages` (`build:cf`). Live at
+Cloudflare Pages via `@cloudflare/next-on-pages`. Live at
 <https://clearify.pages.dev/>. Because there is no server, deploy is purely a
 static-asset publish — no migrations, no secrets, no bindings to sync.

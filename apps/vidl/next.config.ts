@@ -14,7 +14,6 @@ const nextConfig: NextConfig = {
   experimental: {
     useTypeScriptCli: true,
   },
-  output: 'export',
   env: {
     BUILD_TIME: new Date().toLocaleString(),
   },

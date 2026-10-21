@@ -183,7 +183,6 @@ llms.txt                     agent-oriented usage guide
 pnpm --filter @cdlab/flox lint         # next lint
 pnpm --filter @cdlab/flox typecheck    # tsc --noEmit
 pnpm --filter @cdlab/flox build        # next build --webpack (Turbopack NOT used here)
-pnpm --filter @cdlab/flox build:cf     # next-on-pages (Cloudflare Pages build)
 ```
 
 Deploy target is **Cloudflare Pages** via `@cloudflare/next-on-pages`

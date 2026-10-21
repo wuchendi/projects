@@ -172,7 +172,6 @@ llms.txt                      agent-oriented usage guide
 
 ```bash
 pnpm --filter @cdlab/vidl build       # next build → static export (output: 'export')
-pnpm --filter @cdlab/vidl build:cf    # @cloudflare/next-on-pages (Pages build wrapper)
 pnpm --filter @cdlab/vidl typecheck   # tsc --noEmit
 pnpm --filter @cdlab/vidl lint        # next lint
 ```
