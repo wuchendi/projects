@@ -24,7 +24,7 @@ catalogs:
     '@cdlab/driftflake': ^2.0.0
     '@cdlab/zustand-idb': ^0.0.4
     '@hono/zod-validator': ^0.9.1
-    '@huggingface/transformers': ^4.3.1
+    '@huggingface/transformers': 4.2.0
     '@libsql/client': ^0.18.0
     '@mediabunny/mp3-encoder': ^1.61.6
     '@next/third-parties': 16.4.2
