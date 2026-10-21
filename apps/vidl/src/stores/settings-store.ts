@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export interface DownloadSettings {
+  /** Tasks downloading at once; each uses `concurrency` connections. */
+  maxTasks: number
   concurrency: number
   timeoutMs: number
   maxRetries: number
@@ -9,6 +11,7 @@ export interface DownloadSettings {
 }
 
 export const DEFAULT_SETTINGS: DownloadSettings = {
+  maxTasks: 2,
   concurrency: 6,
   timeoutMs: 30_000,
   maxRetries: 3,
@@ -30,11 +33,13 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'vidl-download-settings',
       partialize: ({
+        maxTasks,
         concurrency,
         timeoutMs,
         maxRetries,
         retryBaseDelayMs,
       }) => ({
+        maxTasks,
         concurrency,
         timeoutMs,
         maxRetries,

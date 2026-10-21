@@ -13,24 +13,17 @@ import { Progress } from '@cdlab/ui/components/progress'
 import { HardDriveDownload, Loader2, Search, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { useBatchActions } from '@/hooks/use-batch-actions'
-import {
-  selectFinishNum,
-  selectTargetSegment,
-  useDownloadStore,
-} from '@/stores/download-store'
+import { useDownloadStore } from '@/stores/download-store'
 import { BatchItemRow } from './batch-item-row'
 
 interface BatchQueueCardProps {
   batch: ReturnType<typeof useBatchActions>
-  onCancelBatch: () => void
 }
 
-export function BatchQueueCard({ batch, onCancelBatch }: BatchQueueCardProps) {
+export function BatchQueueCard({ batch }: BatchQueueCardProps) {
   const t = useTranslations()
 
   const isStreamSupported = useDownloadStore((s) => s.isStreamSupported)
-  const finishNum = useDownloadStore(selectFinishNum)
-  const targetSegment = useDownloadStore(selectTargetSegment)
 
   const {
     batchList,
@@ -40,7 +33,6 @@ export function BatchQueueCard({ batch, onCancelBatch }: BatchQueueCardProps) {
     parsedCount,
     doneCount,
     errorCount,
-    currentDownloadingId,
   } = batch
 
   const disabled = isBatchRunning || isBatchParsing
@@ -94,9 +86,6 @@ export function BatchQueueCard({ batch, onCancelBatch }: BatchQueueCardProps) {
               index={idx}
               disabled={disabled}
               isStreamSupported={isStreamSupported}
-              isCurrentlyDownloading={item.id === currentDownloadingId}
-              finishNum={finishNum}
-              targetSegment={targetSegment}
               onRemove={batch.removeBatchItem}
               onUpdate={batch.updateItem}
               onVariantChange={batch.onVariantChange}
@@ -148,9 +137,6 @@ export function BatchQueueCard({ batch, onCancelBatch }: BatchQueueCardProps) {
                 total: batchList.length,
               })}
             </span>
-            <Button size="sm" variant="destructive" onClick={onCancelBatch}>
-              {t('batch.cancel')}
-            </Button>
           </div>
         )}
       </CardFooter>

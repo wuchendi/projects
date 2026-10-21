@@ -1,4 +1,6 @@
+import type { StateCreator } from 'zustand'
 import { create } from 'zustand'
+import { createStore } from 'zustand/vanilla'
 import type {
   AESDecryptor,
   DownloadState,
@@ -110,7 +112,7 @@ const INITIAL_STATE: DownloadStoreState = {
   taskId: '',
 }
 
-export const useDownloadStore = create<DownloadStore>()((set) => ({
+const initializer: StateCreator<DownloadStore> = (set) => ({
   ...INITIAL_STATE,
 
   setUrl: (url) => set({ url }),
@@ -152,7 +154,14 @@ export const useDownloadStore = create<DownloadStore>()((set) => ({
       url: s.url,
       isStreamSupported: s.isStreamSupported,
     })),
-}))
+})
+
+/** One view-state store per download task. */
+export const createDownloadStore = () =>
+  createStore<DownloadStore>()(initializer)
+
+/** The composer's draft: parse results before they become a queued task. */
+export const useDownloadStore = create<DownloadStore>()(initializer)
 
 // ---- Derived selectors ----
 export const selectFinishNum = (s: DownloadStore) =>

@@ -59,7 +59,10 @@
     "playlistChanged": "分片链接已过期且播放列表已变化，请重新解析",
     "storageLow": "浏览器存储空间可能不足以完成此下载",
     "storageFull": "浏览器存储空间已满，请释放空间后重试",
-    "saveFailed": "保存文件失败，分片已保留，请重试保存"
+    "saveFailed": "保存文件失败，分片已保留，请重试保存",
+    "addToQueue": "加入队列",
+    "addedToQueue": "已加入下载队列",
+    "taskStalled": "有任务多次失败后已停止，可在任务列表中重试"
   },
   "progress": {
     "title": "下载进度",
@@ -96,7 +99,9 @@
     "maxRetriesHint": "每个失败片段的重试次数（0-10）",
     "retryDelay": "重试基础延迟",
     "retryDelayHint": "重试前的初始延迟，每次翻倍（0.5-10秒）",
-    "reset": "恢复默认"
+    "reset": "恢复默认",
+    "maxTasks": "同时下载任务数",
+    "maxTasksHint": "同时进行的下载任务数量，每个任务最多占用下方设置的连接数"
   },
   "batch": {
     "title": "批量下载",
@@ -126,6 +131,24 @@
     "status": {
       "done": "已完成",
       "error": "失败"
+    },
+    "queued": "所有已解析的项目都已加入下载队列"
+  },
+  "tasks": {
+    "title": "下载任务",
+    "count": "共 {count} 个任务",
+    "resumeAll": "全部继续",
+    "pauseAll": "全部暂停",
+    "retry": "重试",
+    "remove": "移除",
+    "otherTab": "已在另一个标签页中打开",
+    "status": {
+      "queued": "排队中",
+      "downloading": "下载中",
+      "paused": "已暂停",
+      "error": "失败",
+      "ready": "待保存",
+      "saved": "已保存"
     }
   }
 }

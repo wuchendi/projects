@@ -1,5 +1,5 @@
 export { BatchInputCard } from './batch-input-card'
 export { BatchQueueCard } from './batch-queue-card'
-export { ProgressCard } from './progress-card'
 export { SettingsDialog } from './settings-card'
 export { SourceCard } from './source-card'
+export { TaskListCard } from './task-list-card'
