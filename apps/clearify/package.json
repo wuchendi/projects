@@ -50,7 +50,7 @@
     "@types/node": "catalog:dev",
     "@types/react": "catalog:dev",
     "@types/react-dom": "catalog:dev",
-    "@webgpu/types": "^0.1.72",
+    "@webgpu/types": "^0.1.74",
     "typescript": "catalog:dev"
   }
 }

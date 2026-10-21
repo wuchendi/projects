@@ -129,7 +129,7 @@ export function FloxPlayer({
     return () => {
       if (playerRef.current) {
         playerRef.current.off?.('timeupdate', handleTimeUpdate)
-        playerRef.current.destroy?.()
+        void playerRef.current.destroy?.()
         playerRef.current = null
       }
     }

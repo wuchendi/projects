@@ -43,7 +43,7 @@
     "react-dom": "catalog:prod",
     "sonner": "catalog:prod",
     "use-deep-compare-effect": "^1.8.1",
-    "wavesurfer.js": "^7.12.11",
+    "wavesurfer.js": "^8.0.3",
     "zod": "catalog:prod",
     "zustand": "catalog:prod"
   },
