@@ -3,7 +3,6 @@
 import { Badge } from '@cdlab/ui/components/badge'
 import { Field, FieldTitle } from '@cdlab/ui/components/field'
 import { Input } from '@cdlab/ui/components/input'
-import { Progress } from '@cdlab/ui/components/progress'
 import { Slider } from '@cdlab/ui/components/slider'
 import { ToggleGroup, ToggleGroupItem } from '@cdlab/ui/components/toggle-group'
 import { formatBytes } from '@cdlab/utils'
@@ -17,9 +16,6 @@ interface BatchItemRowProps {
   index: number
   disabled: boolean
   isStreamSupported: boolean
-  isCurrentlyDownloading: boolean
-  finishNum: number
-  targetSegment: number
   onRemove: (id: number) => void
   onUpdate: (id: number, patch: Partial<BatchItem>) => void
   onVariantChange: (item: BatchItem, variantUrl: string) => void
@@ -30,9 +26,6 @@ export function BatchItemRow({
   index,
   disabled,
   isStreamSupported,
-  isCurrentlyDownloading,
-  finishNum,
-  targetSegment,
   onRemove,
   onUpdate,
   onVariantChange,
@@ -71,7 +64,7 @@ export function BatchItemRow({
               ~{formatBytes({ bytes: item.meta.estimatedSize })}
             </Badge>
           )}
-        {!isCurrentlyDownloading && item.status !== 'done' && (
+        {item.status !== 'downloading' && item.status !== 'done' && (
           <button
             type="button"
             onClick={() => onRemove(item.id)}
@@ -81,23 +74,6 @@ export function BatchItemRow({
           </button>
         )}
       </div>
-
-      {/* Inline progress */}
-      {isCurrentlyDownloading && targetSegment > 0 && (
-        <div className="px-3 py-2 bg-blue-500/5 border-t">
-          <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>{t('progress.overall')}</span>
-            <span className="tabular-nums">
-              {finishNum} / {targetSegment} (
-              {((finishNum / targetSegment) * 100).toFixed(0)}%)
-            </span>
-          </div>
-          <Progress
-            value={(finishNum / targetSegment) * 100}
-            className="h-1.5"
-          />
-        </div>
-      )}
 
       {/* Done */}
       {item.status === 'done' && (
@@ -119,7 +95,7 @@ export function BatchItemRow({
       )}
 
       {/* Config */}
-      {isParsed && !isCurrentlyDownloading && item.status !== 'done' && (
+      {isParsed && (
         <div className="border-t px-3 py-3 space-y-2.5 bg-background/50">
           {hasVariants && (
             <Field>

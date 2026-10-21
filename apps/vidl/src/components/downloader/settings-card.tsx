@@ -16,12 +16,9 @@ import { RotateCcw, Settings2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useSettingsStore } from '@/stores/settings-store'
 
-interface SettingsDialogProps {
-  disabled: boolean
-}
-
-export function SettingsDialog({ disabled }: SettingsDialogProps) {
+export function SettingsDialog() {
   const t = useTranslations()
+  const maxTasks = useSettingsStore((s) => s.maxTasks)
   const concurrency = useSettingsStore((s) => s.concurrency)
   const timeoutMs = useSettingsStore((s) => s.timeoutMs)
   const maxRetries = useSettingsStore((s) => s.maxRetries)
@@ -32,7 +29,7 @@ export function SettingsDialog({ disabled }: SettingsDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon-sm" disabled={disabled}>
+        <Button variant="outline" size="icon-sm">
           <Settings2 className="size-4" />
         </Button>
       </DialogTrigger>
@@ -43,6 +40,25 @@ export function SettingsDialog({ disabled }: SettingsDialogProps) {
         </DialogHeader>
 
         <div className="space-y-5 py-2">
+          <Field>
+            <div className="flex items-center justify-between">
+              <FieldTitle>{t('settings.maxTasks')}</FieldTitle>
+              <span className="text-sm font-medium tabular-nums">
+                {maxTasks}
+              </span>
+            </div>
+            <Slider
+              value={[maxTasks]}
+              onValueChange={([v]) => setSettings({ maxTasks: v })}
+              min={1}
+              max={5}
+              step={1}
+            />
+            <p className="text-xs text-muted-foreground">
+              {t('settings.maxTasksHint')}
+            </p>
+          </Field>
+
           <Field>
             <div className="flex items-center justify-between">
               <FieldTitle>{t('settings.concurrency')}</FieldTitle>

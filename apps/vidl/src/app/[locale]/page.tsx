@@ -14,9 +14,9 @@ import { useEffect, useState } from 'react'
 import {
   BatchInputCard,
   BatchQueueCard,
-  ProgressCard,
   SettingsDialog,
   SourceCard,
+  TaskListCard,
 } from '@/components/downloader'
 import { useBatchActions } from '@/hooks/use-batch-actions'
 import { useDownloadActions } from '@/hooks/use-download-actions'
@@ -27,7 +27,6 @@ export default function VideoDownloaderPage() {
   const actions = useDownloadActions()
   const batch = useBatchActions()
 
-  const isDownloading = useDownloadStore((s) => s.downloadState.isDownloading)
   const isStreamSupported = useDownloadStore((s) => s.isStreamSupported)
 
   // Fallback: if StreamSaver.js loaded before the Script onLoad could fire
@@ -39,29 +38,17 @@ export default function VideoDownloaderPage() {
 
   const [activeTab, setActiveTab] = useState('single')
 
-  const handleCancelBatch = () => {
-    batch.cancelBatch()
-  }
-
-  const busy = isDownloading || batch.isBatchRunning
-
   const cardAction = (
     <div className="flex items-center gap-2">
       <TabsList>
-        <TabsTrigger
-          value="single"
-          disabled={batch.isBatchRunning || isDownloading}
-        >
+        <TabsTrigger value="single" disabled={batch.isBatchRunning}>
           <Video className="size-4" />
         </TabsTrigger>
-        <TabsTrigger
-          value="batch"
-          disabled={isDownloading && !batch.isBatchRunning}
-        >
+        <TabsTrigger value="batch" disabled={batch.isBatchRunning}>
           <ListPlus className="size-4" />
         </TabsTrigger>
       </TabsList>
-      <SettingsDialog disabled={busy} />
+      <SettingsDialog />
     </div>
   )
 
@@ -81,7 +68,6 @@ export default function VideoDownloaderPage() {
           {/* Single */}
           <TabsContent value="single" className="space-y-4">
             <SourceCard headerAction={cardAction} actions={actions} />
-            <ProgressCard actions={actions} />
           </TabsContent>
 
           {/* Batch */}
@@ -93,11 +79,11 @@ export default function VideoDownloaderPage() {
               disabled={batch.isBatchRunning || batch.isBatchParsing}
               onAddToQueue={batch.addToQueue}
             />
-            {batch.batchList.length > 0 && (
-              <BatchQueueCard batch={batch} onCancelBatch={handleCancelBatch} />
-            )}
+            {batch.batchList.length > 0 && <BatchQueueCard batch={batch} />}
           </TabsContent>
         </Tabs>
+
+        <TaskListCard />
       </div>
     </IKPageContainer>
   )

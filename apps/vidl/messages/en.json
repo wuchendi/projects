@@ -59,7 +59,10 @@
     "playlistChanged": "Segment links expired and the playlist changed — please parse again",
     "storageLow": "Browser storage may be too small for this download",
     "storageFull": "Browser storage is full — free up space and retry",
-    "saveFailed": "Saving the file failed — segments are kept, try Save again"
+    "saveFailed": "Saving the file failed — segments are kept, try Save again",
+    "addToQueue": "Add to Queue",
+    "addedToQueue": "Added to the download queue",
+    "taskStalled": "A download stopped after repeated failures — retry it from the task list"
   },
   "progress": {
     "title": "Download Progress",
@@ -96,7 +99,9 @@
     "maxRetriesHint": "Number of retry attempts per failed segment (0-10)",
     "retryDelay": "Retry Base Delay",
     "retryDelayHint": "Initial delay before retry, doubles each attempt (0.5-10s)",
-    "reset": "Reset to Defaults"
+    "reset": "Reset to Defaults",
+    "maxTasks": "Parallel tasks",
+    "maxTasksHint": "How many downloads run at the same time. Each one opens up to the connection count below."
   },
   "batch": {
     "title": "Batch Download",
@@ -126,6 +131,24 @@
     "status": {
       "done": "Done",
       "error": "Failed"
+    },
+    "queued": "All parsed items were added to the download queue"
+  },
+  "tasks": {
+    "title": "Downloads",
+    "count": "{count} tasks",
+    "resumeAll": "Resume all",
+    "pauseAll": "Pause all",
+    "retry": "Retry",
+    "remove": "Remove",
+    "otherTab": "Open in another tab",
+    "status": {
+      "queued": "Queued",
+      "downloading": "Downloading",
+      "paused": "Paused",
+      "error": "Failed",
+      "ready": "Ready to save",
+      "saved": "Saved"
     }
   }
 }

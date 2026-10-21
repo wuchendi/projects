@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 import type { AesConf, DownloadStore } from '@/stores/download-store'
 import type { DownloadSettings } from '@/stores/settings-store'
 import type { TaskRecord } from '@/stores/task-store'
-import { ensureTasksHydrated, useTaskStore } from '@/stores/task-store'
+import { useTaskStore } from '@/stores/task-store'
 import { AESDecryptor } from './aes-decryptor'
 import {
   isMasterPlaylist,
@@ -43,6 +43,8 @@ type StoreApi = {
 const EXPIRED_URL_RE = /HTTP (401|403|410)/
 const EXPIRED_HITS_BEFORE_REFRESH = 6
 const MAX_PLAYLIST_REFRESHES = 3
+/** Retry rounds with no finished segment before a task gives up as `error`. */
+const MAX_ERROR_ROUNDS = 3
 
 /**
  * Hold a per-task Web Lock so two tabs never drive the same task. Resolves to
@@ -65,11 +67,6 @@ function holdTaskLock(taskId: string): Promise<(() => void) | null> {
   })
 }
 
-export interface DownloadEngineOptions {
-  /** Persist the task so it can be resumed after a reload. Default true. */
-  persist?: boolean
-}
-
 export class DownloadEngine {
   // Non-serializable internal state (class fields, NOT in store)
   private segments: SegmentStore | null = null
@@ -81,28 +78,19 @@ export class DownloadEngine {
   private isRetrying = false
   private saveAsStream = false
   private wasResumed = false
-  private resuming = false
-  /** Restored after a reload; starts when the user clicks Resume. */
-  private pendingRun: {
-    startSegment: number
-    endSegment: number
-    isGetMP4: boolean
-    aesConf: AesConf | null
-  } | null = null
+  /** The in-flight worker pool; awaited so a paused task drains before it reruns. */
+  private running: Promise<void> | null = null
+  private errorRounds = 0
   private expiredHits = 0
   private playlistRefreshes = 0
   private isRefreshing = false
   private quotaNotified = false
-  private readonly persistTask: boolean
 
   constructor(
     private store: StoreApi,
     private getSettings: () => DownloadSettings,
     private notify: EngineNotifier,
-    options: DownloadEngineOptions = {},
-  ) {
-    this.persistTask = options.persist ?? true
-  }
+  ) {}
 
   // ============================================================
   // Parse
@@ -230,227 +218,125 @@ export class DownloadEngine {
   // Download
   // ============================================================
 
-  async startDownload(isGetMP4: boolean, saveAsStream = false): Promise<void> {
-    const first = this.store.getState()
-    if (first.tsUrlList.length === 0 || first.downloadState.isDownloading) {
-      return Promise.reject(new Error('Cannot start download'))
-    }
-    // Claim the slot before any await so a double click cannot start twice.
-    first.setDownloadState({ isDownloading: true, isPaused: false, isGetMP4 })
+  /**
+   * Load a persisted task into this engine's store: restore the view state
+   * from the record and the segments that were fully staged.
+   */
+  async load(
+    task: TaskRecord,
+    { restored }: { restored: boolean },
+  ): Promise<void> {
+    this.segments = await getSegmentStore(task.backend)
+    this.saveAsStream = task.saveAsStream
+    this.wasResumed = restored
+    this.durationSecond = task.durationSecond
+    this.beginTime = new Date(task.createdAt)
 
-    await ensureTasksHydrated()
-    // A new run replaces whatever the previous one left staged.
-    await this.discardTask()
+    const s = this.store.getState()
+    s.setUrl(task.url)
+    s.setTitle(task.title)
+    s.setCustomFileName(task.customFileName)
+    s.setM3u8Content(task.m3u8Content)
+    s.setPlaylistUrl(task.playlistUrl)
+    s.setTsUrlList(task.tsUrlList)
+    s.setRangeDownload({
+      startSegment: String(task.startSegment),
+      endSegment: String(task.endSegment),
+    })
+    s.setTaskId(task.id)
+    await this.syncStaged(task)
+    s.setIsReadyToSave(task.status === 'ready')
+  }
+
+  /** Rebuild the segment grid from what is really staged on disk. */
+  private async syncStaged(task: TaskRecord): Promise<boolean> {
+    const staged = new Set(await (this.segments as SegmentStore).list(task.id))
+    const inRange = (i: number) =>
+      i >= task.startSegment - 1 && i < task.endSegment
+    const finishList: FinishItem[] = segmentLines(task.m3u8Content).map(
+      (title, i) => ({
+        title,
+        status: staged.has(i) && inRange(i) ? 'finish' : '',
+      }),
+    )
+    const s = this.store.getState()
+    s.setFinishList(finishList)
+    s.setHasMediaData(staged.size > 0)
+    s.setDownloadState({
+      isGetMP4: task.isGetMP4,
+      downloadIndex: task.startSegment - 1,
+    })
+    return (
+      finishList.filter((item) => item.status === 'finish').length ===
+      task.endSegment - task.startSegment + 1
+    )
+  }
+
+  /** Take the per-task Web Lock; false when another tab already holds it. */
+  async acquireLock(): Promise<boolean> {
+    if (this.releaseLock) return true
+    const release = await holdTaskLock(this.store.getState().taskId)
+    if (!release) return false
+    this.releaseLock = release
+    return true
+  }
+
+  /** Start or continue downloading the loaded task from its staged segments. */
+  async run(): Promise<void> {
+    const taskId = this.store.getState().taskId
+    const task = useTaskStore.getState().tasks[taskId]
+    if (!task) return
+
+    // A paused pool may still be finishing in-flight segments.
+    await this.running?.catch(() => {})
+
+    if (!(await this.acquireLock())) {
+      this.notify.info('taskInOtherTab')
+      this.persistPatch({ status: 'paused' })
+      return
+    }
 
     this.abortController = new AbortController()
-    this.saveAsStream = saveAsStream
-    this.wasResumed = false
     this.expiredHits = 0
     this.playlistRefreshes = 0
     this.quotaNotified = false
+    this.errorRounds = 0
 
-    const taskId = crypto.randomUUID()
-    this.segments = await getSegmentStore()
-    this.releaseLock = await holdTaskLock(taskId)
+    await this.syncStaged(task)
+    this.store
+      .getState()
+      .setDownloadState({ isDownloading: true, isPaused: false })
 
-    const s = this.store.getState()
-    s.setTaskId(taskId)
-    s.setIsReadyToSave(false)
-
-    const urlObj = new URL(s.url)
-    const newTitle = urlObj.searchParams.get('title') || s.title
-    s.setTitle(newTitle)
-    this.beginTime = new Date()
-
-    const range = s.rangeDownload
-    let startSeg = Math.max(parseInt(range.startSegment) || 1, 1)
-    let endSeg = Math.max(parseInt(range.endSegment) || s.tsUrlList.length, 1)
-    startSeg = Math.min(startSeg, s.tsUrlList.length)
-    endSeg = Math.min(endSeg, s.tsUrlList.length)
-    const newStartSegment = Math.min(startSeg, endSeg)
-    const newEndSegment = Math.max(startSeg, endSeg)
-
-    s.setRangeDownload({
-      startSegment: String(newStartSegment),
-      endSegment: String(newEndSegment),
-    })
-
-    const newFinishList = s.finishList.map((item) => ({
-      ...item,
-      status: '' as const,
-    }))
-    s.setFinishList(newFinishList)
-
-    s.setDownloadState({
-      downloadIndex: newStartSegment - 1,
-      isDownloading: true,
-      isGetMP4,
-    })
-
-    s.setHasMediaData(false)
-
-    const m3u8Str = s.m3u8Content
-
-    if (isGetMP4) {
-      let infoIndex = 0
-      let duration = 0
-      m3u8Str.split('\n').forEach((item) => {
-        if (item.toUpperCase().indexOf('#EXTINF:') > -1) {
-          infoIndex++
-          if (newStartSegment <= infoIndex && infoIndex <= newEndSegment) {
-            duration += parseFloat(item.split('#EXTINF:')[1])
-          }
-        }
-      })
-      this.durationSecond = duration
-    }
-
-    let aesConf: AesConf | null = null
-    let aesRecord: TaskRecord['aes'] = null
-    if (m3u8Str.indexOf('#EXT-X-KEY') > -1) {
-      const method = (m3u8Str.match(/(.*METHOD=([^,\s]+))/) || ['', '', ''])[2]
-      const uri = (m3u8Str.match(/(.*URI="([^"]+))"/) || ['', '', ''])[2]
-      const iv = (m3u8Str.match(/(.*IV=([^,\s]+))/) || ['', '', ''])[2]
-      aesConf = {
-        method,
-        uri: applyURL(uri, s.url),
-        iv: iv ? new TextEncoder().encode(iv) : '',
-        key: null,
-        decryptor: null,
-      }
-      aesRecord = { method, uri: aesConf.uri, iv }
-      s.setAesConf(aesConf)
-    }
-
-    if (this.persistTask) {
-      useTaskStore.getState().upsertTask({
-        id: taskId,
-        url: s.url,
-        playlistUrl: s.playlistUrl,
-        title: newTitle,
-        customFileName: s.customFileName,
-        isGetMP4,
-        saveAsStream,
-        startSegment: newStartSegment,
-        endSegment: newEndSegment,
-        m3u8Content: m3u8Str,
-        tsUrlList: s.tsUrlList,
-        aes: aesRecord,
-        durationSecond: this.durationSecond,
-        backend: this.segments.backend,
-        status: 'downloading',
-        createdAt: Date.now(),
-      })
-    }
-    void this.checkStorage(s.estimatedSize)
-
-    await this.runDownload(newStartSegment, newEndSegment, isGetMP4, aesConf)
-  }
-
-  /**
-   * Continue a persisted task after a reload: restore the view state from the
-   * record and the segments that were fully staged, then download the rest.
-   */
-  async resume(taskId: string): Promise<void> {
-    if (this.resuming || this.store.getState().downloadState.isDownloading) {
-      return
-    }
-    this.resuming = true
-    try {
-      await ensureTasksHydrated()
-      const task = useTaskStore.getState().tasks[taskId]
-      if (!task || task.status === 'saved') return
-
-      const release = await holdTaskLock(task.id)
-      if (!release) {
-        this.notify.info('taskInOtherTab')
-        return
-      }
-      this.releaseLock = release
-
-      this.segments = await getSegmentStore(task.backend)
-      const staged = new Set(await this.segments.list(task.id))
-      const inRange = (i: number) =>
-        i >= task.startSegment - 1 && i < task.endSegment
-      const finishList: FinishItem[] = segmentLines(task.m3u8Content).map(
-        (title, i) => ({
-          title,
-          status: staged.has(i) && inRange(i) ? 'finish' : '',
-        }),
-      )
-      const target = task.endSegment - task.startSegment + 1
-      const complete =
-        finishList.filter((item) => item.status === 'finish').length === target
-      const waitingForSave = task.status === 'ready' && complete
-
-      this.abortController = new AbortController()
-      this.saveAsStream = task.saveAsStream
-      this.wasResumed = true
-      this.expiredHits = 0
-      this.playlistRefreshes = 0
-      this.quotaNotified = false
-      this.durationSecond = task.durationSecond
-      this.beginTime = new Date(task.createdAt)
-
-      const aesConf: AesConf | null = task.aes
-        ? {
-            method: task.aes.method,
-            uri: task.aes.uri,
-            iv: task.aes.iv ? new TextEncoder().encode(task.aes.iv) : '',
-            key: null,
-            decryptor: null,
-          }
-        : null
-
-      const s = this.store.getState()
-      s.setUrl(task.url)
-      s.setTitle(task.title)
-      s.setCustomFileName(task.customFileName)
-      s.setM3u8Content(task.m3u8Content)
-      s.setPlaylistUrl(task.playlistUrl)
-      s.setTsUrlList(task.tsUrlList)
-      s.setFinishList(finishList)
-      s.setRangeDownload({
-        startSegment: String(task.startSegment),
-        endSegment: String(task.endSegment),
-      })
-      s.setAesConf(
-        aesConf ?? {
-          method: '',
-          uri: '',
-          iv: '',
+    const aesConf: AesConf | null = task.aes
+      ? {
+          method: task.aes.method,
+          uri: task.aes.uri,
+          iv: task.aes.iv ? new TextEncoder().encode(task.aes.iv) : '',
           key: null,
           decryptor: null,
-        },
-      )
-      s.setTaskId(task.id)
-      s.setHasMediaData(staged.size > 0)
-      s.setIsReadyToSave(waitingForSave)
-      s.setDownloadState({
-        isDownloading: !waitingForSave,
-        isPaused: !waitingForSave,
-        isGetMP4: task.isGetMP4,
-        downloadIndex: task.startSegment - 1,
-      })
+        }
+      : null
 
-      if (waitingForSave) {
-        this.releaseTaskLock()
-        this.notify.info('readyToSave')
-        return
-      }
-
-      // Restored paused: nothing is fetched until the user clicks Resume. The
-      // task lock stays held so another tab cannot start it meanwhile.
-      this.pendingRun = {
-        startSegment: task.startSegment,
-        endSegment: task.endSegment,
-        isGetMP4: task.isGetMP4,
-        aesConf,
-      }
-      this.notify.info('resumed')
+    this.running = this.runDownload(
+      task.startSegment,
+      task.endSegment,
+      task.isGetMP4,
+      aesConf,
+    )
+    try {
+      await this.running
     } finally {
-      this.resuming = false
+      this.running = null
+      const ds = this.store.getState().downloadState
+      if (ds.isPaused) {
+        this.store.getState().setDownloadState({ isDownloading: false })
+      }
     }
+  }
+
+  /** Stop fetching; in-flight segments still finish and stay staged. */
+  pause(): void {
+    this.store.getState().setDownloadState({ isPaused: true })
   }
 
   private async runDownload(
@@ -520,14 +406,6 @@ export class DownloadEngine {
     }
   }
 
-  streamDownload(isGetMP4: boolean): Promise<void> {
-    if (!(window as any).streamSaver) {
-      this.notify.error('streamSaverNotLoaded')
-      return Promise.reject(new Error('StreamSaver not loaded'))
-    }
-    return this.startDownload(isGetMP4, true)
-  }
-
   cancelDownload(): void {
     const s = this.store.getState()
     this.abortController?.abort()
@@ -541,7 +419,6 @@ export class DownloadEngine {
     })
     this.downloadingTimestamps.clear()
     this.saveAsStream = false
-    this.pendingRun = null
 
     void this.discardTask()
     s.setTaskId('')
@@ -555,25 +432,16 @@ export class DownloadEngine {
     this.notify.info('cancelled')
   }
 
-  togglePause(): void {
-    const s = this.store.getState()
-    const newIsPaused = !s.downloadState.isPaused
-    s.setDownloadState({ isPaused: newIsPaused })
-    if (newIsPaused) return
-
-    const pending = this.pendingRun
-    if (pending) {
-      this.pendingRun = null
-      this.persistPatch({ status: 'downloading' })
-      void this.runDownload(
-        pending.startSegment,
-        pending.endSegment,
-        pending.isGetMP4,
-        pending.aesConf,
-      )
-      return
-    }
-    this.retryAll(true)
+  /** Stop and delete the task's record and staged segments. */
+  async discard(): Promise<void> {
+    this.abortController?.abort()
+    this.abortController = null
+    this.store.getState().setDownloadState({
+      isDownloading: false,
+      isPaused: false,
+    })
+    await this.discardTask()
+    this.store.getState().setTaskId('')
   }
 
   async retry(index: number): Promise<void> {
@@ -662,13 +530,13 @@ export class DownloadEngine {
     this.persistPatch({ status: 'saved' })
   }
 
-  retryAll(forceRestart: boolean): void {
+  retryAll(): void {
     const s = this.store.getState()
     const ds = s.downloadState
 
-    if (!s.finishList.length || (!forceRestart && ds.isPaused)) return
+    if (!s.finishList.length || ds.isPaused) return
     if (!ds.isDownloading) return
-    if (this.isRetrying && !forceRestart) return
+    if (this.isRetrying) return
 
     const startSegment = parseInt(s.rangeDownload.startSegment)
     const endSegment = parseInt(s.rangeDownload.endSegment)
@@ -704,9 +572,16 @@ export class DownloadEngine {
 
     if (!hasPending) return
 
+    if (s.finishList.some((item) => item.status === 'error')) {
+      if (++this.errorRounds > MAX_ERROR_ROUNDS) {
+        this.markStalled()
+        return
+      }
+    }
+
     s.setFinishList(newFinishList)
 
-    if (ds.downloadIndex >= endSegment || forceRestart) {
+    if (ds.downloadIndex >= endSegment) {
       this.isRetrying = true
       s.setDownloadState({ downloadIndex: firstPendingIndex })
       void this.downloadTS(
@@ -750,6 +625,16 @@ export class DownloadEngine {
   // Internal
   // ============================================================
 
+  /** Repeated rounds with nothing finishing: free the slot, keep staged data. */
+  private markStalled() {
+    this.abortController?.abort()
+    this.store
+      .getState()
+      .setDownloadState({ isDownloading: false, isPaused: false })
+    this.persistPatch({ status: 'error' })
+    this.notify.error('taskStalled')
+  }
+
   private releaseTaskLock() {
     this.releaseLock?.()
     this.releaseLock = null
@@ -757,7 +642,7 @@ export class DownloadEngine {
 
   private persistPatch(patch: Partial<TaskRecord>) {
     const id = this.store.getState().taskId
-    if (this.persistTask && id) useTaskStore.getState().patchTask(id, patch)
+    if (id) useTaskStore.getState().patchTask(id, patch)
   }
 
   /** Drop a task's record and staged segments (current task by default). */
@@ -802,7 +687,7 @@ export class DownloadEngine {
     )
   }
 
-  private async checkStorage(estimatedSize: number | null) {
+  async checkStorage(estimatedSize: number | null) {
     try {
       void navigator.storage?.persist?.()
       const estimate = await navigator.storage?.estimate?.()
@@ -932,6 +817,7 @@ export class DownloadEngine {
     if (!this.segments || this.store.getState().taskId !== taskId) return
     await this.segments.put(taskId, index, afterData)
     s.setHasMediaData(true)
+    this.errorRounds = 0
 
     // Update finish status
     s.updateFinishItem(index, 'finish')

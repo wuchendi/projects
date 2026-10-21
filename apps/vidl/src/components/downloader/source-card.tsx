@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@cdlab/ui/components/button'
-import { ButtonGroup } from '@cdlab/ui/components/button-group'
 import {
   Card,
   CardAction,
@@ -36,8 +35,6 @@ import {
   HardDriveDownload,
   Link,
   Loader2,
-  Pause,
-  Play,
   Trash2,
   TvMinimalPlay,
   X,
@@ -56,10 +53,8 @@ interface SourceCardProps {
   actions: {
     parseM3U8: (url?: string) => Promise<void>
     selectVariant: (variant: any) => Promise<void>
-    startDownload: (isGetMP4: boolean) => Promise<void>
+    addToQueue: (isGetMP4: boolean, saveAsStream: boolean) => Promise<void>
     directDownload: () => Promise<void>
-    streamDownload: (isGetMP4: boolean) => Promise<void>
-    togglePause: () => void
     cancelDownload: () => void
   }
 }
@@ -97,13 +92,10 @@ export function SourceCard({ headerAction, actions }: SourceCardProps) {
   }, [setUrl, t])
 
   const handleDownload = () => {
-    const isStream = format.startsWith('stream-')
-    const isGetMP4 = format === 'mp4' || format === 'stream-mp4'
-    if (isStream) {
-      void actions.streamDownload(isGetMP4)
-    } else {
-      void actions.startDownload(isGetMP4)
-    }
+    void actions.addToQueue(
+      format === 'mp4' || format === 'stream-mp4',
+      format.startsWith('stream-'),
+    )
   }
 
   return (
@@ -346,37 +338,14 @@ export function SourceCard({ headerAction, actions }: SourceCardProps) {
             ) : (
               <Button onClick={handleDownload}>
                 <HardDriveDownload className="size-4" />
-                {t('download.startDownload')}
+                {t('download.addToQueue')}
               </Button>
             )
-          ) : isDirectVideo ? (
+          ) : (
             <Button variant="destructive" onClick={actions.cancelDownload}>
               <X className="size-4" />
               {t('download.cancel')}
             </Button>
-          ) : (
-            <ButtonGroup>
-              <Button
-                onClick={actions.togglePause}
-                variant={downloadState.isPaused ? 'default' : 'secondary'}
-              >
-                {downloadState.isPaused ? (
-                  <>
-                    <Play className="size-4" />
-                    {t('download.resume')}
-                  </>
-                ) : (
-                  <>
-                    <Pause className="size-4" />
-                    {t('download.pause')}
-                  </>
-                )}
-              </Button>
-              <Button variant="destructive" onClick={actions.cancelDownload}>
-                <X className="size-4" />
-                {t('download.cancel')}
-              </Button>
-            </ButtonGroup>
           )}
         </CardFooter>
       )}

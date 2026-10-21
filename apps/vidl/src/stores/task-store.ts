@@ -5,11 +5,20 @@ import { persist } from 'zustand/middleware'
 import type { SegmentBackend } from '@/lib/storage/segment-store'
 
 /**
- * downloading — segments are being fetched (resumable after a reload)
+ * queued      — waiting for a free slot
+ * downloading — segments are being fetched
+ * paused      — stopped by the user or restored after a reload; staged data kept
+ * error       — gave up after repeated failures; staged data kept, can retry
  * ready       — every segment is staged, waiting for the user to save
  * saved       — the file was handed to the browser; staged data is garbage
  */
-export type TaskStatus = 'downloading' | 'ready' | 'saved'
+export type TaskStatus =
+  | 'queued'
+  | 'downloading'
+  | 'paused'
+  | 'error'
+  | 'ready'
+  | 'saved'
 
 export interface TaskRecord {
   id: string
@@ -31,6 +40,8 @@ export interface TaskRecord {
   durationSecond: number
   backend: SegmentBackend
   status: TaskStatus
+  /** Queue position: lower runs first. */
+  order: number
   createdAt: number
 }
 
