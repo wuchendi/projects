@@ -50,7 +50,7 @@
     "react-dom": "catalog:prod",
     "recharts": "catalog:prod",
     "sonner": "catalog:prod",
-    "tyme4ts": "^1.5.2",
+    "tyme4ts": "^1.5.3",
     "zod": "catalog:prod",
     "zustand": "catalog:prod"
   },

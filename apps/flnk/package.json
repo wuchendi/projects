@@ -41,7 +41,7 @@
     "next-themes": "catalog:prod",
     "react": "catalog:prod",
     "react-dom": "catalog:prod",
-    "react-simple-maps": "^5.0.0",
+    "react-simple-maps": "^5.0.5",
     "recharts": "catalog:prod",
     "sonner": "catalog:prod",
     "ua-parser-js": "^2.0.10",

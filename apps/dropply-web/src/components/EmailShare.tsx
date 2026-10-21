@@ -116,7 +116,7 @@ export function EmailShare({
             onSubmit={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              form.handleSubmit()
+              void form.handleSubmit()
             }}
           >
             {sendMutation.isError && (

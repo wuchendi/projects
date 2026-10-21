@@ -35,7 +35,7 @@
     "@react-email/components": "^1.0.12",
     "drizzle-orm": "catalog:prod",
     "hono": "catalog:prod",
-    "resend": "^6.26.0",
+    "resend": "^6.34.1",
     "winston": "catalog:prod",
     "winston-daily-rotate-file": "catalog:prod",
     "zod": "catalog:prod"

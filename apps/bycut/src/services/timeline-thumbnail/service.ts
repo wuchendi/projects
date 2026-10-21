@@ -106,7 +106,7 @@ class TimelineThumbnailCache {
     if (cached) return cached
 
     const pendingPromise = this.pending.get(key)
-    if (pendingPromise) return pendingPromise
+    if (pendingPromise !== undefined) return pendingPromise
 
     const promise = this.generateThumbnail({
       mediaId,
