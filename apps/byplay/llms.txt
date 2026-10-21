@@ -120,5 +120,4 @@ pnpm --filter @cdlab/byplay dev        # http://byplay.localhost:3355
 pnpm --filter @cdlab/byplay lint       # next lint
 pnpm --filter @cdlab/byplay typecheck  # tsc --noEmit
 pnpm --filter @cdlab/byplay build      # next build → static out/
-pnpm --filter @cdlab/byplay build:cf   # @cloudflare/next-on-pages
 ```

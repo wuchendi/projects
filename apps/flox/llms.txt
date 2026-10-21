@@ -23,7 +23,7 @@ Part of the `@cdlab/projects-monorepo`; run all commands from the repo root with
   `export const runtime = 'edge'`) that only fan out / proxy / probe upstream.
   Client = React UI holding ALL durable state in `localStorage` via Zustand.
 - **No bindings, no DB.** There is **no `wrangler.jsonc`** and no KV/D1/R2/DO.
-  Deploy target is Cloudflare Pages via `@cloudflare/next-on-pages` (`build:cf`);
+  Deploy target is Cloudflare Pages via `@cloudflare/next-on-pages`;
   `output: 'standalone'` also makes it a runnable Node/Docker server.
 - **Sources ship EMPTY.** `DEFAULT_SOURCES` / `PREMIUM_SOURCES` are `[]`. The app
   is inert until the user imports the remote curated list or adds sources.
@@ -150,7 +150,6 @@ Client (`src/lib/hooks/useParallelSearch.ts` + `src/lib/utils/search-stream.ts`)
 ```bash
 pnpm --filter @cdlab/flox dev          # http://flox.localhost:3355 (or: pnpm dev:flox)
 pnpm --filter @cdlab/flox build        # next build --webpack (NOT Turbopack)
-pnpm --filter @cdlab/flox build:cf     # next-on-pages (Cloudflare Pages build)
 pnpm --filter @cdlab/flox lint         # next lint
 pnpm --filter @cdlab/flox typecheck    # tsc --noEmit
 ```

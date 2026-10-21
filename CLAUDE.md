@@ -15,7 +15,7 @@ Apps fall into three runtime families with different toolchains:
 
 | Family                        | Apps                                                                                                                             | Build tool                      | Deploy target                                                                                        |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Next.js (App Router)**      | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flnk`, `flox`, `text2img`, `values`, `vidl`, `wepush` | `next build` (some `--webpack`) | Cloudflare Pages (`@cloudflare/next-on-pages`); `text2img`, `wepush`, and `flnk` use `@opennextjs/cloudflare` |
+| **Next.js (App Router)**      | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flnk`, `flox`, `text2img`, `values`, `vidl`, `wepush` | `next build` (some `--webpack`) | Cloudflare Pages (build command `NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1`, output `.vercel/output/static`; not a dependency); `text2img`, `wepush`, and `flnk` use `@opennextjs/cloudflare` |
 | **Cloudflare Workers (Hono)** | `byplay-log`, `dropply-api`, `live-user`                                                                            | `wrangler deploy --minify`      | Cloudflare Workers + Durable Objects / D1                                                            |
 | **Nuxt 4 (Vue 3)**            | `repo-changelog`                                                                                                                 | `nuxt build`/`generate`         | Vercel                                                                                               |
 
@@ -200,7 +200,7 @@ Pure-browser stream download — `mux.js` + Streams API, near-zero memory footpr
 
 #### `byshot` — Cloudinary-backed personal photography collection
 
-- `src/app/page.tsx` — RSC entry: fetches the Cloudinary folder listing, generates blur placeholders, then hands off to `Gallery`. Server-rendered (no `output: 'export'`); deploys via `@cloudflare/next-on-pages`.
+- `src/app/page.tsx` — RSC entry: fetches the Cloudinary folder listing, generates blur placeholders, then hands off to `Gallery`. Server-rendered; deploys to Cloudflare Pages via the `next-on-pages` build command (see the table above).
 - `src/app/p/[photoId]/page.tsx` — Single-photo carousel route (deep-linkable).
 - `src/utils/cachedImages.ts` — Module-level cache around `cloudinary.v2.search.expression('folder:${CLOUDINARY_FOLDER}/*')`. Memoizes across requests within the same isolate; Edge cold-starts refetch.
 - `src/utils/generateBlurPlaceholder.ts` — Fetches an 8px-wide Cloudinary JPEG and inlines it as a base64 data URL using native `Uint8Array` + `btoa()` (no `node:buffer`, so it works on the Edge runtime).

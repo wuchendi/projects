@@ -325,8 +325,8 @@ are `unoptimized`. `BUILD_TIME` is injected at build via `next.config.ts`
 - **Static assets (primary).** `wrangler.jsonc` serves `./out` directly
   (`assets.directory`, `not_found_handling: "404-page"`). Live at
   `dropply.pages.dev`.
-- **`next-on-pages`.** `pnpm --filter @cdlab/dropply-web build:cf` runs
-  `@cloudflare/next-on-pages` for a Cloudflare Pages build.
+- **`next-on-pages`.** Cloudflare Pages builds with `NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1`
+  (output `.vercel/output/static`).
 
 There are **no Cloudflare bindings** — no KV/R2/D1/DO. The app is a static
 asset deployment whose only backend dependency is a reachable `dropply-api`.
@@ -336,8 +336,7 @@ asset deployment whose only backend dependency is a reachable `dropply-api`.
 ```bash
 pnpm dev:dropply                             # web + api → http://dropply.localhost:3355
 pnpm --filter @cdlab/dropply-web typecheck   # tsc --noEmit
-pnpm --filter @cdlab/dropply-web build       # static out/
-pnpm --filter @cdlab/dropply-web build:cf    # Cloudflare Pages build
+pnpm --filter @cdlab/dropply-web build       # next build
 ```
 
 No test script and no test files exist in this app.

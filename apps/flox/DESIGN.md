@@ -364,12 +364,11 @@ runtime secrets (§2). Full table in the [README](README.md#configuration). Note
 | --- | --- | --- |
 | `dev` | `nsl run next dev` | dev at `http://flox.localhost:3355`. |
 | `build` | `next build --webpack` | production build — **Turbopack is not used** here. |
-| `build:cf` | `next-on-pages` | Cloudflare Pages build (`@cloudflare/next-on-pages`). |
 | `start` | `next start` | run the standalone server. |
 | `lint` / `lint:fix` | `next lint` | lint. |
 | `typecheck` | `tsc --noEmit` | type-check. |
 
-Primary deploy target is **Cloudflare Pages** (`build:cf`). `output: 'standalone'`
+Primary deploy target is **Cloudflare Pages**. `output: 'standalone'`
 in `next.config.ts` also makes it a runnable Node/Docker server — that path is
 the only one that reads `AD_KEYWORDS_FILE` from disk. There is **no test
 script**.

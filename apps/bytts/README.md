@@ -183,7 +183,6 @@ bookkeeping. Hydration happens on the client only (`skipHydration` +
 pnpm --filter @cdlab/bytts typecheck    # tsc --noEmit
 pnpm --filter @cdlab/bytts lint         # next lint
 pnpm --filter @cdlab/bytts build        # next build --webpack (forced webpack builder)
-pnpm --filter @cdlab/bytts run build:cf # next-on-pages → .vercel/output (Cloudflare Pages)
 ```
 
 There is **no test script** — the project has no tests. The `build` script

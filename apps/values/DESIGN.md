@@ -267,13 +267,13 @@ image hosts (`res.cloudinary.com`, `wcd.pages.dev`).
 
 ### 8.2 Static export
 
-`output: 'export'` forces the whole app client-side: `page.tsx` is `'use client'`
+The page is fully client-side: `page.tsx` is `'use client'`
 and rate fetching runs in the browser, so it is **CORS-dependent** on the two
-public APIs. `build` emits the static site to `out/`.
+public APIs. `build` runs plain `next build`.
 
 ### 8.3 Deploy
 
-`build:cf` runs `@cloudflare/next-on-pages` for the Cloudflare Pages bundle; the
+Cloudflare Pages builds with `NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1` (output `.vercel/output/static`); the
 live site is <https://values.pages.dev/> (also the `metadataBase`). There is no
 `wrangler.jsonc`, no Cloudflare bindings, and no test suite.
 

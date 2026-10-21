@@ -468,7 +468,6 @@ provided features.
 | --- | --- |
 | `pnpm --filter @cdlab/bycut dev` | `nsl run next dev` → http://bycut.localhost:3355 |
 | `pnpm --filter @cdlab/bycut build` | `next build` → static `out/` |
-| `pnpm --filter @cdlab/bycut build:cf` | `@cloudflare/next-on-pages` (Cloudflare Pages) |
 | `pnpm --filter @cdlab/bycut lint` | `next lint` |
 | `pnpm --filter @cdlab/bycut typecheck` | `tsc --noEmit` |
 

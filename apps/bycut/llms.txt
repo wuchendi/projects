@@ -22,7 +22,7 @@ Part of the `@cdlab/projects-monorepo`; run all commands from the repo root with
 
 - **Static export.** `next.config.ts` sets `output: 'export'` → static `out/`.
   There is NO Node/edge runtime, NO `app/api`, NO wrangler config, NO secrets, NO
-  bindings. Deploy target: Cloudflare Pages (`build:cf` → `@cloudflare/next-on-pages`).
+  bindings. Deploy target: Cloudflare Pages (`next-on-pages` build command).
 - **Local by construction.** Media is decoded/composited/encoded entirely in the
   browser via mediabunny + `@mediabunny/mp3-encoder`. Nothing is uploaded.
 - **NOT FFmpeg.** Despite older README copy, there is no `@ffmpeg/*` dependency and
@@ -157,7 +157,6 @@ Types: `src/types/project.ts`, `timeline.ts`, `assets.ts`. IDs via `@cdlab/drift
 ```bash
 pnpm --filter @cdlab/bycut dev        # http://bycut.localhost:3355
 pnpm --filter @cdlab/bycut build      # next build → static out/
-pnpm --filter @cdlab/bycut build:cf   # @cloudflare/next-on-pages
 pnpm --filter @cdlab/bycut lint       # next lint
 pnpm --filter @cdlab/bycut typecheck  # tsc --noEmit
 ```

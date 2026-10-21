@@ -153,7 +153,6 @@ llms.txt                     agent-oriented usage guide
 
 ```bash
 pnpm --filter @cdlab/byshot build      # next build → static export (out/)
-pnpm --filter @cdlab/byshot build:cf   # @cloudflare/next-on-pages (the real deploy build)
 pnpm --filter @cdlab/byshot typecheck  # tsc --noEmit
 pnpm --filter @cdlab/byshot lint       # next lint (Biome is the monorepo formatter)
 ```

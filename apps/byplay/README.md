@@ -189,7 +189,6 @@ llms.txt                   agent-oriented usage guide
 pnpm --filter @cdlab/byplay lint       # next lint
 pnpm --filter @cdlab/byplay typecheck  # tsc --noEmit
 pnpm --filter @cdlab/byplay build      # next build → static out/
-pnpm --filter @cdlab/byplay build:cf   # @cloudflare/next-on-pages
 ```
 
 Deployed as a fully static export on **Cloudflare Pages** via

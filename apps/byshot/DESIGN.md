@@ -73,7 +73,7 @@ only the view.
 
 `byshot` is a **Next.js App Router (RSC)** app compiled to a static export
 (`output: 'export'`, `next.config.ts`) and wrapped for Cloudflare Pages by
-`@cloudflare/next-on-pages` (`build:cf`). No `wrangler` config or Cloudflare
+`@cloudflare/next-on-pages`. No `wrangler` config or Cloudflare
 binding exists; the only Cloudflare-specific constraint is the subrequest limit
 that caps the blur pass (§4).
 

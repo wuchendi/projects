@@ -19,7 +19,7 @@ Part of the `@cdlab/projects-monorepo`; run all commands from the repo root with
 
 - **Static site, no backend.** All work runs in the tab. `next.config.ts` sets
   `output: 'export'`; `middleware.ts` is the `next-intl` locale shim only.
-  `build:cf` (`@cloudflare/next-on-pages`) is just the Pages build wrapper.
+  the `next-on-pages` build command is just the Pages wrapper.
 - **Framework-agnostic core.** `DownloadEngine` (`src/lib/download-engine.ts`) is
   a plain class driven imperatively. Two hooks each own a `DownloadEngine` via
   `useRef` (single + batch) and share one Zustand `download-store`.
@@ -116,7 +116,6 @@ format options are hidden (`source-card.tsx`).
 ```bash
 pnpm --filter @cdlab/vidl dev        # http://vidl.localhost:3355 (via @dotns/nsl)
 pnpm --filter @cdlab/vidl build      # next build → static export
-pnpm --filter @cdlab/vidl build:cf   # @cloudflare/next-on-pages (Pages build wrapper)
 pnpm --filter @cdlab/vidl typecheck  # tsc --noEmit
 pnpm --filter @cdlab/vidl lint       # next lint
 ```
