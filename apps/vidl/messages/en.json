@@ -50,7 +50,16 @@
     "retryWarning": "{count} segments failed, auto-retrying",
     "forceDownload": "Download completed segments",
     "forceDownloadSuccess": "Browser download triggered for existing segments",
-    "noSegments": "No downloaded segments available"
+    "noSegments": "No downloaded segments available",
+    "resumed": "Unfinished download restored — click Resume to continue",
+    "readyToSave": "All segments downloaded — click Save to write the file",
+    "save": "Save file",
+    "taskInOtherTab": "This download is already running in another tab",
+    "urlsRefreshed": "Segment links expired — refreshed from the playlist",
+    "playlistChanged": "Segment links expired and the playlist changed — please parse again",
+    "storageLow": "Browser storage may be too small for this download",
+    "storageFull": "Browser storage is full — free up space and retry",
+    "saveFailed": "Saving the file failed — segments are kept, try Save again"
   },
   "progress": {
     "title": "Download Progress",

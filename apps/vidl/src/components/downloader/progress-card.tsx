@@ -20,7 +20,7 @@ import {
 } from '@cdlab/ui/components/tooltip'
 import { IKEmpty } from '@cdlab/ui/IK'
 import { cn } from '@cdlab/ui/lib/utils'
-import { Download } from 'lucide-react'
+import { Download, Save } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import {
   selectErrorNum,
@@ -32,7 +32,8 @@ import {
 interface ProgressCardProps {
   actions: {
     retry: (index: number) => Promise<void>
-    forceDownload: () => void
+    forceDownload: () => Promise<void>
+    saveTask: () => Promise<void>
   }
 }
 
@@ -44,7 +45,7 @@ export function ProgressCard({ actions }: ProgressCardProps) {
   const errorNum = useDownloadStore(selectErrorNum)
   const targetSegment = useDownloadStore(selectTargetSegment)
   const hasMediaData = useDownloadStore((s) => s.hasMediaData)
-  const hasStreamWriter = useDownloadStore((s) => s.hasStreamWriter)
+  const isReadyToSave = useDownloadStore((s) => s.isReadyToSave)
 
   return (
     <Card className="flex flex-col p-4 border-none h-full">
@@ -69,11 +70,18 @@ export function ProgressCard({ actions }: ProgressCardProps) {
                 )}
               </div>
 
-              {hasMediaData && !hasStreamWriter && (
+              {isReadyToSave && (
+                <Button size="sm" onClick={() => void actions.saveTask()}>
+                  <Save className="size-4" />
+                  {t('download.save')}
+                </Button>
+              )}
+
+              {hasMediaData && !isReadyToSave && (
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={actions.forceDownload}
+                  onClick={() => void actions.forceDownload()}
                 >
                   <Download className="size-4" />
                   {t('download.forceDownload')}
