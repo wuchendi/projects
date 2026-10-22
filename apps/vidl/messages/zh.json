@@ -62,7 +62,8 @@
     "saveFailed": "保存文件失败，分片已保留，请重试保存",
     "addToQueue": "加入队列",
     "addedToQueue": "已加入下载队列",
-    "taskStalled": "有任务多次失败后已停止，可在任务列表中重试"
+    "taskStalled": "有任务多次失败后已停止，可在任务列表中重试",
+    "takeOverFailed": "另一个标签页没有放开该任务，请重试"
   },
   "progress": {
     "title": "下载进度",
@@ -149,6 +150,7 @@
       "error": "失败",
       "ready": "待保存",
       "saved": "已保存"
-    }
+    },
+    "takeOver": "在此标签页接管"
   }
 }

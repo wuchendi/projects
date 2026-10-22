@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import type { PersistStorage, StorageValue } from 'zustand/middleware'
 import { persist } from 'zustand/middleware'
 import type { SegmentBackend } from '@/lib/storage/segment-store'
+import { onTab, postTab } from '@/lib/tab-bus'
 import type { TaskRows } from './task-merge'
 import { mergeRows, sameRows } from './task-merge'
 
@@ -58,16 +59,8 @@ interface TaskState extends TaskRows {
 
 const ROW_NAME = 'vidl-tasks'
 const WRITE_LOCK = 'vidl-tasks-write'
-const CHANNEL = 'vidl-tasks'
 
 const indexedDb = createIndexedDBStorage<TaskRows>('vidl', 'stores')
-
-let channel: BroadcastChannel | null = null
-function getChannel(): BroadcastChannel | null {
-  if (typeof BroadcastChannel === 'undefined') return null
-  channel ??= new BroadcastChannel(CHANNEL)
-  return channel
-}
 
 /** Run `fn` exclusively across tabs so read-merge-write cannot interleave. */
 function withWriteLock<T>(fn: () => Promise<T>): Promise<T> {
@@ -93,15 +86,15 @@ const mergingStorage: PersistStorage<TaskRows, Promise<void>> = {
       const merged = mergeRows(value.state, stored?.state)
       if (sameRows(merged, stored?.state)) return
       await indexedDb.setItem(name, { ...value, state: merged })
-      getChannel()?.postMessage('changed')
+      postTab({ type: 'changed' })
     }),
 }
 
 /** Call `listener` when another tab changed the persisted task rows. */
 export function onTasksChangedElsewhere(listener: () => void): () => void {
-  const bc = getChannel()
-  bc?.addEventListener('message', listener)
-  return () => bc?.removeEventListener('message', listener)
+  return onTab((message) => {
+    if (message.type === 'changed') listener()
+  })
 }
 
 export const useTaskStore = create<TaskState>()(

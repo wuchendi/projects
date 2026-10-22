@@ -2,7 +2,11 @@ import { logger } from '@cdlab/utils'
 import type { StoreApi } from 'zustand'
 import { create } from 'zustand'
 import type { DownloadStore } from '@/stores/download-store'
-import { createDownloadStore } from '@/stores/download-store'
+import {
+  createDownloadStore,
+  selectErrorNum,
+  selectFinishNum,
+} from '@/stores/download-store'
 import { useSettingsStore } from '@/stores/settings-store'
 import { mergeRows, sameRows } from '@/stores/task-merge'
 import type { TaskRecord, TaskStatus } from '@/stores/task-store'
@@ -15,6 +19,8 @@ import {
 import type { EngineNotifier } from './download-engine'
 import { DownloadEngine } from './download-engine'
 import { getAllSegmentStores, getSegmentStore } from './storage/segment-store'
+import type { TabMessage, TaskCommand, TaskProgress } from './tab-bus'
+import { isTabBusAvailable, onTab, postTab } from './tab-bus'
 import type { TaskOptions } from './task-record'
 import { buildTaskRecord } from './task-record'
 
@@ -24,6 +30,12 @@ export interface TaskRuntime {
 }
 
 const TICK_MS = 2_000
+const PROGRESS_MS = 1_000
+/** Progress from another tab older than this is not shown. */
+const PROGRESS_STALE_MS = 6_000
+const TAKE_OVER_TIMEOUT_MS = 10_000
+/** After handing a task over, do not adopt it straight back for this long. */
+const RELEASE_COOLDOWN_MS = 15_000
 /** A saved task's staged data is kept this long so the browser can finish reading it. */
 const SAVED_GRACE_MS = 10 * 60 * 1000
 
@@ -32,7 +44,18 @@ export const useQueueUi = create<{
   ready: boolean
   /** Bumped whenever this tab starts or stops driving a task. */
   runtimeVersion: number
-}>()(() => ({ ready: false, runtimeVersion: 0 }))
+  /** Progress other tabs published for the tasks they drive. */
+  remote: Record<string, { finished: number; errors: number; at: number }>
+}>()(() => ({ ready: false, runtimeVersion: 0, remote: {} }))
+
+/** Latest progress another tab reported for a task, if still fresh. */
+export function freshRemoteProgress(
+  remote: Record<string, { finished: number; errors: number; at: number }>,
+  id: string,
+) {
+  const entry = remote[id]
+  return entry && Date.now() - entry.at < PROGRESS_STALE_MS ? entry : undefined
+}
 
 /**
  * Owns one engine + view-state store per task this tab drives and decides which
@@ -50,7 +73,9 @@ class TaskManager {
   }
   private initPromise: Promise<void> | null = null
   private tick: ReturnType<typeof setInterval> | null = null
+  private progressTick: ReturnType<typeof setInterval> | null = null
   private adopting = false
+  private releasedAt = new Map<string, number>()
 
   setNotifier(notify: EngineNotifier) {
     this.notify = notify
@@ -85,7 +110,10 @@ class TaskManager {
     useTaskStore.subscribe(() => this.schedule())
     useSettingsStore.subscribe(() => this.schedule())
     onTasksChangedElsewhere(() => void this.syncFromStorage())
+    onTab((message) => this.onMessage(message))
     this.tick ??= setInterval(() => this.onTick(), TICK_MS)
+    this.progressTick ??= setInterval(() => this.publishProgress(), PROGRESS_MS)
+    postTab({ type: 'hello' })
     useQueueUi.setState({ ready: true })
     this.schedule()
   }
@@ -123,10 +151,7 @@ class TaskManager {
         : task.status
     const runtime = this.createRuntime()
     await runtime.engine.load({ ...task, status }, { restored: true })
-    // A ready task only needs saving, so it takes no lock.
-    if (status !== 'ready' && !(await runtime.engine.acquireLock())) {
-      return false
-    }
+    if (!(await runtime.engine.acquireLock())) return false
 
     this.runtimes.set(task.id, runtime)
     if (status !== task.status) {
@@ -178,12 +203,99 @@ class TaskManager {
     try {
       const held = (await navigator.locks?.query())?.held ?? []
       for (const task of foreign) {
+        const released = this.releasedAt.get(task.id)
+        if (released && Date.now() - released < RELEASE_COOLDOWN_MS) continue
         if (held.some((lock) => lock.name === `vidl-task-${task.id}`)) continue
         await this.attach(task)
       }
     } finally {
       this.adopting = false
     }
+  }
+
+  /** Tell other tabs how far the tasks this tab drives have got. */
+  private publishProgress(items?: TaskProgress[]) {
+    const list =
+      items ??
+      [...this.runtimes].flatMap(([id, { store }]) => {
+        const status = useTaskStore.getState().tasks[id]?.status
+        if (!status || status === 'saved') return []
+        const state = store.getState()
+        return [
+          {
+            id,
+            finished: selectFinishNum(state),
+            errors: selectErrorNum(state),
+          },
+        ]
+      })
+    if (list.length > 0) postTab({ type: 'progress', items: list })
+  }
+
+  private onMessage(message: TabMessage) {
+    if (message.type === 'hello') this.publishProgress()
+    if (message.type === 'progress') {
+      const at = Date.now()
+      useQueueUi.setState((ui) => ({
+        remote: {
+          ...ui.remote,
+          ...Object.fromEntries(
+            message.items.map((i) => [
+              i.id,
+              { finished: i.finished, errors: i.errors, at },
+            ]),
+          ),
+        },
+      }))
+    }
+    if (message.type === 'cmd' && this.runtimes.has(message.id)) {
+      this.runCommand(message.id, message.action)
+    }
+  }
+
+  private runCommand(id: string, action: TaskCommand) {
+    if (action === 'pause') this.pause(id)
+    if (action === 'resume') this.resume(id)
+    if (action === 'cancel') void this.cancel(id)
+    if (action === 'release') void this.release(id)
+  }
+
+  /** Apply an action here, or ask the tab that drives the task to do it. */
+  private dispatch(id: string, action: TaskCommand): boolean {
+    if (this.runtimes.has(id)) return true
+    if (isTabBusAvailable()) postTab({ type: 'cmd', id, action })
+    return false
+  }
+
+  /** Stop driving a task and free it for another tab (after a clean pause). */
+  private async release(id: string) {
+    const runtime = this.runtimes.get(id)
+    if (!runtime) return
+    const task = useTaskStore.getState().tasks[id]
+    if (task?.status === 'downloading' || task?.status === 'queued') {
+      this.setStatus(id, 'paused')
+    }
+    await runtime.engine.releaseOwnership()
+    this.releasedAt.set(id, Date.now())
+    this.runtimes.delete(id)
+    useQueueUi.setState((ui) => ({ runtimeVersion: ui.runtimeVersion + 1 }))
+  }
+
+  /** Make this tab drive a task another tab holds: ask it to let go, then attach. */
+  async takeOver(id: string): Promise<boolean> {
+    if (this.runtimes.has(id)) return true
+    postTab({ type: 'cmd', id, action: 'release' })
+    const deadline = Date.now() + TAKE_OVER_TIMEOUT_MS
+    while (Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      const task = useTaskStore.getState().tasks[id]
+      if (!task) return false
+      const held = (await navigator.locks?.query())?.held ?? []
+      if (held.some((lock) => lock.name === `vidl-task-${id}`)) continue
+      if (await this.attach(task)) return true
+    }
+    this.notify.error('takeOverFailed')
+    return false
   }
 
   // ============================================================
@@ -225,6 +337,7 @@ class TaskManager {
   }
 
   pause(id: string) {
+    if (!this.dispatch(id, 'pause')) return
     const runtime = this.runtimes.get(id)
     const task = useTaskStore.getState().tasks[id]
     if (!runtime || !task) return
@@ -236,8 +349,9 @@ class TaskManager {
 
   /** Paused/errored tasks re-enter the queue and start when a slot is free. */
   resume(id: string) {
+    if (!this.dispatch(id, 'resume')) return
     const task = useTaskStore.getState().tasks[id]
-    if (!task || !this.runtimes.has(id)) return
+    if (!task) return
     if (task.status === 'paused' || task.status === 'error') {
       this.setStatus(id, 'queued')
     }
@@ -252,6 +366,7 @@ class TaskManager {
   }
 
   async cancel(id: string) {
+    if (!this.dispatch(id, 'cancel')) return
     const runtime = this.runtimes.get(id)
     if (!runtime) return
     this.runtimes.delete(id)

@@ -334,6 +334,13 @@ export class DownloadEngine {
     }
   }
 
+  /** Stop and give the task lock back so another tab can take the task over. */
+  async releaseOwnership(): Promise<void> {
+    this.pause()
+    await this.running?.catch(() => {})
+    this.releaseTaskLock()
+  }
+
   /** Stop fetching; in-flight segments still finish and stay staged. */
   pause(): void {
     this.store.getState().setDownloadState({ isPaused: true })
@@ -528,6 +535,7 @@ export class DownloadEngine {
 
     this.store.getState().setIsReadyToSave(false)
     this.persistPatch({ status: 'saved' })
+    this.releaseTaskLock()
   }
 
   retryAll(): void {
@@ -712,8 +720,9 @@ export class DownloadEngine {
     if (finishNum !== this.getTargetSegment()) return
 
     // Synchronous from the check above, so concurrent callers cannot both save.
+    // The lock stays until the task is saved or discarded, so a ready task has
+    // one owner just like a downloading one.
     s.setDownloadState({ isDownloading: false })
-    this.releaseTaskLock()
     this.persistPatch({ status: 'ready' })
 
     // Stream saves after a reload need a click (no gesture to start from).

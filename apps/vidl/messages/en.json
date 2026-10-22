@@ -62,7 +62,8 @@
     "saveFailed": "Saving the file failed — segments are kept, try Save again",
     "addToQueue": "Add to Queue",
     "addedToQueue": "Added to the download queue",
-    "taskStalled": "A download stopped after repeated failures — retry it from the task list"
+    "taskStalled": "A download stopped after repeated failures — retry it from the task list",
+    "takeOverFailed": "The other tab did not let go of the task — try again"
   },
   "progress": {
     "title": "Download Progress",
@@ -149,6 +150,7 @@
       "error": "Failed",
       "ready": "Ready to save",
       "saved": "Saved"
-    }
+    },
+    "takeOver": "Take over here"
   }
 }
