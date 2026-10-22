@@ -73,7 +73,8 @@ function TaskRow({ task }: { task: TaskRecord }) {
   const t = useTranslations()
   const [open, setOpen] = useState(false)
   const runtime = taskManager.getRuntime(task.id)
-  const locked = useQueueUi((s) => s.lockedElsewhere[task.id])
+  useQueueUi((s) => s.runtimeVersion) // re-render when this tab takes or drops a task
+  const foreign = !runtime
 
   const finishNum = useStore(
     runtime?.store ?? emptyStore,
@@ -122,7 +123,7 @@ function TaskRow({ task }: { task: TaskRecord }) {
         <Progress value={percent} className="h-1.5" />
 
         <div className="flex flex-wrap items-center gap-2">
-          {locked ? (
+          {foreign ? (
             <span className="text-xs text-muted-foreground">
               {t('tasks.otherTab')}
             </span>

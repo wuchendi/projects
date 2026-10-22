@@ -1,8 +1,11 @@
 import { logger } from '@cdlab/utils'
 import { createIndexedDBStorage } from '@cdlab/zustand-idb'
 import { create } from 'zustand'
+import type { PersistStorage, StorageValue } from 'zustand/middleware'
 import { persist } from 'zustand/middleware'
 import type { SegmentBackend } from '@/lib/storage/segment-store'
+import type { TaskRows } from './task-merge'
+import { mergeRows, sameRows } from './task-merge'
 
 /**
  * queued      — waiting for a free slot
@@ -43,42 +46,108 @@ export interface TaskRecord {
   /** Queue position: lower runs first. */
   order: number
   createdAt: number
+  /** Last change; the newer copy wins when tabs merge their rows. */
+  updatedAt: number
 }
 
-interface TaskState {
-  tasks: Record<string, TaskRecord>
+interface TaskState extends TaskRows {
   upsertTask: (task: TaskRecord) => void
   patchTask: (id: string, patch: Partial<TaskRecord>) => void
   removeTask: (id: string) => void
+}
+
+const ROW_NAME = 'vidl-tasks'
+const WRITE_LOCK = 'vidl-tasks-write'
+const CHANNEL = 'vidl-tasks'
+
+const indexedDb = createIndexedDBStorage<TaskRows>('vidl', 'stores')
+
+let channel: BroadcastChannel | null = null
+function getChannel(): BroadcastChannel | null {
+  if (typeof BroadcastChannel === 'undefined') return null
+  channel ??= new BroadcastChannel(CHANNEL)
+  return channel
+}
+
+/** Run `fn` exclusively across tabs so read-merge-write cannot interleave. */
+function withWriteLock<T>(fn: () => Promise<T>): Promise<T> {
+  if (typeof navigator === 'undefined' || !navigator.locks) return fn()
+  return navigator.locks.request(WRITE_LOCK, fn)
+}
+
+export async function readPersistedRows(): Promise<TaskRows | null> {
+  const stored = await indexedDb.getItem(ROW_NAME)
+  return stored?.state ?? null
+}
+
+/**
+ * Wraps the IndexedDB storage so a write merges with what other tabs already
+ * saved instead of replacing it, then tells them to re-read.
+ */
+const mergingStorage: PersistStorage<TaskRows, Promise<void>> = {
+  getItem: (name) => indexedDb.getItem(name),
+  removeItem: (name) => indexedDb.removeItem(name),
+  setItem: (name, value: StorageValue<TaskRows>) =>
+    withWriteLock(async () => {
+      const stored = await indexedDb.getItem(name)
+      const merged = mergeRows(value.state, stored?.state)
+      if (sameRows(merged, stored?.state)) return
+      await indexedDb.setItem(name, { ...value, state: merged })
+      getChannel()?.postMessage('changed')
+    }),
+}
+
+/** Call `listener` when another tab changed the persisted task rows. */
+export function onTasksChangedElsewhere(listener: () => void): () => void {
+  const bc = getChannel()
+  bc?.addEventListener('message', listener)
+  return () => bc?.removeEventListener('message', listener)
 }
 
 export const useTaskStore = create<TaskState>()(
   persist(
     (set) => ({
       tasks: {},
+      tombstones: {},
 
       upsertTask: (task) =>
-        set((state) => ({ tasks: { ...state.tasks, [task.id]: task } })),
+        set((state) => ({
+          tasks: {
+            ...state.tasks,
+            [task.id]: { ...task, updatedAt: Date.now() },
+          },
+        })),
 
       patchTask: (id, patch) =>
         set((state) => {
           const task = state.tasks[id]
           if (!task) return state
-          return { tasks: { ...state.tasks, [id]: { ...task, ...patch } } }
+          return {
+            tasks: {
+              ...state.tasks,
+              [id]: { ...task, ...patch, updatedAt: Date.now() },
+            },
+          }
         }),
 
       removeTask: (id) =>
         set((state) => {
           const { [id]: _removed, ...rest } = state.tasks
-          return { tasks: rest }
+          return {
+            tasks: rest,
+            tombstones: { ...state.tombstones, [id]: Date.now() },
+          }
         }),
     }),
     {
-      name: 'vidl-tasks',
-      storage: createIndexedDBStorage('vidl', 'stores'),
+      name: ROW_NAME,
+      storage: mergingStorage,
       // IndexedDB is browser-only: hydrate on the client instead of during SSR.
       skipHydration: true,
-      partialize: (state) => ({ tasks: state.tasks }),
+      partialize: (state) => ({
+        tasks: state.tasks,
+        tombstones: state.tombstones,
+      }),
       onRehydrateStorage: () => (_state, error) => {
         if (error) logger.error('Failed to rehydrate task store:', error)
       },
