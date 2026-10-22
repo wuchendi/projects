@@ -68,5 +68,6 @@ export function buildTaskRecord(
     durationSecond,
     status: 'queued',
     createdAt: Date.now(),
+    updatedAt: Date.now(),
   }
 }
