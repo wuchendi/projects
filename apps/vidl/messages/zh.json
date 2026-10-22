@@ -151,6 +151,7 @@
       "ready": "待保存",
       "saved": "已保存"
     },
-    "takeOver": "在此标签页接管"
+    "takeOver": "在此标签页接管",
+    "play": "用 ByPlay 播放"
   }
 }

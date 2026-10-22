@@ -29,11 +29,13 @@ import {
   RotateCcw,
   Save,
   Trash2,
+  TvMinimalPlay,
   X,
 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useStore } from 'zustand'
+import { byplayLink } from '@/lib/byplay'
 import { isTabBusAvailable } from '@/lib/tab-bus'
 import {
   freshRemoteProgress,
@@ -77,6 +79,7 @@ function displayName(task: TaskRecord): string {
 
 function TaskRow({ task }: { task: TaskRecord }) {
   const t = useTranslations()
+  const locale = useLocale()
   const [open, setOpen] = useState(false)
   const runtime = taskManager.getRuntime(task.id)
   useQueueUi((s) => s.runtimeVersion) // re-render when this tab takes or drops a task
@@ -112,6 +115,16 @@ function TaskRow({ task }: { task: TaskRecord }) {
         <span className="truncate flex-1 text-sm font-medium">
           {displayName(task)}
         </span>
+        <a
+          href={byplayLink(locale, task.url)}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={t('tasks.play')}
+          aria-label={t('tasks.play')}
+          className="text-muted-foreground hover:text-foreground shrink-0"
+        >
+          <TvMinimalPlay className="size-4" />
+        </a>
         <Badge variant="outline" className="text-[10px] h-5 shrink-0">
           {task.isGetMP4 ? 'MP4' : 'TS'}
           {task.saveAsStream ? ' · stream' : ''}
@@ -122,6 +135,9 @@ function TaskRow({ task }: { task: TaskRecord }) {
       </div>
 
       <div className="px-3 py-2 space-y-2">
+        <p className="font-mono text-xs text-muted-foreground break-all select-all">
+          {task.url}
+        </p>
         <div className="flex justify-between text-xs text-muted-foreground">
           <span className="tabular-nums">
             {finishNum} / {target}
