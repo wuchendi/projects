@@ -23,6 +23,7 @@ import { cn } from '@cdlab/ui/lib/utils'
 import {
   ChevronDown,
   Download,
+  MonitorUp,
   Pause,
   Play,
   RotateCcw,
@@ -33,7 +34,12 @@ import {
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useStore } from 'zustand'
-import { taskManager, useQueueUi } from '@/lib/task-manager'
+import { isTabBusAvailable } from '@/lib/tab-bus'
+import {
+  freshRemoteProgress,
+  taskManager,
+  useQueueUi,
+} from '@/lib/task-manager'
 import {
   createDownloadStore,
   selectErrorNum,
@@ -76,19 +82,26 @@ function TaskRow({ task }: { task: TaskRecord }) {
   useQueueUi((s) => s.runtimeVersion) // re-render when this tab takes or drops a task
   const foreign = !runtime
 
-  const finishNum = useStore(
+  const remote = useQueueUi((s) => freshRemoteProgress(s.remote, task.id))
+  const ownFinished = useStore(
     runtime?.store ?? emptyStore,
     runtime ? selectFinishNum : () => 0,
   )
-  const errorNum = useStore(
+  const ownErrors = useStore(
     runtime?.store ?? emptyStore,
     runtime ? selectErrorNum : () => 0,
   )
-  const target = useStore(
+  const ownTarget = useStore(
     runtime?.store ?? emptyStore,
     runtime ? selectTargetSegment : () => 0,
   )
+  // A task another tab drives reports its progress over the tab bus.
+  const finishNum = foreign ? (remote?.finished ?? 0) : ownFinished
+  const errorNum = foreign ? (remote?.errors ?? 0) : ownErrors
+  const target = foreign ? task.endSegment - task.startSegment + 1 : ownTarget
   const percent = target > 0 ? (finishNum / target) * 100 : 0
+  // Without the tab bus (old Safari) a foreign task can only be looked at.
+  const canAct = !foreign || isTabBusAvailable()
 
   const { status } = task
   const busy = status === 'downloading' || status === 'queued'
@@ -123,11 +136,12 @@ function TaskRow({ task }: { task: TaskRecord }) {
         <Progress value={percent} className="h-1.5" />
 
         <div className="flex flex-wrap items-center gap-2">
-          {foreign ? (
+          {foreign && (
             <span className="text-xs text-muted-foreground">
               {t('tasks.otherTab')}
             </span>
-          ) : (
+          )}
+          {canAct && (
             <>
               {busy && (
                 <Button
@@ -149,13 +163,23 @@ function TaskRow({ task }: { task: TaskRecord }) {
                   {status === 'error' ? t('tasks.retry') : t('download.resume')}
                 </Button>
               )}
-              {status === 'ready' && (
+              {status === 'ready' && !foreign && (
                 <Button
                   size="sm"
                   onClick={() => void taskManager.save(task.id)}
                 >
                   <Save className="size-4" />
                   {t('download.save')}
+                </Button>
+              )}
+              {foreign && status !== 'saved' && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => void taskManager.takeOver(task.id)}
+                >
+                  <MonitorUp className="size-4" />
+                  {t('tasks.takeOver')}
                 </Button>
               )}
               {status === 'saved' ? (
@@ -181,19 +205,21 @@ function TaskRow({ task }: { task: TaskRecord }) {
               )}
             </>
           )}
-          <Button
-            size="icon-sm"
-            variant="ghost"
-            className="ml-auto"
-            onClick={() => setOpen((v) => !v)}
-          >
-            <ChevronDown
-              className={cn(
-                'size-4 transition-transform',
-                open && 'rotate-180',
-              )}
-            />
-          </Button>
+          {!foreign && (
+            <Button
+              size="icon-sm"
+              variant="ghost"
+              className="ml-auto"
+              onClick={() => setOpen((v) => !v)}
+            >
+              <ChevronDown
+                className={cn(
+                  'size-4 transition-transform',
+                  open && 'rotate-180',
+                )}
+              />
+            </Button>
+          )}
         </div>
       </div>
 
