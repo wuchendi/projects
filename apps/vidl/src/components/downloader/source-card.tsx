@@ -42,9 +42,8 @@ import {
 import { useLocale, useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
+import { byplayLink } from '@/lib/byplay'
 import { selectIsParsed, useDownloadStore } from '@/stores/download-store'
-
-const BYPLAY_URL = 'https://byplay.pages.dev'
 
 type DownloadFormat = 'ts' | 'mp4' | 'stream-ts' | 'stream-mp4'
 
@@ -130,7 +129,7 @@ export function SourceCard({ headerAction, actions }: SourceCardProps) {
               {url.trim() && (
                 <InputGroupButton size="icon-xs" asChild>
                   <a
-                    href={`${BYPLAY_URL}/${locale}?url=${encodeURIComponent(url.trim())}`}
+                    href={byplayLink(locale, url)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

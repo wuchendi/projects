@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   experimental: {
     useTypeScriptCli: true,
   },
+  allowedDevOrigins: ['vidl.a.wd.ds.cc'],
   env: {
     BUILD_TIME: new Date().toLocaleString(),
   },
