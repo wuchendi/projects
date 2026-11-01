@@ -47,7 +47,7 @@ Frozen — no further development. Still deployable, but excluded from the root
 
 | App | What it is | Successor |
 | --- | --- | --- |
-| [flnk](./archived/flnk) | Privacy-first link shortener with geo / device routing | [tinylink](https://github.com/WuChenDi/tinylink) |
+| [flnk](./archived/flnk) | Privacy-first link shortener with geo / device routing | [tinylink](https://github.com/WuChenDi/tinylink) · [↗](https://tinylink.cdlab.workers.dev/) |
 
 ## Packages
 

@@ -281,7 +281,7 @@ Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `lib
 
 `archived/*` holds apps that are frozen — no new features, no refactors, no dependency-compat fixes unless a deploy actually needs one. They stay in the pnpm workspace so they still install and deploy, but root `pnpm build` / `dev` / `lint` filter them out (`--filter='!./archived/*'`) and Biome ignores `archived/**`. Shared catalog bumps may break them; that is accepted.
 
-- `flnk` — the former link shortener (Next.js + OpenNext, D1/KV/Analytics Engine). Superseded by the standalone repo [tinylink](https://github.com/WuChenDi/tinylink); existing data is not migrated. Deploy manually via the `deploy-flnk.yml` workflow or `pnpm deploy:flnk` / `pnpm dev:flnk`.
+- `flnk` — the former link shortener (Next.js + OpenNext, D1/KV/Analytics Engine). Superseded by the standalone repo [tinylink](https://github.com/WuChenDi/tinylink), live at https://tinylink.cdlab.workers.dev/; existing data is not migrated. Deploy manually via the `deploy-flnk.yml` workflow or `pnpm deploy:flnk` / `pnpm dev:flnk`.
 
 ## Conventions
 

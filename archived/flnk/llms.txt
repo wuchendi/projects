@@ -1,5 +1,9 @@
 # flnk usage guide for AI agents
 
+**ARCHIVED.** flnk is frozen and migrated to the standalone tinylink repo
+(https://github.com/WuChenDi/tinylink, live at https://tinylink.cdlab.workers.dev/).
+Do not add features here; existing flnk data was not migrated.
+
 `flnk` is a privacy-first, server-authoritative link shortener that runs as a
 single Cloudflare Worker (Next.js App Router compiled through OpenNext). A short
 link is a **name**, not a URL: the destination, geo/device routing rules, and
