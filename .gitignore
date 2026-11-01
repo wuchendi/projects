@@ -13,7 +13,7 @@ lerna-debug.log*
 .pnpm-debug.log*
 !apps/wepush/src/**/*/logs
 # flnk has an /api/logs route dir — don't let the `logs` log-output rule eat it
-!apps/flnk/src/app/api/logs
+!archived/flnk/src/app/api/logs
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

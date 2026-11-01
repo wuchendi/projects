@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/*
+  - archived/*
 overrides:
   esbuild: ^0.28.0
 catalogs:

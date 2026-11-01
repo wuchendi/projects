@@ -96,8 +96,7 @@
         "apps/values/**/*",
         "apps/flox/**/*",
         "apps/byshot/**/*",
-        "apps/wepush/**/*",
-        "apps/flnk/**/*"
+        "apps/wepush/**/*"
       ],
       "linter": {
         "domains": {
@@ -133,8 +132,7 @@
       "!apps/dropply-api/src/database/**/*.sql",
       "!apps/wepush/src/database/**/*.json",
       "!apps/wepush/src/database/**/*.sql",
-      "!apps/flnk/src/database/**/*.json",
-      "!apps/flnk/src/database/**/*.sql",
+      "!archived/**",
       "!apps/**/cloudflare-env.d.ts",
       "!packages/ui/src/reactbits/**/*.tsx",
       "!packages/ui/src/components/**/*.tsx"

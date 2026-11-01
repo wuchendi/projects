@@ -2,7 +2,7 @@
 
 Shared Drizzle DB factory (**D1 / libSQL, dual-driver**) plus soft-delete /
 expiry query helpers — the single source of truth for database wiring across
-`dropply-api`, `flnk`, and `wepush`.
+`dropply-api`, `wepush`, and `flnk` (archived).
 
 ```diff
 - // every app: its own DatabaseManager, its own getDb, its own driver switch
@@ -84,7 +84,7 @@ Pick the entry by the app's **bundler** — it is not auto-selected.
 | Entry | Source | Client | Use for |
 | --- | --- | --- | --- |
 | `@cdlab/db/node` | `src/node.ts` | `@libsql/client` (native) — supports `file:` local SQLite | Plain-wrangler Hono workers (`dropply-api`), Node test runners |
-| `@cdlab/db/web` | `src/web.ts` | `@libsql/client/web` — pure fetch/ws, bundles under OpenNext esbuild | Next.js / OpenNext apps (`flnk`, `wepush`); remote Turso only, no `file:` |
+| `@cdlab/db/web` | `src/web.ts` | `@libsql/client/web` — pure fetch/ws, bundles under OpenNext esbuild | Next.js / OpenNext apps (`wepush`, `flnk` (archived)); remote Turso only, no `file:` |
 | `@cdlab/db/utils` | `src/utils.ts` | — | Query helpers (also re-exported from `/node` and `/web`) |
 
 Both `/node` and `/web` re-export `./core` and `./utils`, so a single import

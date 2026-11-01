@@ -16,11 +16,12 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "archived/*"
   ],
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
+    "build": "turbo build --filter='!./archived/*'",
+    "dev": "turbo dev --filter='!./archived/*'",
     "dev:bycut": "turbo dev --filter=./apps/bycut",
     "dev:byplay": "turbo dev --filter=./apps/byplay",
     "dev:byplay-log": "turbo dev --filter=./apps/byplay-log",
@@ -35,17 +36,17 @@
     "dev:values": "turbo dev --filter=./apps/values",
     "dev:vidl": "turbo dev --filter=./apps/vidl",
     "dev:wepush": "pnpm --filter ./apps/wepush run dev",
-    "dev:flnk": "pnpm --filter ./apps/flnk run dev",
+    "dev:flnk": "pnpm --filter ./archived/flnk run dev",
     "preview:text2img": "turbo preview --filter=./apps/text2img",
     "preview:wepush": "turbo preview --filter=./apps/wepush",
-    "preview:flnk": "turbo preview --filter=./apps/flnk",
+    "preview:flnk": "turbo preview --filter=./archived/flnk",
     "deploy:dropply-api": "turbo deploy --filter=./apps/dropply-api",
     "deploy:live-user": "turbo deploy --filter=./apps/live-user",
     "deploy:text2img": "pnpm --filter ./apps/text2img run deploy",
     "deploy:wepush": "pnpm --filter ./apps/wepush run deploy",
-    "deploy:flnk": "pnpm --filter ./apps/flnk run deploy",
+    "deploy:flnk": "pnpm --filter ./archived/flnk run deploy",
     "clean": "bash ./scripts/clean.sh",
-    "lint": "turbo lint",
+    "lint": "turbo lint --filter='!./archived/*'",
     "lint:biome": "biome check .",
     "format": "biome format . --write",
     "prepare": "turbo run build --filter=./packages/*"

@@ -2,7 +2,7 @@
 
 `@cdlab/db` is a build-only TypeScript library (tsdown → ESM + CJS + `.d.mts`):
 the shared Drizzle DB factory and query helpers for the monorepo's SQLite-backed
-apps (`dropply-api`, `flnk`, `wepush`). It has **no server, no routes, no
+apps (`dropply-api`, `wepush`, archived `flnk`). It has **no server, no routes, no
 runtime of its own** — it is imported, and the consumer's chosen entry decides
 Node vs Workers-edge. It replaces the hand-rolled `DatabaseManager` / `getDb`
 copies each app used to carry.
@@ -57,8 +57,8 @@ Pick by bundler — NOT auto-selected. A wrong pick breaks the build or local DB
 - `@cdlab/db/node` → `createClient` from `@libsql/client` (native, supports
   `file:`). Use for plain-wrangler Hono workers (`dropply-api`) + Node tests.
 - `@cdlab/db/web` → `createClient` from `@libsql/client/web` (pure fetch/ws,
-  bundles under OpenNext esbuild). Use for Next.js/OpenNext apps (`flnk`,
-  `wepush`). Remote Turso only, no `file:`.
+  bundles under OpenNext esbuild). Use for Next.js/OpenNext apps (`wepush`,
+  archived `flnk`). Remote Turso only, no `file:`.
 
 ## The `Db` type (src/core.ts:23-27)
 
