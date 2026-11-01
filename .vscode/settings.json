@@ -40,7 +40,7 @@
     "apps/dropply-web/messages",
     "apps/text2img/messages",
     "apps/vidl/messages",
-    "apps/flnk/messages"
+    "archived/flnk/messages"
   ],
   "i18n-ally.enabledFrameworks": ["react-i18next"],
   "tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css"

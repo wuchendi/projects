@@ -196,7 +196,7 @@ The canonical consumer block (Next.js) in the README shows `paths: { "@/*":
 
 | Preset | Consumers |
 | --- | --- |
-| `nextjs.json` | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flnk`, `flox`, `text2img`, `values`, `vidl`, `wepush` |
+| `nextjs.json` | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flnk` (archived), `flox`, `text2img`, `values`, `vidl`, `wepush` |
 | `hono.json` | `byplay-log`, `dropply-api`, `live-user` |
 | `react-library.json` | `packages/ui` |
 | `utils.json` | `packages/utils`, `packages/cipher`, `packages/uncrypto`, `packages/db` |

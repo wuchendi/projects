@@ -37,8 +37,8 @@ import { setUserLocale } from '@/i18n/locale'
 import { authClient } from '@/lib/platform/auth-client'
 
 const DOCS_HREF =
-  'https://github.com/WuChenDi/projects/blob/main/apps/flnk/README.md'
-const REPO_HREF = 'https://github.com/WuChenDi/projects/tree/main/apps/flnk'
+  'https://github.com/WuChenDi/projects/blob/main/archived/flnk/README.md'
+const REPO_HREF = 'https://github.com/WuChenDi/projects/tree/main/archived/flnk'
 
 function initials(name?: string | null, email?: string | null): string {
   const source = name?.trim() || email?.trim() || '?'

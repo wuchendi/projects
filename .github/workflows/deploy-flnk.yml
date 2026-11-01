@@ -1,4 +1,4 @@
-name: Deploy flnk
+name: Deploy flnk (archived)
 
 # Manual trigger only — this repo deploys explicitly (CI does not auto-deploy).
 # Run from the Actions tab, optionally choosing a ref to deploy.
@@ -73,7 +73,7 @@ jobs:
       #            with the FLNK_LIBSQL_AUTH_TOKEN repository secret
       - name: Apply database migrations (remote)
         if: ${{ inputs.run_migrations }}
-        working-directory: apps/flnk
+        working-directory: archived/flnk
         env:
           LIBSQL_AUTH_TOKEN: ${{ secrets.FLNK_LIBSQL_AUTH_TOKEN }}
         run: |
@@ -114,7 +114,7 @@ jobs:
       # which no longer defines these as vars. Empty values are skipped so an
       # unset GitHub secret never wipes an existing Worker secret.
       - name: Sync Worker secrets
-        working-directory: apps/flnk
+        working-directory: archived/flnk
         env:
           FLNK_ALLOWED_EMAILS: ${{ secrets.FLNK_ALLOWED_EMAILS }}
           FLNK_CLOUDFLARE_API_TOKEN: ${{ secrets.FLNK_CLOUDFLARE_API_TOKEN }}

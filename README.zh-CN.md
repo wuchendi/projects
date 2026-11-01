@@ -31,7 +31,6 @@
 | [clearify](./apps/clearify) | 图像 / 视频工具箱(抠图 · 压缩 · 转码) | [↗](https://clearify.pages.dev/) |
 | [dropply-api](./apps/dropply-api) | 端到端加密文件分享 API | — |
 | [dropply-web](./apps/dropply-web) | 端到端加密文件分享 —— 密钥仅存于 URL 片段 | [↗](https://dropply.pages.dev/) |
-| [flnk](./apps/flnk) | 隐私优先短链服务,支持地域 / 设备路由 | [↗](https://flnk.cdlab.workers.dev/) |
 | [flox](./apps/flox) | 多源视频聚合与播放(SSE) | [↗](https://floxx.pages.dev/) |
 | [live-user](./apps/live-user) | 实时在线人数统计(WebSocket Hibernation DO) | [↗](https://live-user.cdlab.workers.dev/) |
 | [repo-changelog](./apps/repo-changelog) | GitHub 发布 / 更新日志看板(Nuxt) | [↗](https://repo-changelog.vercel.app/) |
@@ -39,6 +38,15 @@
 | [values](./apps/values) | 加密货币 / 法币 / 大宗商品价值对比 | [↗](https://values.pages.dev/) |
 | [vidl](./apps/vidl) | 浏览器视频下载器(M3U8 / HLS → MP4) | [↗](https://vidl.pages.dev/) |
 | [wepush](./apps/wepush) | 多租户微信模板消息推送控制台 | [↗](https://wepush.cdlab.workers.dev/) |
+
+## 已归档
+
+已冻结,不再迭代。仍可部署,但不参与根目录的 `build` / `dev` / `lint` 与 Biome 检查,
+也不保证跟进依赖升级。
+
+| 应用 | 简介 | 后继 |
+| --- | --- | --- |
+| [flnk](./archived/flnk) | 隐私优先短链服务,支持地域 / 设备路由 | [tinylink](https://github.com/WuChenDi/tinylink) |
 
 ## 共享包
 
@@ -80,12 +88,12 @@ pnpm lint                    # Biome 检查
 pnpm format                  # Biome 格式化 --write
 pnpm clean                   # 清除 node_modules / 缓存 / 构建产物
 
-# 单个项目 —— <name> 是包名(如 values、flnk)
+# 单个项目 —— <name> 是包名(如 values、wepush)
 pnpm --filter @cdlab/<name> dev       # → http://<name>.localhost:3355
 pnpm --filter @cdlab/<name> build
 ```
 
-dev 名是去掉 scope 的包名 —— 即目录名(如 `values`、`flnk`)。具体脚本、开发
+dev 名是去掉 scope 的包名 —— 即目录名(如 `values`、`wepush`)。具体脚本、开发
 地址和部署命令见各子项目的 README。
 
 ## 目录结构

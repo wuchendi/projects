@@ -48,7 +48,7 @@ extends another. Merge order is base → overlay → consumer, key-by-key; **arr
 ## Consumer inventory (authoritative)
 
 - `nextjs.json` → `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`,
-  `flnk`, `flox`, `text2img`, `values`, `vidl`, `wepush`.
+  `flnk` (archived), `flox`, `text2img`, `values`, `vidl`, `wepush`.
 - `hono.json` → `byplay-log`, `dropply-api`, `live-user`.
 - `react-library.json` → `packages/ui`.
 - `utils.json` → `packages/utils`, `packages/cipher`, `packages/uncrypto`, `packages/db`.

@@ -35,7 +35,7 @@ import { ThreadsBackdrop } from '@/components/landing/threads-backdrop'
 import { FlnkLogo, LocaleSwitcher, ThemeToggle } from '@/components/layout'
 import { getConfig } from '@/lib/platform/env'
 
-const GITHUB_HREF = 'https://github.com/WuChenDi/projects/tree/main/apps/flnk'
+const GITHUB_HREF = 'https://github.com/WuChenDi/projects/tree/main/archived/flnk'
 const AUTHOR_HREF = 'https://github.com/WuChenDi'
 
 // Fixed full-page backdrop: a subtle grid washed with violet corner glows

@@ -8,14 +8,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Workspace layout:
 
-- `apps/*` — 16 deployable products (Next.js, Nuxt, Cloudflare Workers)
+- `apps/*` — 15 deployable products (Next.js, Nuxt, Cloudflare Workers)
+- `archived/*` — frozen apps kept for reference and occasional deploys, not developed further (see *Archived apps*)
 - `packages/*` — 6 shared libraries (`ui`, `utils`, `cipher`, `uncrypto`, `db`, `tsconfig`)
 
 Apps fall into three runtime families with different toolchains:
 
 | Family                        | Apps                                                                                                                             | Build tool                      | Deploy target                                                                                        |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Next.js (App Router)**      | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flnk`, `flox`, `text2img`, `values`, `vidl`, `wepush` | `next build` (some `--webpack`) | Cloudflare Pages (build command `NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1`, output `.vercel/output/static`; not a dependency); `text2img`, `wepush`, and `flnk` use `@opennextjs/cloudflare` |
+| **Next.js (App Router)**      | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flox`, `text2img`, `values`, `vidl`, `wepush` | `next build` (some `--webpack`) | Cloudflare Pages (build command `NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1`, output `.vercel/output/static`; not a dependency); `text2img` and `wepush` use `@opennextjs/cloudflare` |
 | **Cloudflare Workers (Hono)** | `byplay-log`, `dropply-api`, `live-user`                                                                            | `wrangler deploy --minify`      | Cloudflare Workers + Durable Objects / D1                                                            |
 | **Nuxt 4 (Vue 3)**            | `repo-changelog`                                                                                                                 | `nuxt build`/`generate`         | Vercel                                                                                               |
 
@@ -26,9 +27,9 @@ Dev servers are routed through `@dotns/nsl` (`nsl run …`) — each app is reac
 ```bash
 # Workspace-wide
 pnpm install                                 # also runs `prepare` → builds all packages/* dist/
-pnpm dev                                     # turbo dev (parallel, all apps)
-pnpm build                                   # turbo build (all)
-pnpm lint                                    # turbo lint (delegates to each app)
+pnpm dev                                     # turbo dev (parallel, all apps; skips archived/*)
+pnpm build                                   # turbo build (all; skips archived/*)
+pnpm lint                                    # turbo lint (delegates to each app; skips archived/*)
 pnpm lint:biome                              # biome check . at root
 pnpm format                                  # biome format . --write
 pnpm clean                                   # bash scripts/clean.sh — wipes node_modules / .turbo / .next / dist / .wrangler
@@ -45,7 +46,7 @@ pnpm --filter @cdlab/<worker> dev         # nsl run wrangler dev
 pnpm --filter @cdlab/<worker> deploy      # wrangler deploy --minify
 pnpm --filter @cdlab/<worker> cf-typegen  # regenerate CloudflareBindings type
 
-# Drizzle (dropply-api, byplay-log, flnk, wepush)
+# Drizzle (dropply-api, byplay-log, wepush)
 pnpm --filter @cdlab/<worker> db:gen      # generate migration from schema
 pnpm --filter @cdlab/<worker> db:migrate  # apply (LibSQL)
 pnpm --filter @cdlab/<worker> cf:localdb  # apply to local D1
@@ -58,7 +59,7 @@ pnpm --filter @cdlab/cipher test:watch
 pnpm --filter @cdlab/utils  exec vitest run path/to.test.ts -t "name"
 
 # Explicit deploys (CI does NOT auto-deploy)
-pnpm deploy:dropply-api | deploy:live-user | deploy:flnk | deploy:text2img | deploy:wepush
+pnpm deploy:dropply-api | deploy:live-user | deploy:text2img | deploy:wepush
 ```
 
 Drizzle's `DB_TYPE` env var (`libsql` default, or `d1`) selects the dialect at config time — see `apps/dropply-api/drizzle.config.ts`. `LIBSQL_URL` defaults to `file:./src/database/data.db`.
@@ -261,11 +262,11 @@ Pure-browser stream download — `mux.js` + Streams API, near-zero memory footpr
 
 #### `@cdlab/db` — Shared Drizzle DB factory + query helpers
 
-Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `libsql`) DB wiring across `dropply-api`, `flnk`, and `wepush` — each app's `src/lib/db.ts` is now a thin adapter over this package (no more divergent hand-rolled `DatabaseManager` / `getDb` copies).
+Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `libsql`) DB wiring across `dropply-api`, `wepush`, and the archived `flnk` — each app's `src/lib/db.ts` is now a thin adapter over this package (no more divergent hand-rolled `DatabaseManager` / `getDb` copies).
 
 - **Two runtime entries** — pick by the app's bundler, NOT auto-selected (explicit subpaths avoid Hono-on-miniflare picking the wrong client):
   - `@cdlab/db/node` → uses `@libsql/client` (Node entry, supports `file:` local SQLite). For plain-wrangler **Hono** workers (`dropply-api`) + Node test runners.
-  - `@cdlab/db/web` → uses `@libsql/client/web` (pure fetch/ws, bundles under OpenNext esbuild). For **Next.js / OpenNext** apps (`flnk`, `wepush`). Remote Turso only, no `file:`.
+  - `@cdlab/db/web` → uses `@libsql/client/web` (pure fetch/ws, bundles under OpenNext esbuild). For **Next.js / OpenNext** apps (`wepush`, archived `flnk`). Remote Turso only, no `file:`.
 - `defineDb(schema)` returns a keyed-cached `getDb(env: DbEnv)`; `DbEnv` = `{ DB_TYPE?, DB?, LIBSQL_URL?, LIBSQL_AUTH_TOKEN? }`. `DB_TYPE` ('libsql' default | 'd1') selects the driver. Each app builds `DbEnv` from its own source (Hono `c.env`; OpenNext injected env / `getCloudflareContext()` with `process.env` fallback).
 - Exported `Db<TSchema>` = `BaseSQLiteDatabase<'async', unknown, TSchema>` — driver-agnostic; `.batch` etc. need narrowing.
 - `./utils` (also re-exported from `/node` and `/web`) — `trackingFields` query helpers: `notDeleted`, `withNotDeleted`, `softDelete`, `isNotExpired`, `withNotDeletedAndNotExpired`, `withUpdatedTimestamp`, `isExpired`.
@@ -275,6 +276,12 @@ Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `lib
 
 - `base.json` — strict, NodeNext, ES2017. Used by everything.
 - `nextjs.json`, `hono.json`, `react-library.json`, `utils.json` — overlay presets per app type.
+
+### Archived apps
+
+`archived/*` holds apps that are frozen — no new features, no refactors, no dependency-compat fixes unless a deploy actually needs one. They stay in the pnpm workspace so they still install and deploy, but root `pnpm build` / `dev` / `lint` filter them out (`--filter='!./archived/*'`) and Biome ignores `archived/**`. Shared catalog bumps may break them; that is accepted.
+
+- `flnk` — the former link shortener (Next.js + OpenNext, D1/KV/Analytics Engine). Superseded by the standalone repo [tinylink](https://github.com/WuChenDi/tinylink); existing data is not migrated. Deploy manually via the `deploy-flnk.yml` workflow or `pnpm deploy:flnk` / `pnpm dev:flnk`.
 
 ## Conventions
 
@@ -289,7 +296,7 @@ Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `lib
   - `useDateNow` — `Date.now()` not `new Date().getTime()`
   - `noRestrictedImports` for zod — **`import * as z from 'zod'`** is mandatory; `import { z } from 'zod'` will fail lint
 - Per-app linter "domains" are scoped via `biome.json` `overrides`: `next` + `react` for the Next apps listed in `overrides[1].includes`, `vue` for `repo-changelog`. Other apps get the recommended-off baseline.
-- `repo-changelog`, `byplay-log/src/database/**/*.{json,sql}`, `dropply-api/src/database/**/*.{json,sql}`, `flnk/src/database/**/*.{json,sql}`, `wepush/src/database/**/*.{json,sql}`, and parts of `packages/ui/src/{components,reactbits}/**/*.tsx` are **excluded from Biome** entirely.
+- `repo-changelog`, `byplay-log/src/database/**/*.{json,sql}`, `dropply-api/src/database/**/*.{json,sql}`, `wepush/src/database/**/*.{json,sql}`, and parts of `packages/ui/src/{components,reactbits}/**/*.tsx` are **excluded from Biome** entirely, as is everything under `archived/`.
 
 ### Dependency versions live in pnpm catalogs
 
@@ -308,7 +315,7 @@ Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `lib
 ### IDs
 
 - `@cdlab/driftflake` (catalog dep) is the standard ID generator across apps.
-- Database tables in `dropply-api`, `byplay-log`, and `wepush` use UUID v4 (or auto-increment for `playerLogs`). `flnk.links` uses a user-facing `slug` with a `(slug, domain)` composite unique key.
+- Database tables in `dropply-api`, `byplay-log`, and `wepush` use UUID v4 (or auto-increment for `playerLogs`).
 
 ### Soft delete
 

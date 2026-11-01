@@ -53,7 +53,7 @@ raw JSON at the package root (`@cdlab/tsconfig/nextjs.json` →
 | File | Extends | Used by | What it changes vs `base.json` |
 | --- | --- | --- | --- |
 | `base.json` | — | Everything (directly or transitively) | The root: `strict`, `NodeNext` module + resolution, `ES2017` target, `declaration` + `declarationMap` on, DOM libs, `moduleDetection: force`, `resolveJsonModule`, `skipLibCheck`. |
-| `nextjs.json` | `./base.json` | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flnk`, `flox`, `text2img`, `values`, `vidl`, `wepush` | `module: ESNext`, `moduleResolution: Bundler`, `jsx: preserve`, `noEmit: true`, `allowJs: true`, `plugins: [{ name: "next" }]`. |
+| `nextjs.json` | `./base.json` | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flnk` (archived), `flox`, `text2img`, `values`, `vidl`, `wepush` | `module: ESNext`, `moduleResolution: Bundler`, `jsx: preserve`, `noEmit: true`, `allowJs: true`, `plugins: [{ name: "next" }]`. |
 | `hono.json` | `./base.json` | `byplay-log`, `dropply-api`, `live-user` | `target/module: ESNext`, `moduleResolution: Bundler`, `lib: ["ESNext"]` (drops DOM), `jsx: react-jsx` + `jsxImportSource: hono/jsx`. |
 | `react-library.json` | `./base.json` | `packages/ui` | `module: ESNext`, `moduleResolution: Bundler`, `jsx: react-jsx`. No framework plugin. |
 | `utils.json` | `./base.json` | `packages/utils`, `packages/cipher`, `packages/uncrypto`, `packages/db` | `module: ESNext`, `moduleResolution: Bundler`, `target: ES6`, `types: ["node"]`, and emit flipped: `noEmit: false`, `declaration: false`, `declarationMap: false` (the bundler emits types). |

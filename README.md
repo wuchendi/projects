@@ -32,7 +32,6 @@ there for depth.
 | [clearify](./apps/clearify) | Image / video toolbox (bg removal · compress · transcode) | [↗](https://clearify.pages.dev/) |
 | [dropply-api](./apps/dropply-api) | End-to-end encrypted file-sharing API | — |
 | [dropply-web](./apps/dropply-web) | E2E encrypted file sharing — key lives in the URL fragment | [↗](https://dropply.pages.dev/) |
-| [flnk](./apps/flnk) | Privacy-first link shortener with geo / device routing | [↗](https://flnk.cdlab.workers.dev/) |
 | [flox](./apps/flox) | Multi-source video aggregation & playback (SSE) | [↗](https://floxx.pages.dev/) |
 | [live-user](./apps/live-user) | Real-time online-user counter (WebSocket Hibernation DO) | [↗](https://live-user.cdlab.workers.dev/) |
 | [repo-changelog](./apps/repo-changelog) | GitHub release / changelog dashboard (Nuxt) | [↗](https://repo-changelog.vercel.app/) |
@@ -40,6 +39,15 @@ there for depth.
 | [values](./apps/values) | Crypto / fiat / commodity value comparison | [↗](https://values.pages.dev/) |
 | [vidl](./apps/vidl) | Browser video downloader (M3U8 / HLS → MP4) | [↗](https://vidl.pages.dev/) |
 | [wepush](./apps/wepush) | Multi-tenant WeChat template-message push console | [↗](https://wepush.cdlab.workers.dev/) |
+
+## Archived
+
+Frozen — no further development. Still deployable, but excluded from the root
+`build` / `dev` / `lint` and Biome, and not guaranteed to keep up with dependency upgrades.
+
+| App | What it is | Successor |
+| --- | --- | --- |
+| [flnk](./archived/flnk) | Privacy-first link shortener with geo / device routing | [tinylink](https://github.com/WuChenDi/tinylink) |
 
 ## Packages
 
@@ -83,13 +91,13 @@ pnpm lint                    # Biome lint
 pnpm format                  # Biome format --write
 pnpm clean                   # wipe node_modules / caches / build output
 
-# A single project — <name> is the package name (e.g. values, flnk)
+# A single project — <name> is the package name (e.g. values, wepush)
 pnpm --filter @cdlab/<name> dev       # → http://<name>.localhost:3355
 pnpm --filter @cdlab/<name> build
 ```
 
 The dev name is the package name with the scope stripped — the directory name
-(e.g. `values`, `flnk`). See each sub-project's README for its exact scripts,
+(e.g. `values`, `wepush`). See each sub-project's README for its exact scripts,
 dev URL, and deploy command.
 
 ## Layout

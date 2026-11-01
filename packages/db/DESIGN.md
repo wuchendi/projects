@@ -114,7 +114,7 @@ source file to ESM + CJS + `.d.mts`:
 | Subpath | Source | Injected client | Target | `file:` local SQLite |
 | --- | --- | --- | --- | --- |
 | `@cdlab/db/node` | `src/node.ts` | `@libsql/client` (native bindings) | Plain-wrangler Hono workers (`dropply-api`), Node test runners | ✓ |
-| `@cdlab/db/web` | `src/web.ts` | `@libsql/client/web` (pure fetch/ws) | Next.js / OpenNext apps (`flnk`, `wepush`) | ✗ (remote Turso only) |
+| `@cdlab/db/web` | `src/web.ts` | `@libsql/client/web` (pure fetch/ws) | Next.js / OpenNext apps (`wepush`, `flnk` (archived)) | ✗ (remote Turso only) |
 | `@cdlab/db/utils` | `src/utils.ts` | — | Query helpers, anywhere | n/a |
 
 `core.ts` is **not** a subpath — it is re-exported via `export * from './core'`
