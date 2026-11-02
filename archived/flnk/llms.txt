@@ -1,7 +1,7 @@
 # flnk usage guide for AI agents
 
-**ARCHIVED.** flnk is frozen and migrated to the standalone tinylink repo
-(https://github.com/WuChenDi/tinylink, live at https://tinylink.cdlab.workers.dev/).
+**ARCHIVED.** flnk is frozen and migrated to TinyLink
+(docs: https://github.com/wuchendi/tinylink-docs, live at https://tinylink.cdlab.workers.dev/).
 Do not add features here.
 
 `flnk` is a privacy-first, server-authoritative link shortener that runs as a

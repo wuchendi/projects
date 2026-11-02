@@ -46,7 +46,7 @@
 
 | 应用 | 简介 | 后继 |
 | --- | --- | --- |
-| [flnk](./archived/flnk) | 隐私优先短链服务,支持地域 / 设备路由 | [tinylink](https://github.com/WuChenDi/tinylink) · [↗](https://tinylink.cdlab.workers.dev/) |
+| [flnk](./archived/flnk) | 隐私优先短链服务,支持地域 / 设备路由 | [tinylink](https://github.com/wuchendi/tinylink-docs) · [↗](https://tinylink.cdlab.workers.dev/) |
 
 ## 共享包
 

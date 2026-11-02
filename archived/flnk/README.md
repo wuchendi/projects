@@ -2,10 +2,10 @@
 
 > [!WARNING]
 > **Archived — migrated to tinylink.** flnk is frozen and no longer developed.
-> Its successor is the standalone [tinylink](https://github.com/WuChenDi/tinylink)
-> repo, live at <https://tinylink.cdlab.workers.dev/>. The code here is kept for
-> reference and can still be deployed manually via the `Deploy flnk (archived)`
-> workflow.
+> Its successor is TinyLink — see the
+> [TinyLink docs](https://github.com/wuchendi/tinylink-docs); live at
+> <https://tinylink.cdlab.workers.dev/>. The code here is kept for reference and
+> can still be deployed manually via the `Deploy flnk (archived)` workflow.
 
 Privacy-first link shortener with **geo / device routing**, styled QR codes,
 password + safety gates, link-in-bio pages, and self-hosted analytics — one
