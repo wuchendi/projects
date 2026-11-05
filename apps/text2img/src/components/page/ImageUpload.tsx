@@ -16,6 +16,9 @@ import type { ModelType } from '@/types'
 
 interface ImageUploadProps {
   modelType: ModelType
+  supportsReference: boolean
+  referenceImages: string[]
+  setReferenceImages: (images: string[]) => void
   sourceImage: string
   setSourceImage: (image: string) => void
   maskImage: string
@@ -23,7 +26,8 @@ interface ImageUploadProps {
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
-const MAX_DIMENSION = 512 // SD v1.5 native resolution
+const MAX_DIMENSION = 512 // SD v1.5 native resolution; FLUX.2 reference limit
+const MAX_REFERENCE_IMAGES = 4
 
 function resizeAndConvertToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -154,12 +158,74 @@ function DropZone({
 
 export function ImageUpload({
   modelType,
+  supportsReference,
+  referenceImages,
+  setReferenceImages,
   sourceImage,
   setSourceImage,
   maskImage,
   setMaskImage,
 }: ImageUploadProps) {
   const t = useTranslations('upload')
+
+  if (supportsReference) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('referenceTitle')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-xs text-muted-foreground">
+            {t('referenceHint', { max: MAX_REFERENCE_IMAGES })}
+          </p>
+          {referenceImages.length > 0 && (
+            <div className="grid grid-cols-4 gap-2">
+              {referenceImages.map((image, i) => (
+                <div
+                  key={i}
+                  className="relative group rounded-lg overflow-hidden border"
+                >
+                  <img
+                    src={`data:image/png;base64,${image}`}
+                    alt={`image ${i}`}
+                    className="w-full aspect-square object-cover bg-muted"
+                  />
+                  <span className="absolute bottom-1 left-1 rounded bg-black/60 px-1 text-[10px] text-white">
+                    image {i}
+                  </span>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-1 right-1 size-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() =>
+                      setReferenceImages(
+                        referenceImages.filter((_, j) => j !== i),
+                      )
+                    }
+                  >
+                    <Trash2 className="size-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+          {referenceImages.length < MAX_REFERENCE_IMAGES && (
+            <DropZone
+              label={t('referenceAdd', {
+                count: referenceImages.length,
+                max: MAX_REFERENCE_IMAGES,
+              })}
+              preview=""
+              onFileSelect={(image) =>
+                setReferenceImages([...referenceImages, image])
+              }
+              onClear={() => {}}
+            />
+          )}
+        </CardContent>
+      </Card>
+    )
+  }
 
   if (modelType === 'text2img') return null
 

@@ -15,7 +15,10 @@ interface GenerateRequest {
   seed?: number
   image_b64?: string
   mask_b64?: string
+  reference_images_b64?: string[]
 }
+
+const MAX_REFERENCE_IMAGES = 4
 
 interface ModelConfig {
   prepareInputs: (data: GenerateRequest) => any
@@ -67,8 +70,9 @@ const blackForestLabsConfig: ModelConfig = {
     if (data.height) {
       formData.append('height', data.height.toString())
     }
-    if (data.num_steps) {
-      formData.append('num_steps', data.num_steps.toString())
+    // klein models run a fixed 4 steps; only dev accepts `steps`.
+    if (data.num_steps && data.model === 'flux-2-dev') {
+      formData.append('steps', data.num_steps.toString())
     }
     if (data.guidance) {
       formData.append('guidance', data.guidance.toString())
@@ -79,6 +83,14 @@ const blackForestLabsConfig: ModelConfig = {
         ? data.seed
         : Math.floor(Math.random() * 1024 * 1024)
     formData.append('seed', seed.toString())
+
+    // Prompts refer to these as "image 0", "image 1", ...
+    data.reference_images_b64?.forEach((b64, i) => {
+      formData.append(
+        `input_image_${i}`,
+        new Blob([new Uint8Array(base64ToUint8Array(b64))]),
+      )
+    })
 
     const req = new Request('http://placeholder', {
       method: 'POST',
@@ -166,11 +178,15 @@ const blackForestLabsConfig: ModelConfig = {
 const leonardoConfig: ModelConfig = {
   prepareInputs: (data: GenerateRequest) => ({
     prompt: data.prompt || 'cyberpunk cat',
-    negative_prompt: data.negative_prompt || '',
+    // Only phoenix accepts negative_prompt, and it rejects an empty string.
+    ...(data.model === 'phoenix-1.0' && data.negative_prompt
+      ? { negative_prompt: data.negative_prompt }
+      : {}),
     height: data.height || 1024,
     width: data.width || 1024,
-    steps: data.num_steps || 25,
-    guidance: data.guidance || 4,
+    num_steps: data.num_steps || 25,
+    // Both models accept guidance in [2, 10] (lucid-origin allows 0+).
+    guidance: Math.min(Math.max(data.guidance || 4, 2), 10),
     seed: data.seed || Math.floor(Math.random() * 1024 * 1024),
   }),
   processResponse: (response: any) => {
@@ -355,6 +371,30 @@ export async function POST(request: Request) {
           },
         },
       )
+    }
+
+    const references = data.reference_images_b64
+    if (references !== undefined) {
+      if (!selectedModel.supportsReference) {
+        return new Response(
+          JSON.stringify({
+            error: 'This model does not support reference images',
+          }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } },
+        )
+      }
+      if (
+        !Array.isArray(references) ||
+        references.length > MAX_REFERENCE_IMAGES ||
+        references.some((r) => typeof r !== 'string' || !r)
+      ) {
+        return new Response(
+          JSON.stringify({
+            error: `reference_images_b64 must be at most ${MAX_REFERENCE_IMAGES} non-empty base64 strings`,
+          }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } },
+        )
+      }
     }
 
     const model = selectedModel.key as keyof AiModels

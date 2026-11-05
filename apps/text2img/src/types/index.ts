@@ -8,12 +8,18 @@ export interface Model {
   disabled: boolean
   group: string
   type: ModelType
+  /** Accepts up to 4 reference images (FLUX.2 `input_image_0..3`). */
+  supportsReference?: boolean
+  /** Burns a large share of the daily free Neurons per image. */
+  highCost?: boolean
 }
 
 export interface ModelGroup {
   id: string
   name: string
   image?: string
+  /** Black-on-transparent icon; inverted in dark mode. */
+  monochrome?: boolean
   models: Model[]
 }
 
@@ -47,4 +53,5 @@ export interface GenerateParams {
   seed?: number
   image_b64?: string
   mask_b64?: string
+  reference_images_b64?: string[]
 }

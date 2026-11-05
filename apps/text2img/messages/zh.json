@@ -21,7 +21,8 @@
     "negativePrompt": "反向提示词",
     "negativePromptPlaceholder": "描述在生成的图像中要避免的元素文本...",
     "model": "模型",
-    "selectModel": "选择模型"
+    "selectModel": "选择模型",
+    "highCost": "高消耗"
   },
   "modelType": {
     "text2img": "文生图",
@@ -45,7 +46,10 @@
     "maskImage": "遮罩图片（白色区域为重绘区域）",
     "dropHint": "点击或拖拽上传图片",
     "invalidFile": "请选择图片文件",
-    "fileTooLarge": "图片大小不能超过 10MB"
+    "fileTooLarge": "图片大小不能超过 10MB",
+    "referenceTitle": "参考图（可选）",
+    "referenceHint": "最多 {max} 张。提示词中可用 image 0、image 1 … 指代，例如 \"put the subject of image 0 into the scene of image 1\"。",
+    "referenceAdd": "添加参考图（{count}/{max}）"
   },
   "result": {
     "title": "生成结果",
@@ -105,10 +109,10 @@
     "flux-2-dev": "专业级写实工具，支持多参考图生成，细节还原度极高。",
     "flux-1-schnell": "高效整流互感器模型，在极短时间内生成高质量艺术构图。",
     "lucid-origin": "适配性最强的创意模型，精准遵循指令，支持复杂的文本渲染。",
-    "phoenix-1.0": "具备卓越的指令遵循能力，生成画面逻辑严密且文本清晰。",
+    "phoenix-1_0": "具备卓越的指令遵循能力，生成画面逻辑严密且文本清晰。",
     "stable-diffusion-xl-lightning": "闪电级生成速度，几步内即可快速导出 1024px 高清大图。",
     "dreamshaper-8-lcm": "深度优化的写实模型，在保持多样化风格的同时增强照片质感。",
-    "stable-diffusion-xl-base-1.0": "行业标准基座模型，提供稳定、高质量的文生图与图像修改功能。",
+    "stable-diffusion-xl-base-1_0": "行业标准基座模型，提供稳定、高质量的文生图与图像修改功能。",
     "stable-diffusion-v1-5-img2img": "经典的图生图模型，支持以现有图像为底稿进行艺术再创作。",
     "stable-diffusion-v1-5-inpainting": "专业的局部重绘模型，通过遮罩精准修改或修复图像特定区域。"
   }
