@@ -7,18 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@cdlab/ui/components/card'
+import type { CascaderOption } from '@cdlab/ui/components/cascader'
+import { Cascader } from '@cdlab/ui/components/cascader'
 import { Label } from '@cdlab/ui/components/label'
 import { PasswordInput } from '@cdlab/ui/components/password-input'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@cdlab/ui/components/select'
 import { Textarea } from '@cdlab/ui/components/textarea'
+import { cn } from '@cdlab/ui/lib/utils'
 import { Dices } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
@@ -51,16 +45,67 @@ export function BasicSettings({
 }: BasicSettingsProps) {
   const t = useTranslations()
 
-  const findSelectedModel = () => {
-    if (!modelGroups || !selectedModel) return null
-    for (const group of modelGroups) {
-      const model = group.models.find((m) => m.id === selectedModel)
-      if (model) return model
-    }
-    return null
-  }
+  const selectedGroup = modelGroups?.find((group) =>
+    group.models.some((m) => m.id === selectedModel),
+  )
 
-  const selectedModelData = findSelectedModel()
+  const modelOptions: CascaderOption[] = (modelGroups ?? []).map((group) => ({
+    value: group.id,
+    textLabel: group.name,
+    label: (
+      <span className="flex items-center gap-2">
+        {group.image && (
+          <span className="relative inline-block w-4 h-4 shrink-0">
+            <Image
+              src={group.image}
+              alt={group.name}
+              fill
+              sizes="16px"
+              className={cn(
+                'object-contain',
+                group.monochrome && 'dark:invert',
+              )}
+            />
+          </span>
+        )}
+        {group.name}
+      </span>
+    ),
+    children: group.models.map((model) => ({
+      value: model.id,
+      textLabel: model.name,
+      disabled: model.disabled,
+      label: (
+        <span className="flex max-w-64 flex-col whitespace-normal">
+          <span className="font-medium flex items-center gap-1.5">
+            {model.name}
+            {model.type !== 'text2img' && (
+              <Badge
+                variant="outline"
+                className="text-[10px] px-1 py-0 font-normal"
+              >
+                {t(`modelType.${model.type}`)}
+              </Badge>
+            )}
+            {model.highCost && (
+              <Badge
+                variant="outline"
+                className="text-[10px] px-1 py-0 font-normal border-amber-500/50 text-amber-600 dark:text-amber-400"
+              >
+                {t('basic.highCost')}
+              </Badge>
+            )}
+          </span>
+          {model.description && (
+            <span className="text-xs text-muted-foreground mt-0.5">
+              {/* next-intl treats "." as a key path separator */}
+              {t(`models.${model.id.replaceAll('.', '_')}`)}
+            </span>
+          )}
+        </span>
+      ),
+    })),
+  }))
 
   return (
     <Card>
@@ -108,65 +153,18 @@ export function BasicSettings({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="model">{t('basic.model')}</Label>
-          <Select value={selectedModel} onValueChange={setSelectedModel}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={t('basic.selectModel')}>
-                <div className="flex items-center gap-2">
-                  {selectedModelData
-                    ? selectedModelData.name
-                    : t('basic.selectModel')}
-                </div>
-              </SelectValue>
-            </SelectTrigger>
-
-            <SelectContent>
-              {modelGroups?.map((group) => (
-                <SelectGroup key={group.id}>
-                  <SelectLabel className="flex items-center gap-2">
-                    {group.image && (
-                      <div className="relative w-4 h-4 shrink-0">
-                        <Image
-                          src={group.image}
-                          alt={`${group.name}`}
-                          fill
-                          sizes="16px"
-                          className="object-contain"
-                        />
-                      </div>
-                    )}
-                    {group.name}
-                  </SelectLabel>
-                  {group.models.map((model) => (
-                    <SelectItem
-                      key={model.id}
-                      value={model.id}
-                      disabled={model.disabled}
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-medium flex items-center gap-1.5">
-                          {model.name}
-                          {model.type !== 'text2img' && (
-                            <Badge
-                              variant="outline"
-                              className="text-[10px] px-1 py-0 font-normal"
-                            >
-                              {t(`modelType.${model.type}`)}
-                            </Badge>
-                          )}
-                        </span>
-                        {model.description && (
-                          <span className="text-xs text-muted-foreground mt-0.5">
-                            {t(`models.${model.id}`)}
-                          </span>
-                        )}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label>{t('basic.model')}</Label>
+          <Cascader
+            className="w-full"
+            allowClear={false}
+            placeholder={t('basic.selectModel')}
+            value={selectedGroup ? [selectedGroup.id, selectedModel] : []}
+            options={modelOptions}
+            onChange={([, modelId]) => {
+              if (modelId) setSelectedModel(modelId)
+            }}
+            displayRender={(labels) => labels.at(-1)}
+          />
         </div>
       </CardContent>
     </Card>

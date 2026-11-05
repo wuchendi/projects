@@ -54,6 +54,7 @@ export function ImageResultCard({
         key === 'password' ||
         key === 'image_b64' ||
         key === 'mask_b64' ||
+        key === 'reference_images_b64' ||
         !value
       )
         return

@@ -5,8 +5,8 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
   {
     id: 'black-forest-labs',
     name: 'Black Forest Labs',
-    image:
-      'https://developers.cloudflare.com/_astro/blackforestlabs.Ccs-Y4-D.svg',
+    image: '/providers/blackforestlabs.svg',
+    monochrome: true,
     models: [
       {
         id: 'flux-2-klein-9b',
@@ -16,6 +16,8 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
         group: 'black-forest-labs',
         type: 'text2img',
         disabled: false,
+        highCost: true,
+        supportsReference: true,
       },
       {
         id: 'flux-2-klein-4b',
@@ -25,6 +27,7 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
         group: 'black-forest-labs',
         type: 'text2img',
         disabled: false,
+        supportsReference: true,
       },
       {
         id: 'flux-2-dev',
@@ -34,6 +37,8 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
         group: 'black-forest-labs',
         type: 'text2img',
         disabled: false,
+        highCost: true,
+        supportsReference: true,
       },
       {
         id: 'flux-1-schnell',
@@ -49,7 +54,7 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
   {
     id: 'leonardo',
     name: 'Leonardo AI',
-    image: 'https://developers.cloudflare.com/_astro/leonardo.CTjvkdQs.svg',
+    image: '/providers/leonardo.svg',
     models: [
       {
         id: 'lucid-origin',
@@ -58,7 +63,8 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
         key: '@cf/leonardo/lucid-origin',
         group: 'leonardo',
         type: 'text2img',
-        disabled: true,
+        disabled: false,
+        highCost: true,
       },
       {
         id: 'phoenix-1.0',
@@ -67,13 +73,15 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
         key: '@cf/leonardo/phoenix-1.0',
         group: 'leonardo',
         type: 'text2img',
-        disabled: true,
+        disabled: false,
+        highCost: true,
       },
     ],
   },
   {
     id: 'bytedance',
     name: 'ByteDance',
+    image: '/providers/bytedance.svg',
     models: [
       {
         id: 'stable-diffusion-xl-lightning',
@@ -104,7 +112,7 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
   {
     id: 'stabilityai',
     name: 'Stability AI',
-    image: 'https://developers.cloudflare.com/_astro/stabilityai.CWXCgVjU.svg',
+    image: '/providers/stabilityai.svg',
     models: [
       {
         id: 'stable-diffusion-xl-base-1.0',
@@ -121,6 +129,7 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
   {
     id: 'runwayml',
     name: 'Runway ML',
+    image: '/providers/runway.svg',
     models: [
       {
         id: 'stable-diffusion-v1-5-img2img',
@@ -129,7 +138,7 @@ export const AVAILABLE_MODELS: ModelGroup[] = [
         key: '@cf/runwayml/stable-diffusion-v1-5-img2img',
         group: 'runwayml',
         type: 'img2img',
-        disabled: false,
+        disabled: true,
       },
       {
         id: 'stable-diffusion-v1-5-inpainting',

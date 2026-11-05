@@ -24,6 +24,8 @@ export default function Home() {
   // Image upload (img2img / inpainting)
   const [sourceImage, setSourceImage] = useState('')
   const [maskImage, setMaskImage] = useState('')
+  // Reference images (FLUX.2)
+  const [referenceImages, setReferenceImages] = useState<string[]>([])
 
   // Advanced options
   const [width, setWidth] = useState(1024)
@@ -58,8 +60,9 @@ export default function Home() {
     ? modelGroups.flatMap((group) => group.models)
     : undefined
 
-  const currentModelType: ModelType =
-    models?.find((m) => m.id === selectedModel)?.type || 'text2img'
+  const currentModel = models?.find((m) => m.id === selectedModel)
+  const currentModelType: ModelType = currentModel?.type || 'text2img'
+  const supportsReference = !!currentModel?.supportsReference
 
   const handleRandomPrompt = () => {
     if (prompts && prompts.length > 0) {
@@ -89,6 +92,10 @@ export default function Home() {
           : undefined,
       mask_b64:
         currentModelType === 'inpainting' && maskImage ? maskImage : undefined,
+      reference_images_b64:
+        supportsReference && referenceImages.length > 0
+          ? referenceImages
+          : undefined,
     }
     handleGenerateClick(params)
   }
@@ -112,6 +119,9 @@ export default function Home() {
 
           <ImageUpload
             modelType={currentModelType}
+            supportsReference={supportsReference}
+            referenceImages={referenceImages}
+            setReferenceImages={setReferenceImages}
             sourceImage={sourceImage}
             setSourceImage={setSourceImage}
             maskImage={maskImage}

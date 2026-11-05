@@ -21,7 +21,8 @@
     "negativePrompt": "Negative Prompt",
     "negativePromptPlaceholder": "Describe elements to avoid in the generated image...",
     "model": "Model",
-    "selectModel": "Select model"
+    "selectModel": "Select model",
+    "highCost": "High cost"
   },
   "modelType": {
     "text2img": "Text-to-Image",
@@ -45,7 +46,10 @@
     "maskImage": "Mask Image (white areas will be repainted)",
     "dropHint": "Click or drag to upload image",
     "invalidFile": "Please select an image file",
-    "fileTooLarge": "Image size cannot exceed 10MB"
+    "fileTooLarge": "Image size cannot exceed 10MB",
+    "referenceTitle": "Reference Images (optional)",
+    "referenceHint": "Up to {max} images. Refer to them in the prompt as image 0, image 1, … e.g. \"put the subject of image 0 into the scene of image 1\".",
+    "referenceAdd": "Add reference image ({count}/{max})"
   },
   "result": {
     "title": "Results",
@@ -105,10 +109,10 @@
     "flux-2-dev": "Professional photorealistic tool with multi-reference image generation and high detail fidelity.",
     "flux-1-schnell": "Efficient rectified transformer model generating high-quality artistic compositions in minimal time.",
     "lucid-origin": "Most versatile creative model with precise instruction following and complex text rendering.",
-    "phoenix-1.0": "Exceptional instruction adherence with logically coherent scenes and clear text generation.",
+    "phoenix-1_0": "Exceptional instruction adherence with logically coherent scenes and clear text generation.",
     "stable-diffusion-xl-lightning": "Lightning-fast generation producing 1024px HD images in just a few steps.",
     "dreamshaper-8-lcm": "Deeply optimized photorealistic model enhancing photo quality while maintaining diverse styles.",
-    "stable-diffusion-xl-base-1.0": "Industry standard base model providing stable, high-quality text-to-image and image editing.",
+    "stable-diffusion-xl-base-1_0": "Industry standard base model providing stable, high-quality text-to-image and image editing.",
     "stable-diffusion-v1-5-img2img": "Classic image-to-image model for artistic recreation using existing images as base.",
     "stable-diffusion-v1-5-inpainting": "Professional inpainting model for precise modification or repair of specific image areas via masks."
   }
