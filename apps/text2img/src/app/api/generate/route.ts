@@ -1,6 +1,7 @@
 import { verifyPasswordFn } from '@cdlab/utils'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { AVAILABLE_MODELS, findModelById } from '@/lib'
+import { corsPreflight, withCors } from '@/lib/cors'
 
 interface GenerateRequest {
   prompt?: string
@@ -302,6 +303,14 @@ const MODEL_TYPE_CONFIGS: Record<string, ModelConfig> = {
 }
 
 export async function POST(request: Request) {
+  return withCors(await generate(request))
+}
+
+export function OPTIONS() {
+  return corsPreflight()
+}
+
+async function generate(request: Request): Promise<Response> {
   const data = (await request.json()) as GenerateRequest
 
   const { env } = getCloudflareContext()
