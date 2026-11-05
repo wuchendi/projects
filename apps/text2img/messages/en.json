@@ -22,7 +22,8 @@
     "negativePromptPlaceholder": "Describe elements to avoid in the generated image...",
     "model": "Model",
     "selectModel": "Select model",
-    "highCost": "High cost"
+    "highCost": "High cost",
+    "passwordRequired": "Please enter the access password"
   },
   "modelType": {
     "text2img": "Text-to-Image",

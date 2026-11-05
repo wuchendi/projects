@@ -120,9 +120,13 @@ export function BasicSettings({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="password">{t('basic.password')}</Label>
+          <Label htmlFor="password">
+            {t('basic.password')}
+            <span className="text-destructive">*</span>
+          </Label>
           <PasswordInput
             id="password"
+            required
             placeholder={t('basic.passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}

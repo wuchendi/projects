@@ -22,7 +22,8 @@
     "negativePromptPlaceholder": "描述在生成的图像中要避免的元素文本...",
     "model": "模型",
     "selectModel": "选择模型",
-    "highCost": "高消耗"
+    "highCost": "高消耗",
+    "passwordRequired": "请输入访问密码"
   },
   "modelType": {
     "text2img": "文生图",

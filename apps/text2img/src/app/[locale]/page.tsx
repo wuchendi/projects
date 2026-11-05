@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Loader2, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { AdvancedOptions } from '@/components/page/AdvancedOptions'
 import { BasicSettings } from '@/components/page/BasicSettings'
 import { ImageResult } from '@/components/page/ImageResult'
@@ -76,10 +77,14 @@ export default function Home() {
   }
 
   const onGenerateClick = () => {
+    if (!password) {
+      toast.error(t('basic.passwordRequired'))
+      return
+    }
     const params: GenerateParams = {
       prompt,
       model: selectedModel,
-      password: password || undefined,
+      password,
       negative_prompt: negativePrompt || undefined,
       width,
       height,
