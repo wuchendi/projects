@@ -62,7 +62,7 @@ account:
 | **Analytics** | Country / region / city / referrer / device / OS / browser / language breakdowns, realtime feed, geo map, CSV export — from your own dataset. |
 | **Launchpads** | Hosted link-in-bio / landing pages at `/m/<slug>` with a themable block editor; buttons reference short links, so clicks reuse their stats. |
 | **AI** | Optional slug suggestions and OG title / description generation via Workers AI. |
-| **Ops** | Daily cron: R2 backup + soft-delete of expired links; link health checks (reachability + Safe Browsing via DoH); Sink import / export. |
+| **Ops** | Daily cron (currently **disabled** in `wrangler.jsonc`: the Cloudflare account hit its free cron-trigger limit): R2 backup + soft-delete of expired links; link health checks (reachability + Safe Browsing via DoH); Sink import / export. |
 | **Auth** | better-auth social login (Google / GitHub) with an email allow-list; every `/api/*` route is session-gated server-side. |
 | **i18n** | English + Chinese (`next-intl`) with a cookie-based locale, so it never collides with the root `[slug]` route. |
 
