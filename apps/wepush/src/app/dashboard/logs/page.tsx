@@ -63,6 +63,12 @@ interface Filters {
 
 const PAGE_SIZE = 50
 
+const STATUS_OPTIONS = [
+  { value: 'all', label: '全部' },
+  { value: 'success', label: '成功' },
+  { value: 'failed', label: '失败' },
+]
+
 async function fetchLogs(
   filters: Filters,
   page: number,
@@ -140,9 +146,16 @@ export default function LogsPage() {
           <div className="space-y-1.5">
             <Label className="text-xs">用户</Label>
             <Select
+              items={[
+                { value: 'all', label: '全部用户' },
+                ...(users ?? []).map((u) => ({
+                  value: u.id,
+                  label: u.name || u.id,
+                })),
+              ]}
               value={filters.userId || 'all'}
               onValueChange={(v) =>
-                updateFilter('userId', v === 'all' ? '' : v)
+                updateFilter('userId', !v || v === 'all' ? '' : v)
               }
             >
               <SelectTrigger className="w-full">
@@ -161,10 +174,11 @@ export default function LogsPage() {
           <div className="space-y-1.5">
             <Label className="text-xs">状态</Label>
             <Select
+              items={STATUS_OPTIONS}
               value={filters.status}
-              onValueChange={(v) =>
-                updateFilter('status', v as Filters['status'])
-              }
+              onValueChange={(v) => {
+                if (v !== null) updateFilter('status', v as Filters['status'])
+              }}
             >
               <SelectTrigger className="w-full">
                 <SelectValue />

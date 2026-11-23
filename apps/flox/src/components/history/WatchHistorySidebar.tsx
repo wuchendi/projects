@@ -52,15 +52,13 @@ export function WatchHistorySidebar() {
       <Drawer
         open={historyOpen}
         onOpenChange={setHistoryOpen}
-        direction="right"
+        swipeDirection="right"
       >
         <DrawerContent className="flex flex-col">
           <DrawerHeader className="flex-row items-center justify-between border-b">
             <DrawerTitle>观看历史</DrawerTitle>
-            <DrawerClose asChild>
-              <Button variant="ghost" size="icon-xs">
-                <XIcon className="size-4" />
-              </Button>
+            <DrawerClose render={<Button variant="ghost" size="icon-xs" />}>
+              <XIcon className="size-4" />
             </DrawerClose>
           </DrawerHeader>
 

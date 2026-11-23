@@ -10,7 +10,7 @@ import type { QRCodeHandle } from '@cdlab/ui/components/qr-code'
 import { QRCode } from '@cdlab/ui/components/qr-code'
 import { Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import type { ReactNode } from 'react'
+import type { ReactElement } from 'react'
 import { useRef } from 'react'
 import type { LinkConfig } from '@/database/schema'
 
@@ -29,7 +29,7 @@ export function QrPopover({
   url: string
   slug: string
   qr?: LinkConfig['qr']
-  children: ReactNode
+  children: ReactElement
 }) {
   const t = useTranslations('links')
   const canvasRef = useRef<QRCodeHandle>(null)
@@ -51,7 +51,7 @@ export function QrPopover({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverTrigger render={children} />
       <PopoverContent align="end" className="w-auto">
         <div className="flex flex-col items-center gap-3">
           <p className="max-w-56 break-all text-center text-xs text-muted-foreground">

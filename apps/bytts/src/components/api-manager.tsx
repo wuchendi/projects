@@ -681,13 +681,8 @@ function SavedApisList({
       {batchMode && apiList.length > 0 && (
         <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
           <Checkbox
-            checked={
-              selected.size === apiList.length
-                ? true
-                : selected.size > 0
-                  ? 'indeterminate'
-                  : false
-            }
+            checked={selected.size === apiList.length}
+            indeterminate={selected.size > 0 && selected.size < apiList.length}
             onCheckedChange={(checked) => toggleAll(checked === true)}
           />
           全选
@@ -979,10 +974,12 @@ export function ApiManagerDialog({
   return (
     <>
       <Dialog open={listOpen} onOpenChange={setListOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline" size="icon-sm" title="管理自定义 API">
-            <Settings />
-          </Button>
+        <DialogTrigger
+          render={
+            <Button variant="outline" size="icon-sm" title="管理自定义 API" />
+          }
+        >
+          <Settings />
         </DialogTrigger>
 
         <DialogContent className="sm:max-w-2xl">
@@ -1064,8 +1061,8 @@ export function ApiManagerDialog({
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">关闭</Button>
+            <DialogClose render={<Button variant="outline" />}>
+              关闭
             </DialogClose>
             <Button onClick={openNewForm}>添加自定义 API</Button>
           </DialogFooter>

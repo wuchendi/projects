@@ -179,19 +179,20 @@ function HeaderInner() {
     return (
       <Button
         key={item.key}
-        asChild
         variant="outline"
         size="icon"
         aria-label={item.label}
+        nativeButton={false}
+        render={
+          <Link
+            href={item.href}
+            {...(item.external
+              ? { target: '_blank', rel: 'noopener noreferrer' }
+              : {})}
+          />
+        }
       >
-        <Link
-          href={item.href}
-          {...(item.external
-            ? { target: '_blank', rel: 'noopener noreferrer' }
-            : {})}
-        >
-          {item.icon}
-        </Link>
+        {item.icon}
       </Button>
     )
   }
@@ -207,17 +208,20 @@ function HeaderInner() {
     }
 
     return (
-      <DropdownMenuItem key={item.key} asChild>
-        <Link
-          href={item.href}
-          className="flex items-center gap-2"
-          {...(item.external
-            ? { target: '_blank', rel: 'noopener noreferrer' }
-            : {})}
-        >
-          {item.icon}
-          {item.label}
-        </Link>
+      <DropdownMenuItem
+        key={item.key}
+        className="flex items-center gap-2"
+        render={
+          <Link
+            href={item.href}
+            {...(item.external
+              ? { target: '_blank', rel: 'noopener noreferrer' }
+              : {})}
+          />
+        }
+      >
+        {item.icon}
+        {item.label}
       </DropdownMenuItem>
     )
   }
@@ -295,10 +299,12 @@ function HeaderInner() {
 
             {hasOverflow && (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" aria-label="更多">
-                    <MoreHorizontalIcon className="size-4" />
-                  </Button>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="outline" size="icon" aria-label="更多" />
+                  }
+                >
+                  <MoreHorizontalIcon className="size-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   {overflowActions.map((item, i) => (

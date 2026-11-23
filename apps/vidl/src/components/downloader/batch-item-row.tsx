@@ -101,12 +101,11 @@ export function BatchItemRow({
             <Field>
               <FieldTitle>{t('batch.variant')}</FieldTitle>
               <ToggleGroup
-                type="single"
                 size="sm"
                 spacing={1}
                 variant="outline"
-                value={item.selectedVariantUrl}
-                onValueChange={(v) => {
+                value={[item.selectedVariantUrl]}
+                onValueChange={([v]) => {
                   if (v) void onVariantChange(item, v)
                 }}
                 className="flex-wrap"
@@ -125,12 +124,11 @@ export function BatchItemRow({
           <Field>
             <FieldTitle>{t('batch.format')}</FieldTitle>
             <ToggleGroup
-              type="single"
               size="sm"
               spacing={1}
               variant="outline"
-              value={item.format}
-              onValueChange={(v) => {
+              value={[item.format]}
+              onValueChange={([v]) => {
                 if (v) onUpdate(item.id, { format: v as BatchFormat })
               }}
               className="flex-wrap"
@@ -181,9 +179,11 @@ export function BatchItemRow({
               </div>
               <Slider
                 value={[item.rangeStart, item.rangeEnd]}
-                onValueChange={([s, e]) =>
+                onValueChange={(value) => {
+                  if (!Array.isArray(value)) return
+                  const [s, e] = value
                   onUpdate(item.id, { rangeStart: s, rangeEnd: e })
-                }
+                }}
                 min={1}
                 max={segCount}
                 step={1}

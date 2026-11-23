@@ -199,14 +199,16 @@ function TransitionJunctionOverlay({
         style={{ left: `${leftPx}px`, width: `${buttonSize}px` }}
       >
         <Popover open={isOpen} onOpenChange={setIsOpen}>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              className="bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground flex size-6 items-center justify-center rounded-sm transition-colors"
-              title="Add transition"
-            >
-              <PlusIcon />
-            </button>
+          <PopoverTrigger
+            render={
+              <button
+                type="button"
+                className="bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground flex size-6 items-center justify-center rounded-sm transition-colors"
+                title="Add transition"
+              />
+            }
+          >
+            <PlusIcon />
           </PopoverTrigger>
           <PopoverContent
             className="w-56 p-0"
@@ -255,28 +257,30 @@ function TransitionJunctionOverlay({
 
       {/* overlay body */}
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <button
-            type="button"
-            className={cn(
-              'flex h-full w-full items-center justify-center rounded-sm border transition-colors',
-              isDragging
-                ? 'bg-primary/40 border-primary'
-                : 'bg-primary/20 hover:bg-primary/30 border-primary/50',
-            )}
-            style={{
-              marginLeft: `${handleWidth}px`,
-              marginRight: `${handleWidth}px`,
-            }}
-            title={`${transition.type} (${displayDuration.toFixed(1)}s)`}
-          >
-            <TransitionDiamondIcon />
-            {overlayWidthPx > 50 && (
-              <span className="text-foreground ml-1 text-[10px] tabular-nums">
-                {displayDuration.toFixed(1)}s
-              </span>
-            )}
-          </button>
+        <PopoverTrigger
+          render={
+            <button
+              type="button"
+              className={cn(
+                'flex h-full w-full items-center justify-center rounded-sm border transition-colors',
+                isDragging
+                  ? 'bg-primary/40 border-primary'
+                  : 'bg-primary/20 hover:bg-primary/30 border-primary/50',
+              )}
+              style={{
+                marginLeft: `${handleWidth}px`,
+                marginRight: `${handleWidth}px`,
+              }}
+              title={`${transition.type} (${displayDuration.toFixed(1)}s)`}
+            />
+          }
+        >
+          <TransitionDiamondIcon />
+          {overlayWidthPx > 50 && (
+            <span className="text-foreground ml-1 text-[10px] tabular-nums">
+              {displayDuration.toFixed(1)}s
+            </span>
+          )}
         </PopoverTrigger>
         <PopoverContent
           className="w-56 p-0"

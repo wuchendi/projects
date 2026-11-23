@@ -52,8 +52,10 @@ export function IKConfirmDialog({
             <OctagonAlert className="h-5 w-5 text-destructive" />
             <span>{title}</span>
           </AlertDialogTitle>
-          <AlertDialogDescription asChild>
-            <div className="text-sm text-muted-foreground">{description}</div>
+          <AlertDialogDescription
+            render={<div className="text-sm text-muted-foreground" />}
+          >
+            {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

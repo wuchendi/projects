@@ -284,11 +284,20 @@ export default function Home() {
               Explore the tools
               <ArrowRight className="size-4" />
             </Button>
-            <Button asChild size="lg" variant="outline">
-              <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-                <GitHubIcon className="size-4" />
-                Star on GitHub
-              </a>
+            <Button
+              size="lg"
+              variant="outline"
+              nativeButton={false}
+              render={
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+            >
+              <GitHubIcon className="size-4" />
+              Star on GitHub
             </Button>
           </div>
         </div>
@@ -451,7 +460,7 @@ export default function Home() {
             ))}
           </div>
         </SectionHeading>
-        <Accordion type="single" collapsible className="border-t">
+        <Accordion className="border-t">
           {faqs.map((item) => (
             <AccordionItem key={item.q} value={item.q}>
               <AccordionTrigger>{item.q}</AccordionTrigger>
@@ -490,11 +499,14 @@ export default function Home() {
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             {tasks.map((task) => (
-              <Button key={task.id} asChild variant="outline">
-                <Link href={task.route}>
-                  <task.icon className="size-4" />
-                  {task.title}
-                </Link>
+              <Button
+                key={task.id}
+                variant="outline"
+                nativeButton={false}
+                render={<Link href={task.route} />}
+              >
+                <task.icon className="size-4" />
+                {task.title}
               </Button>
             ))}
           </div>

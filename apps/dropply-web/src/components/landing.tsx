@@ -244,7 +244,7 @@ export function HowItWorks() {
           {t('subtitle')}
         </p>
       </div>
-      <Accordion type="single" collapsible>
+      <Accordion>
         {FAQ.map((key) => (
           <AccordionItem key={key} value={key}>
             <AccordionTrigger>{t(`faq.${key}.q`)}</AccordionTrigger>

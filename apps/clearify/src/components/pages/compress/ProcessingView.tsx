@@ -123,10 +123,11 @@ export function ProcessingView({
                 ((1 - processedSize / video.size) * 100).toFixed(0)}
               % of original size
             </span>
-            <Button asChild>
-              <a href={outputUrl} download="compressed-video.mp4">
-                Download Video
-              </a>
+            <Button
+              nativeButton={false}
+              render={<a href={outputUrl} download="compressed-video.mp4" />}
+            >
+              Download Video
             </Button>
           </div>
         </div>

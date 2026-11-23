@@ -206,8 +206,8 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
     }
   }
 
-  const handleEffectValueChange = (value: number[]) => {
-    const newValue = value[0]
+  const handleEffectValueChange = (value: number | readonly number[]) => {
+    const newValue = Array.isArray(value) ? value[0] : value
     switch (selectedEffect) {
       case 'blur':
         setBlurValue(newValue)
@@ -361,7 +361,10 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
             {/* Background Settings */}
             <div>
               <Label className="mb-3">Background</Label>
-              <Tabs value={bgType} onValueChange={setBgType}>
+              <Tabs
+                value={bgType}
+                onValueChange={(value) => setBgType(value as string)}
+              >
                 <TabsList className="grid w-full grid-cols-3">
                   {backgroundOptions.map((option) => (
                     <TabsTrigger key={option.id} value={option.id}>

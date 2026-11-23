@@ -161,34 +161,36 @@ export function TimelineElement({
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger asChild>
-        <div
-          className={`absolute top-0 h-full select-none ${
-            isBeingDragged ? 'z-30' : 'z-10'
-          }`}
-          style={{
-            left: `${elementLeft}px`,
-            width: `${elementWidth}px`,
-            transform:
-              isBeingDragged && dragState.isDragging
-                ? `translate3d(0, ${dragOffsetY}px, 0)`
-                : undefined,
-          }}
-        >
-          <ElementInner
-            element={element}
-            track={track}
-            zoomLevel={zoomLevel}
-            isSelected={isSelected}
-            isBeingDragged={isBeingDragged}
-            hasAudio={hasAudio}
-            isMuted={isMuted}
-            mediaAssets={mediaAssets}
-            onElementClick={onElementClick}
-            onElementMouseDown={onElementMouseDown}
-            handleResizeStart={handleResizeStart}
+      <ContextMenuTrigger
+        render={
+          <div
+            className={`absolute top-0 h-full select-none ${
+              isBeingDragged ? 'z-30' : 'z-10'
+            }`}
+            style={{
+              left: `${elementLeft}px`,
+              width: `${elementWidth}px`,
+              transform:
+                isBeingDragged && dragState.isDragging
+                  ? `translate3d(0, ${dragOffsetY}px, 0)`
+                  : undefined,
+            }}
           />
-        </div>
+        }
+      >
+        <ElementInner
+          element={element}
+          track={track}
+          zoomLevel={zoomLevel}
+          isSelected={isSelected}
+          isBeingDragged={isBeingDragged}
+          hasAudio={hasAudio}
+          isMuted={isMuted}
+          mediaAssets={mediaAssets}
+          onElementClick={onElementClick}
+          onElementMouseDown={onElementMouseDown}
+          handleResizeStart={handleResizeStart}
+        />
       </ContextMenuTrigger>
       <ContextMenuContent className="z-200 w-64">
         <ActionMenuItem action="split" icon={<Scissors className="size-4" />}>

@@ -48,14 +48,16 @@ export function ExportButton() {
 
   return (
     <Popover open={isExportPopoverOpen} onOpenChange={setIsExportPopoverOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          disabled={!hasProject}
-          onClick={() => hasProject && setIsExportPopoverOpen(true)}
-        >
-          <FolderUp className="size-4" />
-          <span>{t('common.export')}</span>
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            disabled={!hasProject}
+            onClick={() => hasProject && setIsExportPopoverOpen(true)}
+          />
+        }
+      >
+        <FolderUp className="size-4" />
+        <span>{t('common.export')}</span>
       </PopoverTrigger>
       {hasProject &&
         (isAudio ? (

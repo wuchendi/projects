@@ -71,20 +71,23 @@ export function TabBar() {
         {TAB_KEYS.map((tabKey) => {
           const tab = tabs[tabKey]
           return (
-            <Tooltip key={tabKey} delayDuration={10}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant={activeTab === tabKey ? 'secondary' : 'ghost'}
-                  aria-label={t(tab.label)}
-                  className={cn(
-                    'flex-col p-1.5! rounded-sm! h-auto! [&_svg]:size-4.5',
-                    activeTab !== tabKey &&
-                      'border border-transparent text-muted-foreground',
-                  )}
-                  onClick={() => setActiveTab(tabKey)}
-                >
-                  <tab.icon />
-                </Button>
+            <Tooltip key={tabKey}>
+              <TooltipTrigger
+                delay={10}
+                render={
+                  <Button
+                    variant={activeTab === tabKey ? 'secondary' : 'ghost'}
+                    aria-label={t(tab.label)}
+                    className={cn(
+                      'flex-col p-1.5! rounded-sm! h-auto! [&_svg]:size-4.5',
+                      activeTab !== tabKey &&
+                        'border border-transparent text-muted-foreground',
+                    )}
+                    onClick={() => setActiveTab(tabKey)}
+                  />
+                }
+              >
+                <tab.icon />
               </TooltipTrigger>
               <TooltipContent side="right" align="center" sideOffset={8}>
                 {t(tab.label)}

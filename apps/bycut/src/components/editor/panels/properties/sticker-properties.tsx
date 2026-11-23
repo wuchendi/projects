@@ -9,6 +9,7 @@ import { PanelBaseView } from '@/components/editor/panels/panel-base-view'
 import { useEditor } from '@/hooks/use-editor'
 import type { StickerElement } from '@/types/timeline'
 import { clamp } from '@/utils/math'
+import { firstSliderValue } from '@/utils/slider'
 import {
   PropertyGroup,
   PropertyItem,
@@ -256,7 +257,8 @@ export function StickerProperties({
                     min={10}
                     max={500}
                     step={1}
-                    onValueChange={([value]) => {
+                    onValueChange={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialScaleRef.current === null) {
                         initialScaleRef.current = element.transform.scale
                       }
@@ -265,7 +267,8 @@ export function StickerProperties({
                         pushHistory: false,
                       })
                     }}
-                    onValueCommit={([value]) => {
+                    onValueCommitted={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialScaleRef.current !== null) {
                         updateTransform({
                           updates: { scale: initialScaleRef.current },
@@ -344,7 +347,8 @@ export function StickerProperties({
                     min={-180}
                     max={180}
                     step={1}
-                    onValueChange={([value]) => {
+                    onValueChange={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialRotationRef.current === null) {
                         initialRotationRef.current = element.transform.rotate
                       }
@@ -353,7 +357,8 @@ export function StickerProperties({
                         pushHistory: false,
                       })
                     }}
-                    onValueCommit={([value]) => {
+                    onValueCommitted={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialRotationRef.current !== null) {
                         updateTransform({
                           updates: {
@@ -436,7 +441,8 @@ export function StickerProperties({
                     min={0}
                     max={100}
                     step={1}
-                    onValueChange={([value]) => {
+                    onValueChange={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialOpacityRef.current === null) {
                         initialOpacityRef.current = element.opacity
                       }
@@ -445,7 +451,8 @@ export function StickerProperties({
                         pushHistory: false,
                       })
                     }}
-                    onValueCommit={([value]) => {
+                    onValueCommitted={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialOpacityRef.current !== null) {
                         updateElement({
                           updates: {

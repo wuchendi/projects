@@ -16,6 +16,9 @@ import { RotateCcw, Settings2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useSettingsStore } from '@/stores/settings-store'
 
+const firstValue = (value: number | readonly number[]) =>
+  Array.isArray(value) ? value[0] : (value as number)
+
 export function SettingsDialog() {
   const t = useTranslations()
   const maxTasks = useSettingsStore((s) => s.maxTasks)
@@ -28,10 +31,8 @@ export function SettingsDialog() {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon-sm">
-          <Settings2 className="size-4" />
-        </Button>
+      <DialogTrigger render={<Button variant="outline" size="icon-sm" />}>
+        <Settings2 className="size-4" />
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -49,7 +50,9 @@ export function SettingsDialog() {
             </div>
             <Slider
               value={[maxTasks]}
-              onValueChange={([v]) => setSettings({ maxTasks: v })}
+              onValueChange={(value) =>
+                setSettings({ maxTasks: firstValue(value) })
+              }
               min={1}
               max={5}
               step={1}
@@ -68,7 +71,9 @@ export function SettingsDialog() {
             </div>
             <Slider
               value={[concurrency]}
-              onValueChange={([v]) => setSettings({ concurrency: v })}
+              onValueChange={(value) =>
+                setSettings({ concurrency: firstValue(value) })
+              }
               min={1}
               max={20}
               step={1}
@@ -87,7 +92,9 @@ export function SettingsDialog() {
             </div>
             <Slider
               value={[timeoutMs / 1000]}
-              onValueChange={([v]) => setSettings({ timeoutMs: v * 1000 })}
+              onValueChange={(value) =>
+                setSettings({ timeoutMs: firstValue(value) * 1000 })
+              }
               min={5}
               max={120}
               step={5}
@@ -106,7 +113,9 @@ export function SettingsDialog() {
             </div>
             <Slider
               value={[maxRetries]}
-              onValueChange={([v]) => setSettings({ maxRetries: v })}
+              onValueChange={(value) =>
+                setSettings({ maxRetries: firstValue(value) })
+              }
               min={0}
               max={10}
               step={1}
@@ -125,8 +134,8 @@ export function SettingsDialog() {
             </div>
             <Slider
               value={[retryBaseDelayMs / 1000]}
-              onValueChange={([v]) =>
-                setSettings({ retryBaseDelayMs: v * 1000 })
+              onValueChange={(value) =>
+                setSettings({ retryBaseDelayMs: firstValue(value) * 1000 })
               }
               min={0.5}
               max={10}

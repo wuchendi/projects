@@ -96,7 +96,7 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
     React.useEffect(() => {
       if (!pendingFocusRef.current && !pendingScrollRef.current) return
       // rAF-after-commit: runs after the new column/popup content is laid out and
-      // after Radix/vaul's own open-focus, so our focus target reliably wins.
+      // after Base UI's own open-focus, so our focus target reliably wins.
       const frame = requestAnimationFrame(() => {
         if (pendingScrollRef.current) {
           pendingScrollRef.current = false
@@ -204,7 +204,7 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
       columns: CascaderOption[][],
     ) => {
       const column = columns[columnIndex]
-      const hasChildren = option.children && option.children.length > 0
+      const isBranch = option.children && option.children.length > 0
 
       switch (e.key) {
         case 'ArrowDown':
@@ -231,7 +231,7 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
         case 'Enter':
           e.preventDefault()
           if (!option.disabled) {
-            if (hasChildren) {
+            if (isBranch) {
               handleSelect(option, columnIndex)
             } else if (e.key === 'Enter') {
               handleSelect(option, columnIndex)
@@ -265,7 +265,7 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
         case 'Tab':
           if (
             !e.shiftKey &&
-            hasChildren &&
+            isBranch &&
             expandedPath[columnIndex] === option.value
           ) {
             e.preventDefault()
@@ -315,12 +315,6 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
         disabled && "pointer-events-none opacity-50",
         className
         )}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            if (!disabled) setOpen(!open)
-          }
-        }}
       >
         <span className="flex-1 truncate text-left font-normal">
           {displayValue || placeholder}
@@ -368,7 +362,7 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
             {column.map((option, itemIndex) => {
               const isExpanded = expandedPath[columnIndex] === option.value
               const isSelected = selectedValue[columnIndex] === option.value
-              const hasChildren = option.children && option.children.length > 0
+              const isBranch = option.children && option.children.length > 0
               const isFocused =
                 focusedColumn === columnIndex && focusedIndex === itemIndex
               const refKey = `${columnIndex}-${itemIndex}`
@@ -386,7 +380,7 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
                   role="option"
                   aria-selected={isSelected}
                   aria-disabled={option.disabled}
-                  aria-expanded={hasChildren ? isExpanded : undefined}
+                  aria-expanded={isBranch ? isExpanded : undefined}
                   tabIndex={isFocused && open ? 0 : -1}
                   className={cn(
                     'flex cursor-pointer items-center justify-between gap-1.5 rounded-md px-2 py-1.5 text-sm outline-hidden select-none',
@@ -401,7 +395,7 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
                     handleKeyDown(e, option, columnIndex, itemIndex, columns)
                   }
                   onMouseEnter={() => {
-                    if (expandTrigger === 'hover' && hasChildren) {
+                    if (expandTrigger === 'hover' && isBranch) {
                       handleExpand(option, columnIndex)
                     }
                   }}
@@ -411,13 +405,13 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
                   }}
                 >
                   <span className="truncate">{option.label}</span>
-                  {hasChildren && (
+                  {isBranch && (
                     <ChevronRight
                       className="h-4 w-4 shrink-0 opacity-50"
                       aria-hidden="true"
                     />
                   )}
-                  {!hasChildren && isSelected && (
+                  {!isBranch && isSelected && (
                     <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
                   )}
                 </div>
@@ -444,7 +438,7 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
         setExpandedPath(nextExpandedPath)
         setFocusedColumn(0)
         setFocusedIndex(nextFocusedIndex)
-        // Both the Popover (onOpenAutoFocus is prevented) and the Drawer rely on
+        // Both the Popover (initialFocus is disabled) and the Drawer rely on
         // this deferred flush to focus the first item once content is laid out.
         pendingFocusRef.current = `0-${nextFocusedIndex}`
       } else {
@@ -455,7 +449,11 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
     if (isMobile) {
       return (
         <Drawer open={open} onOpenChange={handleOpenChange}>
-          <DrawerTrigger asChild>{triggerElement}</DrawerTrigger>
+          <DrawerTrigger
+            nativeButton={false}
+            disabled={disabled}
+            render={triggerElement}
+          />
           <DrawerContent className={cn('px-0', popupClassName)}>
             <DrawerHeader className="pb-2">
               <DrawerTitle className="text-sm font-medium">
@@ -470,16 +468,18 @@ const Cascader = React.forwardRef<HTMLDivElement, CascaderProps>(
 
     return (
       <Popover open={open} onOpenChange={handleOpenChange}>
-        <PopoverTrigger asChild>{triggerElement}</PopoverTrigger>
+        <PopoverTrigger
+          nativeButton={false}
+          disabled={disabled}
+          render={triggerElement}
+        />
         <PopoverContent
           className={cn('w-auto p-0', popupClassName)}
           align="start"
           portalContainer={portalContainer}
-          onOpenAutoFocus={(e) => {
-            // Radix would focus the content wrapper on open; prevent that and
-            // let the deferred pendingFocusRef flush focus the first item.
-            e.preventDefault()
-          }}
+          // Skip the popup's own initial focus and let the deferred
+          // pendingFocusRef flush focus the first item.
+          initialFocus={false}
         >
           {columnsContent}
         </PopoverContent>

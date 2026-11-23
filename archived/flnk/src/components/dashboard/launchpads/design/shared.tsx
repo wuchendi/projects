@@ -131,9 +131,9 @@ export function SurfaceTypeToggle({
   const t = useTranslations('launchpads')
   return (
     <ToggleGroup
-      type="single"
-      value={value.type}
-      onValueChange={(v) => {
+      value={[value.type]}
+      onValueChange={(vals) => {
+        const v = vals[0]
         if (!v) return
         if (v === 'gradient')
           onChange({ type: 'gradient', to: value.to ?? '#e0e7ff' })
@@ -184,7 +184,11 @@ export function SurfaceEditor({
           min={0}
           max={100}
           step={5}
-          onValueChange={(vals) => onChange({ overlay: vals[0] ?? 40 })}
+          onValueChange={(vals) =>
+            onChange({
+              overlay: (Array.isArray(vals) ? vals[0] : vals) ?? 40,
+            })
+          }
         />
       </div>
     </div>

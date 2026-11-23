@@ -78,7 +78,7 @@ subpath maps directly to one file (`/*` wildcards, so `./components/button` →
 | --- | --- | --- |
 | `./globals.css` | `src/styles/globals.css` | Tailwind v4 theme entry (the one CSS file consumers `@import`) |
 | `./postcss.config` | `postcss.config.mjs` | Shared PostCSS config (`@tailwindcss/postcss`) |
-| `./components/<name>` | `src/components/<name>.tsx` | 56 shadcn/ui primitives (`button`, `dialog`, `sidebar`, `table`, `chart`, `qr-code`, …) |
+| `./components/<name>` | `src/components/<name>.tsx` | 59 shadcn/ui primitives (`button`, `dialog`, `sidebar`, `table`, `chart`, `qr-code`, …) |
 | `./IK/<name>` | `src/IK/<name>.tsx` | App-shell "asset kit" — headers, footers, empty/loading/failed states, confirm dialog, version banner |
 | `./icon/<name>` | `src/icon/<name>.tsx` | Brand icon SVGs (`GitHubIcon`, `XIcon`) |
 | `./reactbits/<name>` | `src/reactbits/<name>.tsx` | 10 animated visual effects (`Aurora`, `Particles`, `Plasma`, `Threads`, `SpotlightCard`, …) |
@@ -92,7 +92,7 @@ the exports map — import by leaf subpath.
 
 | Group | Count | Base | Notes |
 | --- | --- | --- | --- |
-| `components/` | 56 | mostly `radix-ui` (unified pkg, 27 files); `@base-ui/react` in exactly one (`combobox`) | shadcn/ui `style: radix-nova`. Driver wrappers: `chart`→`recharts`, `qr-code`→`qrcode`, `sonner`→`sonner`, `drawer`→`vaul`, `command`→`cmdk`, `calendar`→`react-day-picker`, `resizable`→`react-resizable-panels`, `input-otp`→`input-otp`. Non-stock extras: `cascader`, `color-picker`, `copy-button`, `heatmap-calendar`, `image-compare`, `password-input`, `input-with-back`, `audio-waveform`, `waveform-player`, `spark-chart`. |
+| `components/` | 59 | `@base-ui/react` (Base UI, 28 files; composition via the `render` prop, no `asChild`) | shadcn/ui `style: base-nova`. Driver wrappers: `chart`→`recharts`, `qr-code`→`qrcode`, `sonner`→`sonner`, `command`→`cmdk`, `calendar`→`react-day-picker`, `resizable`→`react-resizable-panels`, `input-otp`→`input-otp`. Non-stock extras: `cascader`, `color-picker`, `copy-button`, `heatmap-calendar`, `image-compare`, `password-input`, `input-with-back`, `audio-waveform`, `waveform-player`, `spark-chart`. |
 | `IK/` | 10 | composed from the primitives | Layout chrome (`IKHeader`, `IKFooter`, `IKPageContainer`), state screens (`IKEmpty`, `IKAssetLoading`, `IKAssetFailed`), `IKAssetRenderer` (status-switch render-prop), `IKConfirmDialog`, `IKAudioAssetPlayer` (hover-preview), `IKVersionInfo` (console banner, renders `null`). |
 | `reactbits/` | 10 | reactbits.dev | `Aurora`/`Particles`/`Plasma`/`Threads` embed inline GLSL via `ogl`; `SplashCursor` is a raw-WebGL fluid effect; `BlurText`/`CountUp`/`GradientText`/`ShinyText`/`SpotlightCard` are DOM/`motion`. All `'use client'`, browser-only. |
 | `icon/` | 2 | inline SVG | `GitHubIcon`, `XIcon`. |
@@ -101,7 +101,7 @@ the exports map — import by leaf subpath.
 
 ## RSC boundary
 
-Components that use browser APIs / state carry `'use client'` (44 of 56
+Components that use browser APIs / state carry `'use client'` (44 of 59
 primitives, plus `IKAudioAssetPlayer`, `IKVersionInfo`, and all 10 reactbits).
 Server-safe primitives (`button`, `badge`, `card`, `alert`, `input`, `textarea`,
 `skeleton`, `spinner`, `breadcrumb`, `button-group`, `color-picker`, `empty`) and
@@ -134,7 +134,7 @@ flowchart LR
 
 ## Adding / updating primitives
 
-`components.json` configures the `shadcn` CLI: `style: radix-nova`, `rsc: true`,
+`components.json` configures the `shadcn` CLI: `style: base-nova`, `rsc: true`,
 `baseColor: neutral`, `iconLibrary: lucide`, aliases pointing at `@cdlab/ui/*`,
 and two custom registries:
 

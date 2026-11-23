@@ -377,7 +377,7 @@ export function HeatmapCalendar({
   }))
 
   return (
-    <TooltipProvider delayDuration={80}>
+    <TooltipProvider delay={80}>
       <div
         className={cn(
           'flex w-full min-w-0 gap-3',
@@ -451,31 +451,33 @@ export function HeatmapCalendar({
                     const cls = levels[clampLevel(cell.level, levels.length)]
                     return (
                       <Tooltip key={cell.key}>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            disabled={cell.disabled}
-                            onClick={() =>
-                              !cell.disabled && onCellClick?.(cell)
-                            }
-                            className={cn(
-                              'rounded-[3px] outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                              !palette?.length && cls,
-                              cell.disabled &&
-                                'cursor-default opacity-30 pointer-events-none',
-                            )}
-                            style={{
-                              width: cellSize,
-                              height: cellSize,
-                              ...(bgStyleForLevel(cell.level, palette) ?? {}),
-                            }}
-                            aria-label={
-                              cell.disabled
-                                ? 'Outside range'
-                                : `${cell.label}: ${cell.value}`
-                            }
-                          />
-                        </TooltipTrigger>
+                        <TooltipTrigger
+                          render={
+                            <button
+                              type="button"
+                              disabled={cell.disabled}
+                              onClick={() =>
+                                !cell.disabled && onCellClick?.(cell)
+                              }
+                              className={cn(
+                                'rounded-[3px] outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                                !palette?.length && cls,
+                                cell.disabled &&
+                                  'cursor-default opacity-30 pointer-events-none',
+                              )}
+                              style={{
+                                width: cellSize,
+                                height: cellSize,
+                                ...(bgStyleForLevel(cell.level, palette) ?? {}),
+                              }}
+                              aria-label={
+                                cell.disabled
+                                  ? 'Outside range'
+                                  : `${cell.label}: ${cell.value}`
+                              }
+                            />
+                          }
+                        />
                         <TooltipContent side="top">
                           {tooltipNode(cell)}
                         </TooltipContent>

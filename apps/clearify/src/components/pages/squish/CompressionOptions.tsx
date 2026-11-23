@@ -28,10 +28,9 @@ export const CompressionOptions = ({
       <Label>Output Format</Label>
       <ToggleGroup
         variant="outline"
-        type="single"
-        value={outputType}
+        value={[outputType]}
         onValueChange={(value) => {
-          if (value) onOutputTypeChange(value as OutputType)
+          if (value[0]) onOutputTypeChange(value[0] as OutputType)
         }}
         className="grid grid-cols-5"
       >
@@ -58,7 +57,9 @@ export const CompressionOptions = ({
           min={1}
           max={100}
           step={1}
-          onValueChange={(value) => onQualityChange(value[0])}
+          onValueChange={(value) =>
+            onQualityChange(Array.isArray(value) ? value[0] : value)
+          }
           className="w-full focus:outline-none"
         />
       </Field>

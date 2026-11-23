@@ -446,41 +446,43 @@ export function Timeline() {
 
                       return (
                         <ContextMenu key={track.id}>
-                          <ContextMenuTrigger asChild>
-                            <div
-                              className={cn(
-                                'absolute right-0 left-0',
-                                isBeingDragged && 'opacity-40',
-                              )}
-                              style={{
-                                top: `${getCumulativeHeightBefore({
-                                  tracks,
-                                  trackIndex: index,
-                                })}px`,
-                                height: `${getTrackHeight({
-                                  type: track.type,
-                                })}px`,
-                              }}
-                            >
-                              <TimelineTrackContent
-                                track={track}
-                                zoomLevel={zoomLevel}
-                                dragState={dragState}
-                                rulerScrollRef={tracksScrollRef}
-                                tracksScrollRef={tracksScrollRef}
-                                lastMouseXRef={lastMouseXRef}
-                                onSnapPointChange={handleSnapPointChange}
-                                onResizeStateChange={handleResizeStateChange}
-                                onElementMouseDown={handleElementMouseDown}
-                                onElementClick={handleElementClick}
-                                onTrackMouseDown={(event) => {
-                                  handleSelectionMouseDown(event)
-                                  handleTracksMouseDown(event)
+                          <ContextMenuTrigger
+                            render={
+                              <div
+                                className={cn(
+                                  'absolute right-0 left-0',
+                                  isBeingDragged && 'opacity-40',
+                                )}
+                                style={{
+                                  top: `${getCumulativeHeightBefore({
+                                    tracks,
+                                    trackIndex: index,
+                                  })}px`,
+                                  height: `${getTrackHeight({
+                                    type: track.type,
+                                  })}px`,
                                 }}
-                                onTrackClick={handleTracksClick}
-                                shouldIgnoreClick={shouldIgnoreClick}
                               />
-                            </div>
+                            }
+                          >
+                            <TimelineTrackContent
+                              track={track}
+                              zoomLevel={zoomLevel}
+                              dragState={dragState}
+                              rulerScrollRef={tracksScrollRef}
+                              tracksScrollRef={tracksScrollRef}
+                              lastMouseXRef={lastMouseXRef}
+                              onSnapPointChange={handleSnapPointChange}
+                              onResizeStateChange={handleResizeStateChange}
+                              onElementMouseDown={handleElementMouseDown}
+                              onElementClick={handleElementClick}
+                              onTrackMouseDown={(event) => {
+                                handleSelectionMouseDown(event)
+                                handleTracksMouseDown(event)
+                              }}
+                              onTrackClick={handleTracksClick}
+                              shouldIgnoreClick={shouldIgnoreClick}
+                            />
                           </ContextMenuTrigger>
                           <ContextMenuContent className="z-200 w-40">
                             <ContextMenuItem

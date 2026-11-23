@@ -281,29 +281,31 @@ function SegmentGrid({ taskId }: { taskId: string }) {
           {finishList.map((item, index) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: no unique identifier available
             <Tooltip key={index}>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  onClick={() => void taskManager.retrySegment(taskId, index)}
-                  disabled={item.status !== 'error'}
-                  className={cn(
-                    'aspect-square rounded-md border font-medium',
-                    'text-xs sm:text-sm',
-                    'transition-all duration-150 shadow-sm',
-                    'flex items-center justify-center',
-                    item.status === 'finish' &&
-                      'bg-emerald-600 hover:bg-emerald-700 border-emerald-700 text-white',
-                    item.status === 'error' &&
-                      'bg-red-600 hover:bg-red-700 border-red-700 text-white cursor-pointer hover:scale-105',
-                    item.status === 'downloading' &&
-                      'bg-blue-600 animate-pulse border-blue-700 text-white',
-                    item.status === '' &&
-                      'bg-muted hover:bg-muted/80 border-border text-muted-foreground',
-                    'disabled:cursor-not-allowed disabled:opacity-60',
-                  )}
-                >
-                  {index + 1}
-                </button>
+              <TooltipTrigger
+                render={
+                  <button
+                    type="button"
+                    onClick={() => void taskManager.retrySegment(taskId, index)}
+                    disabled={item.status !== 'error'}
+                    className={cn(
+                      'aspect-square rounded-md border font-medium',
+                      'text-xs sm:text-sm',
+                      'transition-all duration-150 shadow-sm',
+                      'flex items-center justify-center',
+                      item.status === 'finish' &&
+                        'bg-emerald-600 hover:bg-emerald-700 border-emerald-700 text-white',
+                      item.status === 'error' &&
+                        'bg-red-600 hover:bg-red-700 border-red-700 text-white cursor-pointer hover:scale-105',
+                      item.status === 'downloading' &&
+                        'bg-blue-600 animate-pulse border-blue-700 text-white',
+                      item.status === '' &&
+                        'bg-muted hover:bg-muted/80 border-border text-muted-foreground',
+                      'disabled:cursor-not-allowed disabled:opacity-60',
+                    )}
+                  />
+                }
+              >
+                {index + 1}
               </TooltipTrigger>
               <TooltipContent>
                 <p className="max-w-xs wrap-break-word">

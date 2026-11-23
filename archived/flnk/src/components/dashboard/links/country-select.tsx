@@ -46,23 +46,20 @@ export function CountrySelect({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
+      <PopoverTrigger render={<Button
           type="button"
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between font-normal"
-        >
-          {selected ? (
-            <span>
-              {selected.flag} {selected.code}
-            </span>
-          ) : (
-            <span className="text-muted-foreground">{placeholder}</span>
-          )}
-          <ChevronsUpDown className="size-4 opacity-50" />
-        </Button>
+          className="w-full justify-between font-normal" />}>
+        {selected ? (
+          <span>
+            {selected.flag} {selected.code}
+          </span>
+        ) : (
+          <span className="text-muted-foreground">{placeholder}</span>
+        )}
+        <ChevronsUpDown className="size-4 opacity-50" />
       </PopoverTrigger>
       <PopoverContent className="w-[260px] p-0" align="start">
         <Command>

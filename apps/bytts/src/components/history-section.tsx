@@ -258,11 +258,11 @@ export default function HistorySection() {
           )}
           {history.length > 0 && (
             <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button size="sm" variant="secondary">
-                  <Trash2 />
-                  清除历史
-                </Button>
+              <AlertDialogTrigger
+                render={<Button size="sm" variant="secondary" />}
+              >
+                <Trash2 />
+                清除历史
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>

@@ -106,15 +106,17 @@ function TransitionPresetCard({ preset }: { preset: TransitionPreset }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            className="bg-muted hover:bg-accent flex flex-col items-center gap-2 rounded-lg border p-3 transition-colors"
-            onClick={handleApplyTransition}
-          >
-            <TransitionPreview type={preset.type} />
-            <span className="text-xs font-medium">{preset.label}</span>
-          </button>
+        <TooltipTrigger
+          render={
+            <button
+              type="button"
+              className="bg-muted hover:bg-accent flex flex-col items-center gap-2 rounded-lg border p-3 transition-colors"
+              onClick={handleApplyTransition}
+            />
+          }
+        >
+          <TransitionPreview type={preset.type} />
+          <span className="text-xs font-medium">{preset.label}</span>
         </TooltipTrigger>
         <TooltipContent>
           <p>

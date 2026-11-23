@@ -42,18 +42,20 @@ export function MonthDayPicker({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          disabled={disabled}
-          className={`justify-start font-normal ${
-            selected ? '' : 'text-muted-foreground'
-          } ${className ?? ''}`}
-        >
-          <CalendarIcon className="mr-2 size-4" />
-          {selected ? format(selected, 'MM-dd') : placeholder}
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            type="button"
+            variant="outline"
+            disabled={disabled}
+            className={`justify-start font-normal ${
+              selected ? '' : 'text-muted-foreground'
+            } ${className ?? ''}`}
+          />
+        }
+      >
+        <CalendarIcon className="mr-2 size-4" />
+        {selected ? format(selected, 'MM-dd') : placeholder}
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <div className="border-b px-3 py-2 text-xs text-muted-foreground">

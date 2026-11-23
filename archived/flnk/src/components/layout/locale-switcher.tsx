@@ -29,21 +29,18 @@ export function LocaleSwitcher() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
+      <DropdownMenuTrigger render={<Button
           variant="outline"
           size="icon"
           aria-label="Switch language"
-          disabled={isPending}
-        >
-          <Languages className="size-4" />
-        </Button>
+          disabled={isPending} />}>
+        <Languages className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {locales.map((locale) => (
           <DropdownMenuItem
             key={locale}
-            onSelect={() => onSelect(locale)}
+            onClick={() => onSelect(locale)}
             disabled={locale === current}
           >
             {localeLabels[locale]}

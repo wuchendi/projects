@@ -76,11 +76,9 @@ export function LinksBulkBar({
           {t('disable')}
         </Button>
         <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Tag className="size-4" />
-              {t('tagAction')}
-            </Button>
+          <PopoverTrigger render={<Button variant="outline" size="sm" />}>
+            <Tag className="size-4" />
+            {t('tagAction')}
           </PopoverTrigger>
           <PopoverContent align="end" className="w-64 space-y-2">
             <Label>{t('bulkTagLabel')}</Label>

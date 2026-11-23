@@ -54,6 +54,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+const DAY_OPTIONS = [
+  { value: '7', label: '近 7 天' },
+  { value: '30', label: '近 30 天' },
+]
+
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString('zh-CN', {
     month: 'short',
@@ -92,8 +97,11 @@ export function TrendChart() {
         </CardDescription>
         <CardAction>
           <Select
+            items={DAY_OPTIONS}
             value={String(days)}
-            onValueChange={(v) => setDays(Number(v) as 7 | 30)}
+            onValueChange={(v) => {
+              if (v !== null) setDays(Number(v) as 7 | 30)
+            }}
           >
             <SelectTrigger>
               <SelectValue />

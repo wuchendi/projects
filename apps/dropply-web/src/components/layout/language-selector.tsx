@@ -41,18 +41,20 @@ export function LanguageSelector() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className="size-8 cursor-pointer"
-          disabled={isPending}
-          aria-label={t('language.label')}
-        >
-          <LanguagesIcon
-            className={`size-4 ${isPending ? 'animate-spin' : ''}`}
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            size="icon"
+            className="size-8 cursor-pointer"
+            disabled={isPending}
+            aria-label={t('language.label')}
           />
-        </Button>
+        }
+      >
+        <LanguagesIcon
+          className={`size-4 ${isPending ? 'animate-spin' : ''}`}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {languages.map((language) => (

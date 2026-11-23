@@ -9,6 +9,7 @@ import { useEditor } from '@/hooks/use-editor'
 import { formatSpeedLabel, SPEED_PRESETS } from '@/lib/timeline/speed-utils'
 import type { AudioElement } from '@/types/timeline'
 import { clamp } from '@/utils/math'
+import { firstSliderValue } from '@/utils/slider'
 import {
   PropertyGroup,
   PropertyItem,
@@ -93,7 +94,8 @@ export function AudioProperties({
                     min={0}
                     max={200}
                     step={1}
-                    onValueChange={([value]) => {
+                    onValueChange={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialVolumeRef.current === null) {
                         initialVolumeRef.current = element.volume
                       }
@@ -102,7 +104,8 @@ export function AudioProperties({
                         pushHistory: false,
                       })
                     }}
-                    onValueCommit={([value]) => {
+                    onValueCommitted={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialVolumeRef.current !== null) {
                         updateElement({
                           updates: { volume: initialVolumeRef.current },

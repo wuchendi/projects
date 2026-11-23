@@ -253,7 +253,7 @@ function PlusButton({
   if (tooltipText) {
     return (
       <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipTrigger render={button} />
         <TooltipContent>
           <p>{tooltipText}</p>
         </TooltipContent>

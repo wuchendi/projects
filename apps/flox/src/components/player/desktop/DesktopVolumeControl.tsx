@@ -50,7 +50,9 @@ export function DesktopVolumeControl({
           min={0}
           max={1}
           step={0.01}
-          onValueChange={(v) => onVolumeValueChange(v[0])}
+          onValueChange={(v) =>
+            onVolumeValueChange(Array.isArray(v) ? v[0] : v)
+          }
           aria-label="音量"
           className="flex-1"
         />

@@ -101,20 +101,17 @@ export function NavUser() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
+          <DropdownMenuTrigger render={<SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Avatar image={user.image} name={name} email={email} />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{name || email}</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {email}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
+              className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground" />}>
+            <Avatar image={user.image} name={name} email={email} />
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{name || email}</span>
+              <span className="truncate text-xs text-muted-foreground">
+                {email}
+              </span>
+            </div>
+            <ChevronsUpDown className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="min-w-56 rounded-lg"
@@ -163,22 +160,18 @@ export function NavUser() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem asChild>
-              <Link href={DOCS_HREF} target="_blank" rel="noopener noreferrer">
-                <BookOpen className="size-4" />
-                {t('docs')}
-              </Link>
+            <DropdownMenuItem render={<Link href={DOCS_HREF} target="_blank" rel="noopener noreferrer" />}>
+              <BookOpen className="size-4" />
+              {t('docs')}
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={REPO_HREF} target="_blank" rel="noopener noreferrer">
-                <GitHubIcon className="size-4" />
-                {t('repo')}
-              </Link>
+            <DropdownMenuItem render={<Link href={REPO_HREF} target="_blank" rel="noopener noreferrer" />}>
+              <GitHubIcon className="size-4" />
+              {t('repo')}
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onSelect={() => void onSignOut()}>
+            <DropdownMenuItem onClick={() => void onSignOut()}>
               <LogOut className="size-4" />
               {t('signOut')}
             </DropdownMenuItem>

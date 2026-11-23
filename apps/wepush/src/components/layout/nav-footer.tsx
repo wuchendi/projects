@@ -47,29 +47,31 @@ export function NavFooter() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Image
-                src={user?.image || 'https://wcd.pages.dev/logo.png'}
-                alt="wepush"
-                width={32}
-                height={32}
-                className="size-8 shrink-0 rounded-lg"
-                unoptimized
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton
+                size="lg"
+                className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground"
               />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {user?.name || user?.email || 'wepush'}
-                </span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {user?.email || '推送控制台'}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
+            }
+          >
+            <Image
+              src={user?.image || 'https://wcd.pages.dev/logo.png'}
+              alt="wepush"
+              width={32}
+              height={32}
+              className="size-8 shrink-0 rounded-lg"
+              unoptimized
+            />
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-semibold">
+                {user?.name || user?.email || 'wepush'}
+              </span>
+              <span className="truncate text-xs text-muted-foreground">
+                {user?.email || '推送控制台'}
+              </span>
+            </div>
+            <ChevronsUpDown className="ml-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="min-w-56 rounded-lg"
@@ -107,23 +109,35 @@ export function NavFooter() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem asChild>
-              <Link href={DOCS_HREF} target="_blank" rel="noopener noreferrer">
-                <BookOpen className="size-4" />
-                文档
-              </Link>
+            <DropdownMenuItem
+              render={
+                <Link
+                  href={DOCS_HREF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+            >
+              <BookOpen className="size-4" />
+              文档
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={REPO_HREF} target="_blank" rel="noopener noreferrer">
-                <GitHubIcon className="size-4" />
-                源码仓库
-              </Link>
+            <DropdownMenuItem
+              render={
+                <Link
+                  href={REPO_HREF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+            >
+              <GitHubIcon className="size-4" />
+              源码仓库
             </DropdownMenuItem>
 
             {user ? (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={() => void onSignOut()}>
+                <DropdownMenuItem onClick={() => void onSignOut()}>
                   <LogOut className="size-4" />
                   退出登录
                 </DropdownMenuItem>

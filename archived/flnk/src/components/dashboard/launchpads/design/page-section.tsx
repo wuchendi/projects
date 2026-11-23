@@ -161,7 +161,11 @@ export function PageSection({
             <Label className="text-xs">{t('design.typography.font')}</Label>
             <Select
               value={font}
-              onValueChange={(v) => setTheme({ font: v as Theme['font'] })}
+              onValueChange={(v) => v && setTheme({ font: v as Theme['font'] })}
+              items={FONTS.map((f) => ({
+                value: f,
+                label: t(`design.typography.fonts.${f}`),
+              }))}
             >
               <SelectTrigger className="w-48">
                 <SelectValue />

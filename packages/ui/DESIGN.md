@@ -53,8 +53,9 @@ these goals:
 - **Not relocatable in isolation.** The theme's `@source` globs (§7) hard-code the
   `packages/ui` ↔ `apps/**` relative layout; the package can't move without
   breaking Tailwind class detection.
-- **Not a single UI ecosystem.** It deliberately mixes `radix-ui` and one
-  `@base-ui/react` component (§4) — resolving that is out of scope.
+- **Not a single UI ecosystem beyond the primitives.** Interactive primitives
+  are uniformly `@base-ui/react` (§4), but several components still wrap
+  third-party drivers (`recharts`, `cmdk`, `react-day-picker`, …, §4.2).
 - **No demo site / Storybook / visual tests.** Validation is delegated to the
   consuming apps and root tooling (§9).
 
@@ -74,7 +75,7 @@ boundary between this package and each consumer:
   packages/ui/package.json  exports  (wildcard subpaths, no barrel)
       ▼
   src/
-    components/*.tsx   56 shadcn/ui primitives   (radix-ui + 1 @base-ui/react)
+    components/*.tsx   59 shadcn/ui primitives   (@base-ui/react)
     IK/*.tsx           10 app-shell parts        (composed from primitives)
     reactbits/*.tsx    10 effects                (ogl / raw-WebGL / motion)
     icon/*.tsx         2 brand SVGs
@@ -88,7 +89,7 @@ Key properties:
 - **The consumer's bundler is the compiler.** TSX/JSX transform, tree-shaking,
   and type-checking all happen in-consumer. This package emits nothing.
 - **No dependency inversion at runtime** — every dep in `package.json`
-  (`radix-ui`, `@base-ui/react`, `ogl`, `recharts`, `qrcode`, `motion`, …) is a
+  (`@base-ui/react`, `ogl`, `recharts`, `qrcode`, `motion`, …) is a
   client library the consumer's bundle pulls in on demand.
 - **The only cross-package runtime coupling is CSS** — `globals.css` `@source`
   reaches into `apps/**` (§7).
@@ -121,30 +122,28 @@ entry.
 
 ## 4. Primitives (`components/`)
 
-56 files, shadcn/ui `style: radix-nova` (`components.json`). They are the bulk of
+59 files, shadcn/ui `style: base-nova` (`components.json`). They are the bulk of
 the library and the part that is **not linted** (§9).
 
-### 4.1 Two primitive ecosystems
+### 4.1 Primitive ecosystem: Base UI
 
-- **`radix-ui`** — the **unified** package (imported as
-  `import { Dialog as DialogPrimitive } from "radix-ui"`, **not** per-component
-  `@radix-ui/*`) — is the base for **27** components.
-- **`@base-ui/react`** is used by **exactly one** component: `combobox.tsx`
-  (`Combobox as ComboboxPrimitive`).
-
-This split is intentional but easy to trip over — when adding or editing a
-component, check which ecosystem its neighbors use before importing.
+- **`@base-ui/react`** (Base UI) is the single primitive base — **28**
+  components import it, via per-primitive subpaths
+  (`import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"`) plus the
+  `@base-ui/react/use-render` / `@base-ui/react/merge-props` helpers.
+- **Composition uses the `render` prop**, not `asChild` — e.g.
+  `<DialogTrigger render={<Button />} />`. New or edited components must follow
+  the same pattern.
 
 ### 4.2 Driver-backed wrappers
 
-Several primitives wrap a third-party library rather than a Radix primitive:
+Several primitives wrap a third-party library rather than a Base UI primitive:
 
 | Component | Backed by |
 | --- | --- |
 | `chart` | `recharts` |
 | `qr-code` | `qrcode` (canvas/svg backend switch + imperative `QRCodeHandle` ref: `download`, `toDataURL`) |
 | `sonner` | `sonner` (reads theme via `next-themes`) |
-| `drawer` | `vaul` |
 | `command` | `cmdk` |
 | `calendar` | `react-day-picker` |
 | `resizable` | `react-resizable-panels` |
@@ -232,7 +231,7 @@ enabled buttons.
 The library targets React 19 with `rsc: true` (`components.json`), so it must be
 safe under React Server Components:
 
-- **Client components carry `'use client'`** — 44 of 56 primitives, plus
+- **Client components carry `'use client'`** — 44 of 59 primitives, plus
   `IKAudioAssetPlayer`, `IKVersionInfo`, and all 10 reactbits effects.
 - **Server-safe components omit it** — e.g. `button`, `badge`, `card`, `alert`,
   `input`, `textarea`, `skeleton`, `spinner`, `breadcrumb`, `button-group`,
@@ -260,7 +259,7 @@ There is no build/test pipeline in this package. Validation is external:
   `tsconfig.lint.json` (`include: ["src","turbo"]`) exists for editor/CI
   type-checking but its `dist` `outDir` is a phantom — nothing is emitted.
 - **shadcn CLI** (`components.json`) adds/updates primitives and effects:
-  `style: radix-nova`, `rsc: true`, `baseColor: neutral`, `iconLibrary: lucide`,
+  `style: base-nova`, `rsc: true`, `baseColor: neutral`, `iconLibrary: lucide`,
   aliases at `@cdlab/ui/*`, and two custom registries — `@react-bits` →
   `https://reactbits.dev/r/{name}.json`, `@ikui` →
   `https://ik-ui.pages.dev/r/{name}.json`.
@@ -272,7 +271,7 @@ There is no build/test pipeline in this package. Validation is external:
 - **`package.json`** — `"private": true`, `"type": "module"`, `"scripts": {}`
   (the no-build design), and the `exports` map (§3). Dependencies are pinned via
   the pnpm catalog (`catalog:prod` / `catalog:dev`, resolved in root
-  `pnpm-workspace.yaml`: React 19, `radix-ui`, `@base-ui/react`, `ogl`,
+  `pnpm-workspace.yaml`: React 19, `@base-ui/react`, `ogl`,
   `recharts`, `qrcode`, `motion`, …).
 - **`components.json`** — shadcn CLI config (§9).
 - **`postcss.config.mjs`** — the `@tailwindcss/postcss` plugin only; re-exported as

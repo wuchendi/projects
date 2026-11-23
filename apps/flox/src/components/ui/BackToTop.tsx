@@ -16,7 +16,7 @@ export function BackToTop() {
     }
 
     const attach = () => {
-      viewport = document.querySelector('[data-radix-scroll-area-viewport]')
+      viewport = document.querySelector('[data-slot="scroll-area-viewport"]')
       if (!viewport) return false
       viewport.addEventListener('scroll', toggleVisibility, { passive: true })
       toggleVisibility()
@@ -35,7 +35,9 @@ export function BackToTop() {
   }, [])
 
   const scrollToTop = () => {
-    const viewport = document.querySelector('[data-radix-scroll-area-viewport]')
+    const viewport = document.querySelector(
+      '[data-slot="scroll-area-viewport"]',
+    )
     viewport?.scrollTo({ top: 0, behavior: 'smooth' })
   }
 

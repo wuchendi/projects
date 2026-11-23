@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@cdlab/ui/lib/utils"
+
 import { Button } from "@cdlab/ui/components/button"
 import { Input } from "@cdlab/ui/components/input"
 import { Textarea } from "@cdlab/ui/components/textarea"
@@ -89,8 +89,10 @@ function InputGroupButton({
   variant = "ghost",
   size = "xs",
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size"> &
-  VariantProps<typeof inputGroupButtonVariants>) {
+}: Omit<React.ComponentProps<typeof Button>, "size" | "type"> &
+  VariantProps<typeof inputGroupButtonVariants> & {
+    type?: "button" | "submit" | "reset"
+  }) {
   return (
     <Button
       type={type}

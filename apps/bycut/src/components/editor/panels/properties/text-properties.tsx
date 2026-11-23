@@ -29,6 +29,7 @@ import type {
   Transform,
 } from '@/types/timeline'
 import { clamp } from '@/utils/math'
+import { firstSliderValue } from '@/utils/slider'
 import { uppercase } from '@/utils/string'
 import {
   PropertyGroup,
@@ -472,7 +473,8 @@ export function TextProperties({
                         min={MIN_FONT_SIZE}
                         max={MAX_FONT_SIZE}
                         step={1}
-                        onValueChange={([value]) => {
+                        onValueChange={(values) => {
+                          const value = firstSliderValue(values)
                           if (initialFontSizeRef.current === null) {
                             initialFontSizeRef.current = element.fontSize
                           }
@@ -481,7 +483,8 @@ export function TextProperties({
                             pushHistory: false,
                           })
                         }}
-                        onValueCommit={([value]) => {
+                        onValueCommitted={(values) => {
+                          const value = firstSliderValue(values)
                           if (initialFontSizeRef.current !== null) {
                             editor.timeline.updateElements({
                               updates: buildBatchUpdates({
@@ -594,7 +597,8 @@ export function TextProperties({
                         min={0}
                         max={100}
                         step={1}
-                        onValueChange={([value]) => {
+                        onValueChange={(values) => {
+                          const value = firstSliderValue(values)
                           if (initialOpacityRef.current === null) {
                             initialOpacityRef.current = element.opacity
                           }
@@ -605,7 +609,8 @@ export function TextProperties({
                             pushHistory: false,
                           })
                         }}
-                        onValueCommit={([value]) => {
+                        onValueCommitted={(values) => {
+                          const value = firstSliderValue(values)
                           if (initialOpacityRef.current !== null) {
                             editor.timeline.updateElements({
                               updates: buildBatchUpdates({
@@ -709,7 +714,8 @@ export function TextProperties({
                             min={0}
                             max={100}
                             step={1}
-                            onValueChange={([value]) => {
+                            onValueChange={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialBgOpacityRef.current === null) {
                                 initialBgOpacityRef.current =
                                   element.backgroundOpacity ?? 1
@@ -721,7 +727,8 @@ export function TextProperties({
                                 pushHistory: false,
                               })
                             }}
-                            onValueCommit={([value]) => {
+                            onValueCommitted={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialBgOpacityRef.current !== null) {
                                 editor.timeline.updateElements({
                                   updates: buildBatchUpdates({
@@ -758,7 +765,8 @@ export function TextProperties({
                             min={0}
                             max={50}
                             step={1}
-                            onValueChange={([value]) => {
+                            onValueChange={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialBgBorderRadiusRef.current === null) {
                                 initialBgBorderRadiusRef.current =
                                   element.backgroundBorderRadius ?? 0
@@ -770,7 +778,8 @@ export function TextProperties({
                                 pushHistory: false,
                               })
                             }}
-                            onValueCommit={([value]) => {
+                            onValueCommitted={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialBgBorderRadiusRef.current !== null) {
                                 editor.timeline.updateElements({
                                   updates: buildBatchUpdates({
@@ -807,7 +816,8 @@ export function TextProperties({
                             min={0}
                             max={50}
                             step={1}
-                            onValueChange={([value]) => {
+                            onValueChange={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialBgPaddingYRef.current === null) {
                                 initialBgPaddingYRef.current =
                                   element.backgroundPaddingY ?? 4
@@ -819,7 +829,8 @@ export function TextProperties({
                                 pushHistory: false,
                               })
                             }}
-                            onValueCommit={([value]) => {
+                            onValueCommitted={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialBgPaddingYRef.current !== null) {
                                 editor.timeline.updateElements({
                                   updates: buildBatchUpdates({
@@ -856,7 +867,8 @@ export function TextProperties({
                             min={0}
                             max={50}
                             step={1}
-                            onValueChange={([value]) => {
+                            onValueChange={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialBgPaddingXRef.current === null) {
                                 initialBgPaddingXRef.current =
                                   element.backgroundPaddingX ?? 8
@@ -868,7 +880,8 @@ export function TextProperties({
                                 pushHistory: false,
                               })
                             }}
-                            onValueCommit={([value]) => {
+                            onValueCommitted={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialBgPaddingXRef.current !== null) {
                                 editor.timeline.updateElements({
                                   updates: buildBatchUpdates({
@@ -972,7 +985,8 @@ export function TextProperties({
                             min={1}
                             max={20}
                             step={1}
-                            onValueChange={([value]) => {
+                            onValueChange={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialStrokeRef.current === null) {
                                 initialStrokeRef.current = { ...currentStroke }
                               }
@@ -981,7 +995,8 @@ export function TextProperties({
                                 pushHistory: false,
                               })
                             }}
-                            onValueCommit={([value]) => {
+                            onValueCommitted={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialStrokeRef.current !== null) {
                                 updateStroke({
                                   stroke: initialStrokeRef.current,
@@ -1084,7 +1099,8 @@ export function TextProperties({
                             min={-20}
                             max={20}
                             step={1}
-                            onValueChange={([value]) => {
+                            onValueChange={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialShadowRef.current === null) {
                                 initialShadowRef.current = { ...currentShadow }
                               }
@@ -1093,7 +1109,8 @@ export function TextProperties({
                                 pushHistory: false,
                               })
                             }}
-                            onValueCommit={([value]) => {
+                            onValueCommitted={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialShadowRef.current !== null) {
                                 updateShadow({
                                   shadow: initialShadowRef.current,
@@ -1124,7 +1141,8 @@ export function TextProperties({
                             min={-20}
                             max={20}
                             step={1}
-                            onValueChange={([value]) => {
+                            onValueChange={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialShadowRef.current === null) {
                                 initialShadowRef.current = { ...currentShadow }
                               }
@@ -1133,7 +1151,8 @@ export function TextProperties({
                                 pushHistory: false,
                               })
                             }}
-                            onValueCommit={([value]) => {
+                            onValueCommitted={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialShadowRef.current !== null) {
                                 updateShadow({
                                   shadow: initialShadowRef.current,
@@ -1164,7 +1183,8 @@ export function TextProperties({
                             min={0}
                             max={30}
                             step={1}
-                            onValueChange={([value]) => {
+                            onValueChange={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialShadowRef.current === null) {
                                 initialShadowRef.current = { ...currentShadow }
                               }
@@ -1173,7 +1193,8 @@ export function TextProperties({
                                 pushHistory: false,
                               })
                             }}
-                            onValueCommit={([value]) => {
+                            onValueCommitted={(values) => {
+                              const value = firstSliderValue(values)
                               if (initialShadowRef.current !== null) {
                                 updateShadow({
                                   shadow: initialShadowRef.current,
@@ -1344,7 +1365,8 @@ export function TextProperties({
                         min={10}
                         max={500}
                         step={1}
-                        onValueChange={([value]) => {
+                        onValueChange={(values) => {
+                          const value = firstSliderValue(values)
                           if (initialScaleRef.current === null) {
                             initialScaleRef.current = element.transform.scale
                           }
@@ -1353,7 +1375,8 @@ export function TextProperties({
                             pushHistory: false,
                           })
                         }}
-                        onValueCommit={([value]) => {
+                        onValueCommitted={(values) => {
+                          const value = firstSliderValue(values)
                           if (initialScaleRef.current !== null) {
                             updateTransform({
                               updates: { scale: initialScaleRef.current },
@@ -1433,7 +1456,8 @@ export function TextProperties({
                         min={-180}
                         max={180}
                         step={1}
-                        onValueChange={([value]) => {
+                        onValueChange={(values) => {
+                          const value = firstSliderValue(values)
                           if (initialRotationRef.current === null) {
                             initialRotationRef.current =
                               element.transform.rotate
@@ -1443,7 +1467,8 @@ export function TextProperties({
                             pushHistory: false,
                           })
                         }}
-                        onValueCommit={([value]) => {
+                        onValueCommitted={(values) => {
+                          const value = firstSliderValue(values)
                           if (initialRotationRef.current !== null) {
                             updateTransform({
                               updates: {

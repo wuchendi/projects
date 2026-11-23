@@ -45,7 +45,7 @@ export function SliderField({
         min={min}
         max={max}
         step={step}
-        onValueChange={([v]) => onChange(v)}
+        onValueChange={(v) => onChange(Array.isArray(v) ? v[0] : v)}
       />
     </Field>
   )

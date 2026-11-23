@@ -166,11 +166,9 @@ export function LaunchpadEditor({ id }: { id: string }) {
           {t(`status.${form.status}`)}
         </Badge>
         {form.status === 'published' && form.slug && (
-          <Button variant="outline" size="sm" asChild>
-            <a href={publicUrl} target="_blank" rel="noreferrer">
-              <ExternalLink className="size-4" />
-              {tc('open')}
-            </a>
+          <Button variant="outline" size="sm" render={<a href={publicUrl} target="_blank" rel="noreferrer" />} nativeButton={false}>
+            <ExternalLink className="size-4" />
+            {tc('open')}
           </Button>
         )}
         <Button

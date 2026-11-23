@@ -33,9 +33,8 @@ export function ListLayoutToggle({
 }: ListLayoutToggleProps) {
   return (
     <ToggleGroup
-      type="single"
-      value={value}
-      onValueChange={(v) => v && onChange(v as ListView)}
+      value={[value]}
+      onValueChange={(v) => v[0] && onChange(v[0] as ListView)}
       variant="outline"
       className={className}
     >

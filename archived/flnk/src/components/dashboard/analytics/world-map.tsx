@@ -110,14 +110,12 @@ export function WorldMap({
                   }
                   return (
                     <Tooltip key={geo.rsmKey}>
-                      <TooltipTrigger asChild>
-                        <Geography
+                      <TooltipTrigger render={<Geography
                           geography={geo}
                           className={GEOGRAPHY_CLASS}
                           stroke="var(--background)"
                           {...shade}
-                        />
-                      </TooltipTrigger>
+                        />} />
                       <TooltipContent>
                         <span className="font-medium">
                           {geo.properties?.name ?? geo.id}

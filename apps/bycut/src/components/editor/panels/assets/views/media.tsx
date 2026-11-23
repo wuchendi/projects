@@ -336,15 +336,17 @@ export function MediaView() {
               )}
             </InputGroup>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  disabled={isProcessing}
-                  size="icon"
-                  className="size-8 shrink-0"
-                >
-                  <CloudUpload className="size-4" />
-                </Button>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    disabled={isProcessing}
+                    size="icon"
+                    className="size-8 shrink-0"
+                  />
+                }
+              >
+                <CloudUpload className="size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={openFilePicker} className="gap-2">
@@ -363,17 +365,19 @@ export function MediaView() {
           </div>
           <div className="flex items-center gap-1">
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant={filterType !== 'all' ? 'secondary' : 'outline'}
-                  size="sm"
-                  className="h-7 gap-1 px-2 text-xs"
-                >
-                  <Filter className="size-3.5" />
-                  {filterType === 'all'
-                    ? t('common.all')
-                    : t(`common.${filterType}`)}
-                </Button>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant={filterType !== 'all' ? 'secondary' : 'outline'}
+                    size="sm"
+                    className="h-7 gap-1 px-2 text-xs"
+                  />
+                }
+              >
+                <Filter className="size-3.5" />
+                {filterType === 'all'
+                  ? t('common.all')
+                  : t(`common.${filterType}`)}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem
@@ -406,18 +410,20 @@ export function MediaView() {
               </DropdownMenuContent>
             </DropdownMenu>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isProcessing}
-                  className="h-7 gap-1 px-2 text-xs"
-                >
-                  <ArrowUpDown className="size-3.5" />
-                  {t(
-                    `common.${sortBy === 'name' ? 'name' : sortBy === 'type' ? 'type' : sortBy === 'duration' ? 'duration' : 'name'}`,
-                  )}
-                </Button>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isProcessing}
+                    className="h-7 gap-1 px-2 text-xs"
+                  />
+                }
+              >
+                <ArrowUpDown className="size-3.5" />
+                {t(
+                  `common.${sortBy === 'name' ? 'name' : sortBy === 'type' ? 'type' : sortBy === 'duration' ? 'duration' : 'name'}`,
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <SortMenuItem
@@ -481,24 +487,26 @@ export function MediaView() {
             <div className="ml-auto flex items-center">
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() =>
-                        setMediaViewMode(
-                          mediaViewMode === 'grid' ? 'list' : 'grid',
-                        )
-                      }
-                      disabled={isProcessing}
-                      className="size-7 shrink-0"
-                    >
-                      {mediaViewMode === 'grid' ? (
-                        <LayoutGrid className="size-4" />
-                      ) : (
-                        <List className="size-4" />
-                      )}
-                    </Button>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() =>
+                          setMediaViewMode(
+                            mediaViewMode === 'grid' ? 'list' : 'grid',
+                          )
+                        }
+                        disabled={isProcessing}
+                        className="size-7 shrink-0"
+                      />
+                    }
+                  >
+                    {mediaViewMode === 'grid' ? (
+                      <LayoutGrid className="size-4" />
+                    ) : (
+                      <List className="size-4" />
+                    )}
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>

@@ -127,14 +127,18 @@ export function SourceCard({ headerAction, actions }: SourceCardProps) {
                 </InputGroupButton>
               )}
               {url.trim() && (
-                <InputGroupButton size="icon-xs" asChild>
-                  <a
-                    href={byplayLink(locale, url)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <TvMinimalPlay />
-                  </a>
+                <InputGroupButton
+                  size="icon-xs"
+                  nativeButton={false}
+                  render={
+                    <a
+                      href={byplayLink(locale, url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  }
+                >
+                  <TvMinimalPlay />
                 </InputGroupButton>
               )}
             </div>
@@ -192,12 +196,11 @@ export function SourceCard({ headerAction, actions }: SourceCardProps) {
               <Field>
                 <FieldTitle>{t('batch.variant')}</FieldTitle>
                 <ToggleGroup
-                  type="single"
                   size="sm"
                   spacing={1}
                   variant="outline"
-                  value={variants.find((v) => v.selected)?.url || ''}
-                  onValueChange={(v) => {
+                  value={[variants.find((v) => v.selected)?.url || '']}
+                  onValueChange={([v]) => {
                     if (v) {
                       const variant = variants.find((item) => item.url === v)
                       if (variant) void actions.selectVariant(variant)
@@ -225,9 +228,11 @@ export function SourceCard({ headerAction, actions }: SourceCardProps) {
                 {(format === 'stream-mp4' || format === 'stream-ts') && (
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <CircleQuestionMark className="size-3.5 cursor-help text-muted-foreground" />
-                      </TooltipTrigger>
+                      <TooltipTrigger
+                        render={
+                          <CircleQuestionMark className="size-3.5 cursor-help text-muted-foreground" />
+                        }
+                      />
                       <TooltipContent>
                         <p className="max-w-xs">
                           {t('download.streamTooltip')}
@@ -238,12 +243,11 @@ export function SourceCard({ headerAction, actions }: SourceCardProps) {
                 )}
               </FieldTitle>
               <ToggleGroup
-                type="single"
                 size="sm"
                 spacing={1}
                 variant="outline"
-                value={format}
-                onValueChange={(v) => {
+                value={[format]}
+                onValueChange={([v]) => {
                   if (v) setFormat(v as DownloadFormat)
                 }}
                 className="flex-wrap"
@@ -296,12 +300,13 @@ export function SourceCard({ headerAction, actions }: SourceCardProps) {
                     parseInt(rangeDownload.startSegment) || 1,
                     parseInt(rangeDownload.endSegment) || tsUrlList.length,
                   ]}
-                  onValueChange={(value) =>
+                  onValueChange={(value) => {
+                    if (!Array.isArray(value)) return
                     setRangeDownload({
                       startSegment: String(value[0]),
                       endSegment: String(value[1]),
                     })
-                  }
+                  }}
                   min={1}
                   max={tsUrlList.length}
                   step={1}

@@ -109,15 +109,16 @@ function ImageItem({ image, onDelete }: ImageItemProps) {
             variant="secondary"
             size="icon-xs"
             className="bg-black/40 backdrop-blur-[2px]"
-            asChild
             title="Download"
+            nativeButton={false}
+            render={
+              <a
+                href={editedImageUrl || image.processedUrl || ''}
+                download={`bg-removed-${image.id}.png`}
+              />
+            }
           >
-            <a
-              href={editedImageUrl || image.processedUrl || ''}
-              download={`bg-removed-${image.id}.png`}
-            >
-              <Download className="size-4" />
-            </a>
+            <Download className="size-4" />
           </Button>
           <Button
             variant="secondary"

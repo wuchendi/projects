@@ -9,6 +9,7 @@ import { useEditor } from '@/hooks/use-editor'
 import { formatSpeedLabel, SPEED_PRESETS } from '@/lib/timeline/speed-utils'
 import type { ImageElement, VideoElement } from '@/types/timeline'
 import { clamp } from '@/utils/math'
+import { firstSliderValue } from '@/utils/slider'
 import {
   PropertyGroup,
   PropertyItem,
@@ -290,7 +291,8 @@ export function VideoProperties({
                     min={10}
                     max={500}
                     step={1}
-                    onValueChange={([value]) => {
+                    onValueChange={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialScaleRef.current === null) {
                         initialScaleRef.current = element.transform.scale
                       }
@@ -299,7 +301,8 @@ export function VideoProperties({
                         pushHistory: false,
                       })
                     }}
-                    onValueCommit={([value]) => {
+                    onValueCommitted={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialScaleRef.current !== null) {
                         updateTransform({
                           updates: { scale: initialScaleRef.current },
@@ -379,7 +382,8 @@ export function VideoProperties({
                     min={-180}
                     max={180}
                     step={1}
-                    onValueChange={([value]) => {
+                    onValueChange={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialRotationRef.current === null) {
                         initialRotationRef.current = element.transform.rotate
                       }
@@ -388,7 +392,8 @@ export function VideoProperties({
                         pushHistory: false,
                       })
                     }}
-                    onValueCommit={([value]) => {
+                    onValueCommitted={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialRotationRef.current !== null) {
                         updateTransform({
                           updates: { rotate: initialRotationRef.current },
@@ -470,7 +475,8 @@ export function VideoProperties({
                     min={0}
                     max={100}
                     step={1}
-                    onValueChange={([value]) => {
+                    onValueChange={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialOpacityRef.current === null) {
                         initialOpacityRef.current = element.opacity
                       }
@@ -485,7 +491,8 @@ export function VideoProperties({
                         pushHistory: false,
                       })
                     }}
-                    onValueCommit={([value]) => {
+                    onValueCommitted={(values) => {
+                      const value = firstSliderValue(values)
                       if (initialOpacityRef.current !== null) {
                         editor.timeline.updateElements({
                           updates: [

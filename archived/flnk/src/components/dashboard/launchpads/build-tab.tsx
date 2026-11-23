@@ -78,11 +78,9 @@ export function BuildTab({ config, links, onChange }: BuildTabProps) {
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{t('build.hint')}</p>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="sm">
-              <Plus className="size-4" />
-              {t('build.addBlock')}
-            </Button>
+          <DropdownMenuTrigger render={<Button size="sm" />}>
+            <Plus className="size-4" />
+            {t('build.addBlock')}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {BLOCK_TYPES.map((type) => (
