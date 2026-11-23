@@ -1,4 +1,5 @@
-import { headers } from 'next/headers'
+import { readShellPrefs } from '@cdlab/ui/shell/core/prefs'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { DashboardShell } from '@/components/dashboard/shell'
@@ -12,5 +13,6 @@ export default async function ProtectedDashboardLayout({
   const user = await getAllowedSession(await headers())
   if (!user) redirect('/dashboard/login')
 
-  return <DashboardShell>{children}</DashboardShell>
+  const prefs = readShellPrefs((await cookies()).toString())
+  return <DashboardShell prefs={prefs}>{children}</DashboardShell>
 }

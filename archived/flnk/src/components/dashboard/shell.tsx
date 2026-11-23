@@ -1,23 +1,9 @@
 'use client'
 
-import { ScrollArea } from '@cdlab/ui/components/scroll-area'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarRail,
-  SidebarTrigger,
-} from '@cdlab/ui/components/sidebar'
-import { IKFooter } from '@cdlab/ui/IK'
+import type { ShellLabels } from '@cdlab/ui/shell/core/labels'
+import type { ShellPrefs } from '@cdlab/ui/shell/core/prefs'
+import type { ShellSpace } from '@cdlab/ui/shell/core/spaces'
+import { AppShell } from '@cdlab/ui/shell/layout/app-shell'
 import type { LucideIcon } from 'lucide-react'
 import {
   Activity,
@@ -29,9 +15,8 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { useMemo } from 'react'
 import { NavUser } from '@/components/dashboard/nav-user'
 import { FlnkLogo } from '@/components/layout'
 
@@ -39,128 +24,107 @@ interface NavItem {
   href: string
   key: string
   icon: LucideIcon
-  exact: boolean
+  exact?: boolean
+  /** Management utilities sit at the rail foot as icons. */
+  footer?: boolean
 }
 
-// Core product features.
-const MAIN_ITEMS: NavItem[] = [
+const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard', key: 'overview', icon: BarChart3, exact: true },
-  { href: '/dashboard/links', key: 'links', icon: Link2, exact: false },
-  {
-    href: '/dashboard/launchpads',
-    key: 'launchpads',
-    icon: Rocket,
-    exact: false,
-  },
-  {
-    href: '/dashboard/analytics',
-    key: 'analytics',
-    icon: Sparkles,
-    exact: false,
-  },
-  {
-    href: '/dashboard/realtime',
-    key: 'realtime',
-    icon: Activity,
-    exact: false,
-  },
-  { href: '/dashboard/check', key: 'check', icon: ShieldCheck, exact: false },
+  { href: '/dashboard/links', key: 'links', icon: Link2 },
+  { href: '/dashboard/launchpads', key: 'launchpads', icon: Rocket },
+  { href: '/dashboard/analytics', key: 'analytics', icon: Sparkles },
+  { href: '/dashboard/realtime', key: 'realtime', icon: Activity },
+  { href: '/dashboard/check', key: 'check', icon: ShieldCheck },
+  { href: '/dashboard/migrate', key: 'migrate', icon: Database, footer: true },
+  { href: '/dashboard/settings', key: 'settings', icon: Settings, footer: true },
 ]
 
-// Management / admin utilities, pinned to the bottom of the sidebar.
-const MANAGE_ITEMS: NavItem[] = [
-  { href: '/dashboard/migrate', key: 'migrate', icon: Database, exact: false },
-  {
-    href: '/dashboard/settings',
-    key: 'settings',
-    icon: Settings,
-    exact: false,
-  },
-]
-
-function isActive(pathname: string, item: NavItem) {
-  return item.exact
-    ? pathname === item.href
-    : pathname === item.href || pathname.startsWith(`${item.href}/`)
+// Shell placeholders (`{count}` …) are filled in by the shell, so they are
+// passed through next-intl unchanged.
+const KEEP = {
+  count: '{count}',
+  total: '{total}',
+  page: '{page}',
+  pages: '{pages}',
+  size: '{size}',
+  name: '{name}',
 }
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
+function useShellLabels(): ShellLabels {
+  const t = useTranslations('dashboard.shell')
+  return useMemo(
+    () => ({
+      toggleSidebar: t('toggleSidebar'),
+      openMenu: t('openMenu'),
+      search: t('search'),
+      searchPlaceholder: t('searchPlaceholder'),
+      searchEmpty: t('searchEmpty'),
+      searchFailed: t('searchFailed'),
+      goTo: t('goTo'),
+      filter: t('filter'),
+      filterActive: t('filterActive', KEEP),
+      display: t('display'),
+      reset: t('reset'),
+      clearSearch: t('clearSearch'),
+      loading: t('loading'),
+      selectedCount: t('selectedCount', KEEP),
+      selectAll: t('selectAll'),
+      deselectAll: t('deselectAll'),
+      selectRow: t('selectRow', KEEP),
+      clearSelection: t('clearSelection'),
+      columns: t('columns'),
+      pagerTotal: t('pagerTotal', KEEP),
+      pagerSelected: t('pagerSelected', KEEP),
+      pagerPage: t('pagerPage', KEEP),
+      pageSize: t('pageSize', KEEP),
+      firstPage: t('firstPage'),
+      previousPage: t('previousPage'),
+      nextPage: t('nextPage'),
+      lastPage: t('lastPage'),
+    }),
+    [t],
+  )
+}
+
+// The dashboard chrome: the shared `@cdlab/ui/shell` (appshell registry) fed
+// with flnk's spaces and account menu.
+export function DashboardShell({
+  prefs,
+  children,
+}: {
+  /** The shell prefs cookie as read on the server, so SSR matches the client. */
+  prefs: ShellPrefs
+  children: React.ReactNode
+}) {
   const t = useTranslations('dashboard.nav')
   const tc = useTranslations('common')
+  const labels = useShellLabels()
 
-  const renderItem = (item: NavItem) => {
-    const Icon = item.icon
-    return (
-      <SidebarMenuItem key={item.href}>
-        <SidebarMenuButton
-          isActive={isActive(pathname, item)}
-          tooltip={t(item.key)} render={<Link href={item.href} />}>
-          <Icon />
-          <span>{t(item.key)}</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    )
-  }
+  const spaces: ShellSpace[] = useMemo(
+    () =>
+      NAV_ITEMS.map((item) => ({
+        key: item.key,
+        href: item.href,
+        label: t(item.key),
+        icon: item.icon,
+        ...(item.exact ? { exact: true } : {}),
+        ...(item.footer ? { footer: true } : {}),
+      })),
+    [t],
+  )
 
   return (
-    <SidebarProvider>
-      <Sidebar collapsible="icon">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
-              <SidebarMenuButton
-                size="lg"
-                className="flex-1 group-data-[collapsible=icon]:hidden" render={<Link href="/dashboard" />}>
-                <FlnkLogo className="size-6" />
-                <span className="truncate font-semibold">
-                  {tc('appName')}
-                </span>
-              </SidebarMenuButton>
-              <SidebarTrigger />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>{t('group.workspace')}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>{MAIN_ITEMS.map(renderItem)}</SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>{t('group.manage')}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>{MANAGE_ITEMS.map(renderItem)}</SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-
-        <SidebarFooter>
-          <NavUser />
-        </SidebarFooter>
-        <SidebarRail />
-      </Sidebar>
-
-      <SidebarInset>
-        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center border-b bg-background/80 px-4 backdrop-blur md:hidden">
-          <SidebarTrigger className="-ml-1" />
-        </header>
-
-        {/* One scroll region for the whole page. The footer lives inside it so
-            it flows at the end of the content instead of being pinned to the
-            viewport — matching the (non-persistent) header. The viewport's inner
-            wrapper is forced into a full-height flex column so `main` (flex-1)
-            keeps the footer at the bottom on short pages and lets it scroll away
-            on tall ones. */}
-        <ScrollArea className="h-[calc(100svh-3.5rem)] md:h-svh [&>[data-slot=scroll-area-viewport]>div]:!flex [&>[data-slot=scroll-area-viewport]>div]:min-h-full [&>[data-slot=scroll-area-viewport]>div]:flex-col">
-          <main className="flex flex-1 flex-col p-4 pt-4 md:px-6 md:pt-6">
-            {children}
-          </main>
-          <IKFooter year={new Date().getFullYear()} />
-        </ScrollArea>
-      </SidebarInset>
-    </SidebarProvider>
+    <AppShell
+      spaces={spaces}
+      homeHref="/dashboard"
+      logo={<FlnkLogo className="size-[18px]" />}
+      logoLabel={tc('appName')}
+      account={<NavUser />}
+      labels={labels}
+      prefs={prefs}
+    >
+      {children}
+    </AppShell>
   )
 }

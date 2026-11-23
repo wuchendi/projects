@@ -21,6 +21,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { eventKey, localTime } from '@/lib/format/format'
 import { statsApi } from '@/lib/platform/api'
+import { ViewHeader } from '@/components/dashboard/view-header'
 
 // WebGL globe is client-only — skip SSR and lazy-load so it never blocks the page.
 const RealtimeGlobe = dynamic(
@@ -106,31 +107,31 @@ export function RealtimeView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-        </div>
-        <Select
-          value={windowKey}
-          onValueChange={(v) => v && setWindowKey(v)}
-          items={Object.keys(WINDOWS).map((w) => ({
-            value: w,
-            label: t(`window.${w}`),
-          }))}
-        >
-          <SelectTrigger className="w-full sm:w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.keys(WINDOWS).map((w) => (
-              <SelectItem key={w} value={w}>
-                {t(`window.${w}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <ViewHeader
+        title={t('title')}
+        description={t('subtitle')}
+        actions={
+          <Select
+            value={windowKey}
+            onValueChange={(v) => v && setWindowKey(v)}
+            items={Object.keys(WINDOWS).map((w) => ({
+              value: w,
+              label: t(`window.${w}`),
+            }))}
+          >
+            <SelectTrigger size="sm" className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.keys(WINDOWS).map((w) => (
+                <SelectItem key={w} value={w}>
+                  {t(`window.${w}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        }
+      />
 
       {notConfigured && (
         <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">

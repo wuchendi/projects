@@ -1,125 +1,68 @@
 'use client'
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarRail,
-  SidebarTrigger,
-} from '@cdlab/ui/components/sidebar'
-import { IKFooter, IKPageContainer } from '@cdlab/ui/IK'
-import type { LucideIcon } from 'lucide-react'
+import { shellLabelsZh } from '@cdlab/ui/shell/core/labels'
+import type { ShellPrefs } from '@cdlab/ui/shell/core/prefs'
+import type { ShellSpace } from '@cdlab/ui/shell/core/spaces'
+import { AppShell } from '@cdlab/ui/shell/layout/app-shell'
 import { Bug, FileText, Home, ListChecks, Settings, Users } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { WepushLogo } from '@/components/layout/logo'
 import { NavFooter } from '@/components/layout/nav-footer'
 
-interface NavItem {
-  href: string
-  label: string
-  icon: LucideIcon
-  exact?: boolean
-}
-
-// Core console features.
-const MAIN_ITEMS: NavItem[] = [
-  { href: '/dashboard', label: '概览', icon: Home, exact: true },
-  { href: '/dashboard/users', label: '接收人', icon: Users },
-  { href: '/dashboard/templates', label: '模板', icon: FileText },
-  { href: '/dashboard/logs', label: '日志', icon: ListChecks },
+// Rail entries: the core console features, then the tooling / configuration
+// entries pinned to the rail foot.
+const SPACES: ShellSpace[] = [
+  {
+    key: 'overview',
+    href: '/dashboard',
+    label: '概览',
+    icon: Home,
+    exact: true,
+  },
+  { key: 'users', href: '/dashboard/users', label: '接收人', icon: Users },
+  {
+    key: 'templates',
+    href: '/dashboard/templates',
+    label: '模板',
+    icon: FileText,
+  },
+  { key: 'logs', href: '/dashboard/logs', label: '日志', icon: ListChecks },
+  {
+    key: 'debug',
+    href: '/dashboard/debug',
+    label: '探测',
+    icon: Bug,
+    footer: true,
+  },
+  {
+    key: 'settings',
+    href: '/dashboard/settings',
+    label: '设置',
+    icon: Settings,
+    footer: true,
+  },
 ]
 
-// Tooling / configuration, pinned below the main group.
-const MANAGE_ITEMS: NavItem[] = [
-  { href: '/dashboard/debug', label: '探测', icon: Bug },
-  { href: '/dashboard/settings', label: '设置', icon: Settings },
-]
-
-function isActive(pathname: string, item: NavItem) {
-  return item.exact
-    ? pathname === item.href
-    : pathname === item.href || pathname.startsWith(`${item.href}/`)
-}
-
-export function DashboardShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-
-  const renderItem = (item: NavItem) => {
-    const Icon = item.icon
-    return (
-      <SidebarMenuItem key={item.href}>
-        <SidebarMenuButton
-          isActive={isActive(pathname, item)}
-          tooltip={item.label}
-          render={<Link href={item.href} />}
-        >
-          <Icon />
-          <span>{item.label}</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    )
-  }
-
+// The console chrome: the shared `@cdlab/ui/shell` (appshell registry, `packages/ui/src/shell`) fed with
+// wepush's spaces and account menu.
+export function DashboardShell({
+  prefs,
+  children,
+}: {
+  /** The shell prefs cookie as read on the server, so SSR matches the client. */
+  prefs: ShellPrefs
+  children: React.ReactNode
+}) {
   return (
-    <SidebarProvider>
-      <Sidebar collapsible="icon">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
-              <SidebarMenuButton
-                size="lg"
-                className="flex-1 group-data-[collapsible=icon]:hidden"
-                render={<Link href="/dashboard" />}
-              >
-                <WepushLogo className="size-6 shrink-0 text-primary" />
-                <span className="truncate font-semibold">wepush</span>
-              </SidebarMenuButton>
-              <SidebarTrigger />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>工作区</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>{MAIN_ITEMS.map(renderItem)}</SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-          <SidebarGroup>
-            <SidebarGroupLabel>管理</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>{MANAGE_ITEMS.map(renderItem)}</SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-
-        <SidebarFooter>
-          <NavFooter />
-        </SidebarFooter>
-        <SidebarRail />
-      </Sidebar>
-
-      <SidebarInset>
-        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center border-b bg-background/80 px-4 backdrop-blur md:hidden">
-          <SidebarTrigger className="-ml-1" />
-        </header>
-
-        <IKPageContainer className="flex-col pt-4 md:pt-6">
-          {children}
-        </IKPageContainer>
-        <IKFooter year={new Date().getFullYear()} />
-      </SidebarInset>
-    </SidebarProvider>
+    <AppShell
+      spaces={SPACES}
+      homeHref="/dashboard"
+      logo={<WepushLogo className="size-[18px]" />}
+      logoLabel="wepush"
+      account={<NavFooter />}
+      labels={shellLabelsZh}
+      prefs={prefs}
+    >
+      {children}
+    </AppShell>
   )
 }

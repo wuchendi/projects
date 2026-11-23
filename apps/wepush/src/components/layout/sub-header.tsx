@@ -1,3 +1,7 @@
+import { PageHeader } from '@cdlab/ui/shell/layout/page-header'
+
+// The page's header row (the shell's sticky `PageHeader`: space icon, title,
+// actions on the right) plus an optional description line under it.
 export function SubHeader({
   title,
   description,
@@ -8,14 +12,20 @@ export function SubHeader({
   children?: React.ReactNode
 }) {
   return (
-    <header className="mb-6 flex items-center justify-between">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-        {description && (
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-        )}
-      </div>
-      <div className="flex gap-2">{children}</div>
-    </header>
+    <>
+      <PageHeader
+        title={title}
+        actions={
+          children ? (
+            <div className="flex items-center gap-2">{children}</div>
+          ) : undefined
+        }
+      />
+      {description ? (
+        <p className="pt-4 pb-6 text-sm text-muted-foreground">{description}</p>
+      ) : (
+        <div className="h-6" />
+      )}
+    </>
   )
 }
