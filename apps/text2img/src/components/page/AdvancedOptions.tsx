@@ -61,7 +61,7 @@ export function AdvancedOptions({
             max={2048}
             step={1}
             value={[width]}
-            onValueChange={(values) => setWidth(values[0])}
+            onValueChange={(v) => setWidth(Array.isArray(v) ? v[0] : v)}
           />
         </div>
 
@@ -76,7 +76,7 @@ export function AdvancedOptions({
             max={2048}
             step={1}
             value={[height]}
-            onValueChange={(values) => setHeight(values[0])}
+            onValueChange={(v) => setHeight(Array.isArray(v) ? v[0] : v)}
           />
         </div>
 
@@ -91,7 +91,7 @@ export function AdvancedOptions({
             max={20}
             step={1}
             value={[numSteps]}
-            onValueChange={(values) => setNumSteps(values[0])}
+            onValueChange={(v) => setNumSteps(Array.isArray(v) ? v[0] : v)}
           />
         </div>
 
@@ -106,7 +106,7 @@ export function AdvancedOptions({
             max={30}
             step={0.5}
             value={[guidance]}
-            onValueChange={(values) => setGuidance(values[0])}
+            onValueChange={(v) => setGuidance(Array.isArray(v) ? v[0] : v)}
           />
         </div>
 

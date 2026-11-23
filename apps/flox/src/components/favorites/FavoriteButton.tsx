@@ -127,7 +127,7 @@ export const FavoriteButton = memo<FavoriteButtonProps>(
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipTrigger render={button} />
           <TooltipContent>{isFav ? '取消收藏' : '收藏'}</TooltipContent>
         </Tooltip>
       </TooltipProvider>

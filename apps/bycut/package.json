@@ -37,7 +37,6 @@
     "next": "catalog:prod",
     "next-intl": "catalog:prod",
     "next-themes": "catalog:prod",
-    "radix-ui": "catalog:prod",
     "react": "catalog:prod",
     "react-dom": "catalog:prod",
     "sonner": "catalog:prod",

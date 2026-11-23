@@ -135,25 +135,25 @@ export function StorageIndicator() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger
-        asChild
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        render={
+          <button
+            type="button"
+            className="relative flex items-center justify-center rounded-full p-1 hover:bg-accent transition-colors"
+            aria-label={t('projects.storageUsage')}
+          />
+        }
       >
-        <button
-          type="button"
-          className="relative flex items-center justify-center rounded-full p-1 hover:bg-accent transition-colors"
-          aria-label={t('projects.storageUsage')}
+        <CircularProgressRing percent={usagePercent} />
+        <span
+          className={cn(
+            'absolute text-[8px] font-bold leading-none',
+            getUsageColor({ percent: usagePercent }),
+          )}
         >
-          <CircularProgressRing percent={usagePercent} />
-          <span
-            className={cn(
-              'absolute text-[8px] font-bold leading-none',
-              getUsageColor({ percent: usagePercent }),
-            )}
-          >
-            {stats ? `${usagePercent}%` : '—'}
-          </span>
-        </button>
+          {stats ? `${usagePercent}%` : '—'}
+        </span>
       </PopoverTrigger>
 
       <PopoverContent
@@ -162,7 +162,7 @@ export function StorageIndicator() {
         align="end"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onOpenAutoFocus={(event) => event.preventDefault()}
+        initialFocus={false}
       >
         {!stats ? (
           <div className="p-4 text-center text-sm text-muted-foreground">

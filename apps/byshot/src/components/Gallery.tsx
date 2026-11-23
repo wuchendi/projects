@@ -90,14 +90,18 @@ export default function Gallery({ images }: { images: ImageProps[] }) {
               A curated collection of moments captured through my lens
             </p>
             <div className="flex items-center pointer z-10 mt-6 md:mt-4 gap-4">
-              <Button variant="outline" asChild>
-                <Link
-                  href="https://wcd.pages.dev/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Blog
-                </Link>
+              <Button
+                variant="outline"
+                nativeButton={false}
+                render={
+                  <Link
+                    href="https://wcd.pages.dev/"
+                    target="_blank"
+                    rel="noreferrer"
+                  />
+                }
+              >
+                Blog
               </Button>
               <ThemeToggle />
             </div>

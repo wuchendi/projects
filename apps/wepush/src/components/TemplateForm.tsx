@@ -204,8 +204,12 @@ export function TemplateForm({
             真实预览：
           </Label>
           <Select
-            value={previewUserId || undefined}
-            onValueChange={setPreviewUserId}
+            items={usersList?.map((u) => ({
+              value: u.id,
+              label: u.name || u.wechatOpenId || u.id,
+            }))}
+            value={previewUserId || null}
+            onValueChange={(v) => setPreviewUserId(v ?? '')}
             disabled={!usersList || usersList.length === 0}
           >
             <SelectTrigger className="w-56">

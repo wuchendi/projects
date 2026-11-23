@@ -32,7 +32,12 @@ export default function CurrencySelector({
   const currentCurrency = getCurrencyInfo(value)
 
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select
+      value={value}
+      onValueChange={(next) => {
+        if (next !== null) onChange(next)
+      }}
+    >
       <SelectTrigger className="w-[140px]">
         <SelectValue>
           {currentCurrency ? (
@@ -42,7 +47,7 @@ export default function CurrencySelector({
           )}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="w-[var(--radix-select-trigger-width)] min-w-[210px]">
+      <SelectContent className="min-w-[210px]">
         <SelectGroup>
           <SelectLabel>🚀 Cryptocurrency</SelectLabel>
           {CURRENCY_CONFIG.crypto.map((currency) => (

@@ -183,7 +183,25 @@ function ProjectInfoView() {
             <PropertyItemValue>
               <Select
                 value={selectedValue}
-                onValueChange={(value) => handleCanvasSizeChange({ value })}
+                items={[
+                  {
+                    value: CANVAS_FIT_VALUE,
+                    label: originalCanvasSize
+                      ? t('properties.fitWithSize', {
+                          width: originalCanvasSize.width,
+                          height: originalCanvasSize.height,
+                        })
+                      : t('properties.fit'),
+                  },
+                  ...CANVAS_SIZE_PRESETS.map((preset) => ({
+                    value: preset.label,
+                    label: `${preset.label} (${preset.width}×${preset.height})`,
+                  })),
+                  { value: CANVAS_CUSTOM_VALUE, label: t('common.custom') },
+                ]}
+                onValueChange={(value) => {
+                  if (value !== null) handleCanvasSizeChange({ value })
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('export.selectCanvasSize')} />
@@ -265,7 +283,13 @@ function ProjectInfoView() {
             <PropertyItemValue>
               <Select
                 value={activeProject.settings.fps.toString()}
-                onValueChange={handleFpsChange}
+                items={FPS_PRESETS.map((preset) => ({
+                  value: preset.value,
+                  label: preset.label,
+                }))}
+                onValueChange={(value) => {
+                  if (value !== null) handleFpsChange(value)
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('export.selectFrameRate')} />

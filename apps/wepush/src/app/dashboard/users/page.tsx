@@ -313,13 +313,8 @@ export default function UsersPage() {
               <TableRow>
                 <TableHead className="w-10 pl-4">
                   <Checkbox
-                    checked={
-                      allSelected
-                        ? true
-                        : someSelected
-                          ? 'indeterminate'
-                          : false
-                    }
+                    checked={allSelected}
+                    indeterminate={someSelected}
                     onCheckedChange={(c) => toggleAll(c === true)}
                     aria-label="全选"
                   />

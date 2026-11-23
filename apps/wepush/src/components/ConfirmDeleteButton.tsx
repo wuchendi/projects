@@ -34,16 +34,18 @@ export function ConfirmDeleteButton({
 }: Props) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant={variant}
-          size={size}
-          aria-label="删除"
-          disabled={disabled}
-          className="text-destructive hover:text-destructive"
-        >
-          {children}
-        </Button>
+      <AlertDialogTrigger
+        render={
+          <Button
+            variant={variant}
+            size={size}
+            aria-label="删除"
+            disabled={disabled}
+            className="text-destructive hover:text-destructive"
+          />
+        }
+      >
+        {children}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

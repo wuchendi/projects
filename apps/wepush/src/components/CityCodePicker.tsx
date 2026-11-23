@@ -99,20 +99,22 @@ export function CityCodePicker({ value, onChange, placeholder }: Props) {
         className="flex-1 font-mono"
       />
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-52 shrink-0 justify-between"
-            title={selected ? formatLabel(selected) : '点击搜索城市'}
-          >
-            <span className="truncate text-sm">
-              {selected ? formatLabel(selected) : '搜索城市...'}
-            </span>
-            <ChevronsUpDown className="ml-1 size-4 shrink-0 opacity-50" />
-          </Button>
+        <PopoverTrigger
+          render={
+            <Button
+              type="button"
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              className="w-52 shrink-0 justify-between"
+              title={selected ? formatLabel(selected) : '点击搜索城市'}
+            />
+          }
+        >
+          <span className="truncate text-sm">
+            {selected ? formatLabel(selected) : '搜索城市...'}
+          </span>
+          <ChevronsUpDown className="ml-1 size-4 shrink-0 opacity-50" />
         </PopoverTrigger>
         <PopoverContent className="w-96 p-0" align="end">
           <div className="border-b p-2">

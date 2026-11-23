@@ -77,7 +77,7 @@ export function LinkDrawer({
   const [saving, setSaving] = useState(false)
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} direction="right">
+    <Drawer open={open} onOpenChange={onOpenChange} swipeDirection="right">
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>
@@ -98,10 +98,8 @@ export function LinkDrawer({
         </ScrollArea>
 
         <DrawerFooter className="flex-row justify-end gap-2">
-          <DrawerClose asChild>
-            <Button type="button" variant="outline" disabled={saving}>
-              {tc('cancel')}
-            </Button>
+          <DrawerClose render={<Button type="button" variant="outline" disabled={saving} />}>
+            {tc('cancel')}
           </DrawerClose>
           <Button type="submit" form="link-editor-form" disabled={saving}>
             {saving ? tc('saving') : tc('save')}
@@ -305,7 +303,7 @@ function EditorForm({
         />
       </div>
 
-      <Accordion type="multiple" className="w-full">
+      <Accordion multiple className="w-full">
         <AccordionItem value="link_settings">
           <AccordionTrigger>{t('section.settings')}</AccordionTrigger>
           <AccordionContent className="space-y-4 px-1">
@@ -328,22 +326,19 @@ function EditorForm({
               <Label>{t('expiration')}</Label>
               <div className="relative">
                 <Popover open={dateOpen} onOpenChange={setDateOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
+                  <PopoverTrigger render={<Button
                       type="button"
                       variant="outline"
                       className={cn(
                         'w-full justify-start pr-9 font-normal',
                         !expiryDate && 'text-muted-foreground',
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 size-4" />
-                      {expiryDate
-                        ? format(expiryDate, 'PP', {
-                            locale: dateLocale(locale),
-                          })
-                        : t('pickDate')}
-                    </Button>
+                      )} />}>
+                    <CalendarIcon className="mr-2 size-4" />
+                    {expiryDate
+                      ? format(expiryDate, 'PP', {
+                          locale: dateLocale(locale),
+                        })
+                      : t('pickDate')}
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
@@ -474,7 +469,11 @@ function EditorForm({
                 <Label>{t('qrDot')}</Label>
                 <Select
                   value={form.qrDot}
-                  onValueChange={(v) => set('qrDot', v as QrDot)}
+                  onValueChange={(v) => v && set('qrDot', v as QrDot)}
+                  items={[
+                    { value: 'dot', label: t('qrDotRound') },
+                    { value: 'square', label: t('qrDotSquare') },
+                  ]}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -489,7 +488,11 @@ function EditorForm({
                 <Label>{t('qrCorner')}</Label>
                 <Select
                   value={form.qrCorner}
-                  onValueChange={(v) => set('qrCorner', v as QrCorner)}
+                  onValueChange={(v) => v && set('qrCorner', v as QrCorner)}
+                  items={[
+                    { value: 'rounded', label: t('qrCornerRound') },
+                    { value: 'square', label: t('qrCornerSquare') },
+                  ]}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -508,7 +511,13 @@ function EditorForm({
                 <Label>{t('qrErrorLevel')}</Label>
                 <Select
                   value={form.qrError}
-                  onValueChange={(v) => set('qrError', v as QrErrorLevel)}
+                  onValueChange={(v) => v && set('qrError', v as QrErrorLevel)}
+                  items={[
+                    { value: 'L', label: 'L (7%)' },
+                    { value: 'M', label: 'M (15%)' },
+                    { value: 'Q', label: 'Q (25%)' },
+                    { value: 'H', label: 'H (30%)' },
+                  ]}
                 >
                   <SelectTrigger>
                     <SelectValue />

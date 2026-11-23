@@ -21,8 +21,8 @@ export function DesktopProgressBar({
         min={0}
         max={max}
         step={0.1}
-        onValueChange={(v) => onSeekChange(v[0])}
-        onValueCommit={(v) => onSeekCommit(v[0])}
+        onValueChange={(v) => onSeekChange(Array.isArray(v) ? v[0] : v)}
+        onValueCommitted={(v) => onSeekCommit(Array.isArray(v) ? v[0] : v)}
         aria-label="播放进度"
       />
     </div>

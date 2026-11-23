@@ -87,7 +87,11 @@ export function LinksFilterBar({
     return (
       <Select
         value={status}
-        onValueChange={(v) => setStatus(v as typeof status)}
+        onValueChange={(v) => v && setStatus(v as typeof status)}
+        items={[
+          { value: 'all', label: t('allStatus') },
+          ...STATUSES.map((s) => ({ value: s, label: t(`status.${s}`) })),
+        ]}
       >
         <SelectTrigger
           className={mobile ? 'w-full' : 'hidden w-auto min-w-28 md:flex'}
@@ -130,7 +134,11 @@ export function LinksFilterBar({
 
   function sortSelect(mobile: boolean) {
     return (
-      <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
+      <Select
+        value={sort}
+        onValueChange={(v) => v && setSort(v as SortKey)}
+        items={SORTS.map((s) => ({ value: s, label: t(`sort.${s}`) }))}
+      >
         <SelectTrigger
           className={mobile ? 'w-full' : 'hidden w-auto min-w-32 md:flex'}
         >
@@ -184,20 +192,17 @@ export function LinksFilterBar({
 
         {/* Mobile: collapse the filter controls into a right-side drawer. */}
         <Sheet>
-          <SheetTrigger asChild>
-            <Button
+          <SheetTrigger render={<Button
               variant="outline"
               size="icon"
               aria-label={t('filters')}
-              className="relative shrink-0 md:hidden"
-            >
-              <SlidersHorizontal className="size-4" />
-              {drawerActiveCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                  {drawerActiveCount}
-                </span>
-              )}
-            </Button>
+              className="relative shrink-0 md:hidden" />}>
+            <SlidersHorizontal className="size-4" />
+            {drawerActiveCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                {drawerActiveCount}
+              </span>
+            )}
           </SheetTrigger>
           <SheetContent side="right">
             <SheetHeader>
@@ -284,9 +289,8 @@ export function LinksFilterBar({
           </Badge>
           {tags.length > 1 && (
             <ToggleGroup
-              type="single"
-              value={tagMatch}
-              onValueChange={(v) => v && setTagMatch(v as 'and' | 'or')}
+              value={[tagMatch]}
+              onValueChange={(v) => v[0] && setTagMatch(v[0] as 'and' | 'or')}
               variant="outline"
               size="sm"
               className="ml-1"

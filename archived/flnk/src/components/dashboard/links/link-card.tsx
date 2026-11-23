@@ -258,17 +258,13 @@ export function LinkCard({
         <Pencil className="size-4" />
       </Button>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label={t('table.actions')}>
-            <MoreHorizontal className="size-4" />
-          </Button>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon" aria-label={t('table.actions')} />}>
+          <MoreHorizontal className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-36" align="end">
-          <DropdownMenuItem asChild>
-            <a href={shortUrl} target="_blank" rel="noreferrer">
-              <ExternalLink className="size-4" />
-              {tc('open')}
-            </a>
+          <DropdownMenuItem render={<a href={shortUrl} target="_blank" rel="noreferrer" />}>
+            <ExternalLink className="size-4" />
+            {tc('open')}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onViewAnalytics(link.slug)}>
             <BarChart3 className="size-4" />

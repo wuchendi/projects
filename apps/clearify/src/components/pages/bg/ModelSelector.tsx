@@ -11,6 +11,12 @@ import { cn } from '@cdlab/ui/lib/utils'
 import { CheckCircle } from 'lucide-react'
 import type { ModelStatus, RemovalModel } from '@/types'
 
+const modelItems: { value: RemovalModel; label: string }[] = [
+  { value: 'wuchendi/MODNet', label: 'MODNet (WebGPU)' },
+  { value: 'briaai/RMBG-2.0', label: 'RMBG-2.0 (Advanced)' },
+  { value: 'briaai/RMBG-1.4', label: 'RMBG-1.4 (Cross-browser)' },
+]
+
 interface ModelSelectorProps {
   currentModel: RemovalModel
   modelStatus: ModelStatus
@@ -59,19 +65,22 @@ export const ModelSelector = ({
         )}
       </div>
       <Select
+        items={modelItems}
         value={currentModel}
-        onValueChange={(value: RemovalModel) => onModelChange(value)}
+        onValueChange={(value) => {
+          if (value) onModelChange(value)
+        }}
         disabled={isModelSwitching}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="wuchendi/MODNet">MODNet (WebGPU)</SelectItem>
-          <SelectItem value="briaai/RMBG-2.0">RMBG-2.0 (Advanced)</SelectItem>
-          <SelectItem value="briaai/RMBG-1.4">
-            RMBG-1.4 (Cross-browser)
-          </SelectItem>
+          {modelItems.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>

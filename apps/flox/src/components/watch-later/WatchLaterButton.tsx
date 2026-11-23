@@ -121,7 +121,7 @@ export const WatchLaterButton = memo<WatchLaterButtonProps>(
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipTrigger render={button} />
           <TooltipContent>
             {inQueue ? '从稍后观看移除' : '加入稍后观看'}
           </TooltipContent>

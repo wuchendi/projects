@@ -370,14 +370,16 @@ function StickersContentView({ category }: { category: StickerCategory }) {
                   </span>
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          type="button"
-                          onClick={clearRecentStickers}
-                          className="hover:bg-accent ml-auto flex size-5 items-center justify-center rounded p-0"
-                        >
-                          <X className="text-muted-foreground size-3" />
-                        </button>
+                      <TooltipTrigger
+                        render={
+                          <button
+                            type="button"
+                            onClick={clearRecentStickers}
+                            className="hover:bg-accent ml-auto flex size-5 items-center justify-center rounded p-0"
+                          />
+                        }
+                      >
+                        <X className="text-muted-foreground size-3" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>{t('stickers.clearRecent')}</p>
@@ -603,36 +605,38 @@ function StickerItem({
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <div
-          className={cn(
-            'relative',
-            isAdding && 'pointer-events-none opacity-50',
-          )}
-        >
-          <DraggableItem
-            name={displayName}
-            preview={preview}
-            dragData={{
-              id: iconName,
-              type: 'sticker',
-              name: displayName,
-              iconName,
-            }}
-            onAddToTimeline={() => onAdd(iconName)}
-            aspectRatio={1}
-            shouldShowLabel={false}
-            isRounded={true}
-            variant="card"
-            className=""
-            containerClassName="w-full"
+      <TooltipTrigger
+        render={
+          <div
+            className={cn(
+              'relative',
+              isAdding && 'pointer-events-none opacity-50',
+            )}
           />
-          {isAdding && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-black/60">
-              <Spinner className="size-6 text-white" />
-            </div>
-          )}
-        </div>
+        }
+      >
+        <DraggableItem
+          name={displayName}
+          preview={preview}
+          dragData={{
+            id: iconName,
+            type: 'sticker',
+            name: displayName,
+            iconName,
+          }}
+          onAddToTimeline={() => onAdd(iconName)}
+          aspectRatio={1}
+          shouldShowLabel={false}
+          isRounded={true}
+          variant="card"
+          className=""
+          containerClassName="w-full"
+        />
+        {isAdding && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-black/60">
+            <Spinner className="size-6 text-white" />
+          </div>
+        )}
       </TooltipTrigger>
       <TooltipContent>
         <div className="space-y-1">

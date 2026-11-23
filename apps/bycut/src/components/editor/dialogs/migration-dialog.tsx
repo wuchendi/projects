@@ -33,12 +33,18 @@ export function MigrationDialog() {
       })
 
   return (
-    <Dialog open={true}>
-      <DialogContent
-        className="sm:max-w-md"
-        onPointerDownOutside={(event) => event.preventDefault()}
-        onEscapeKeyDown={(event) => event.preventDefault()}
-      >
+    <Dialog
+      open={true}
+      onOpenChange={(_open, eventDetails) => {
+        if (
+          eventDetails.reason === 'outside-press' ||
+          eventDetails.reason === 'escape-key'
+        ) {
+          eventDetails.cancel()
+        }
+      }}
+    >
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

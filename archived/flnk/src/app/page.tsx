@@ -166,16 +166,12 @@ export default async function LandingPage() {
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
           <ThemeToggle />
-          <Button asChild variant="outline" size="icon" aria-label="GitHub">
-            <a href={GITHUB_HREF} target="_blank" rel="noopener noreferrer">
-              <Github className="size-4" />
-            </a>
+          <Button variant="outline" size="icon" aria-label="GitHub" render={<a href={GITHUB_HREF} target="_blank" rel="noopener noreferrer" />} nativeButton={false}>
+            <Github className="size-4" />
           </Button>
-          <Button asChild>
-            <Link href="/dashboard">
-              {tc('enterDashboard')}
-              <ArrowRight className="size-3.5" />
-            </Link>
+          <Button render={<Link href="/dashboard" />} nativeButton={false}>
+            {tc('enterDashboard')}
+            <ArrowRight className="size-3.5" />
           </Button>
         </div>
       </header>
@@ -232,21 +228,16 @@ export default async function LandingPage() {
               </p>
 
               <div className="mt-9 flex items-center justify-center flex-row gap-3">
-                <Button asChild size="lg">
-                  <Link href="/dashboard">
-                    {t('getStarted')}
-                    <ArrowRight className="size-4" />
-                  </Link>
+                <Button size="lg" render={<Link href="/dashboard" />} nativeButton={false}>
+                  {t('getStarted')}
+                  <ArrowRight className="size-4" />
                 </Button>
-                <Button asChild size="lg" variant="outline">
-                  <a
+                <Button size="lg" variant="outline" render={<a
                     href={GITHUB_HREF}
                     target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Github className="size-4" />
-                    {tc('viewSource')}
-                  </a>
+                    rel="noopener noreferrer" />} nativeButton={false}>
+                  <Github className="size-4" />
+                  {tc('viewSource')}
                 </Button>
               </div>
 
@@ -449,21 +440,16 @@ export default async function LandingPage() {
                 {t('cta.subtitle')}
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Button asChild size="lg">
-                  <Link href="/dashboard">
-                    {t('cta.button')}
-                    <ArrowRight className="size-4" />
-                  </Link>
+                <Button size="lg" render={<Link href="/dashboard" />} nativeButton={false}>
+                  {t('cta.button')}
+                  <ArrowRight className="size-4" />
                 </Button>
-                <Button asChild size="lg" variant="outline">
-                  <a
+                <Button size="lg" variant="outline" render={<a
                     href={GITHUB_HREF}
                     target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Github className="size-4" />
-                    {tc('viewSource')}
-                  </a>
+                    rel="noopener noreferrer" />} nativeButton={false}>
+                  <Github className="size-4" />
+                  {tc('viewSource')}
                 </Button>
               </div>
             </div>

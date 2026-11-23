@@ -13,7 +13,7 @@ const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
   ({ value, size = "icon", className, onClick, ...props }, ref) => {
     const [copied, setCopied] = React.useState(false);
 
-    const handleCopy = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleCopy: CopyButtonProps["onClick"] = (event) => {
       if (value) {
         navigator.clipboard.writeText(value).catch(() => {});
       }

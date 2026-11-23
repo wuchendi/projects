@@ -115,27 +115,31 @@ export function EpisodeList({
           <CardAction>
             <ButtonGroup>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <CopyButton
-                    value={episodes.map((e) => e.url).join('\n')}
-                    variant="outline"
-                    size="icon-xs"
-                    aria-label="复制全部播放地址"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <CopyButton
+                      value={episodes.map((e) => e.url).join('\n')}
+                      variant="outline"
+                      size="icon-xs"
+                      aria-label="复制全部播放地址"
+                    />
+                  }
+                />
                 <TooltipContent>复制全部播放地址</TooltipContent>
               </Tooltip>
 
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={isReversed ? 'default' : 'outline'}
-                    size="icon-xs"
-                    onClick={() => onToggleReverse?.(!isReversed)}
-                    aria-label={isReversed ? '恢复正序' : '倒序排列'}
-                  >
-                    <ArrowUpDownIcon className="size-3.5" />
-                  </Button>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant={isReversed ? 'default' : 'outline'}
+                      size="icon-xs"
+                      onClick={() => onToggleReverse?.(!isReversed)}
+                      aria-label={isReversed ? '恢复正序' : '倒序排列'}
+                    />
+                  }
+                >
+                  <ArrowUpDownIcon className="size-3.5" />
                 </TooltipTrigger>
                 <TooltipContent>
                   {isReversed ? '恢复正序' : '倒序排列'}
@@ -185,33 +189,38 @@ export function EpisodeList({
                     </Button>
 
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <CopyButton
-                          value={episode.url}
-                          variant={isCurrentEpisode ? 'default' : 'outline'}
-                          size="icon"
-                          aria-label={`复制第 ${originalIndex + 1} 集链接`}
-                        />
-                      </TooltipTrigger>
+                      <TooltipTrigger
+                        render={
+                          <CopyButton
+                            value={episode.url}
+                            variant={isCurrentEpisode ? 'default' : 'outline'}
+                            size="icon"
+                            aria-label={`复制第 ${originalIndex + 1} 集链接`}
+                          />
+                        }
+                      />
                       <TooltipContent>复制播放地址</TooltipContent>
                     </Tooltip>
 
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant={isCurrentEpisode ? 'default' : 'outline'}
-                          size="icon"
-                          aria-label={`下载第 ${originalIndex + 1} 集`}
-                          asChild
-                        >
-                          <a
-                            href={`${VIDL_URL}/zh?url=${encodeURIComponent(episode.url)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <DownloadIcon className="size-4" />
-                          </a>
-                        </Button>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            variant={isCurrentEpisode ? 'default' : 'outline'}
+                            size="icon"
+                            aria-label={`下载第 ${originalIndex + 1} 集`}
+                            nativeButton={false}
+                            render={
+                              <a
+                                href={`${VIDL_URL}/zh?url=${encodeURIComponent(episode.url)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              />
+                            }
+                          />
+                        }
+                      >
+                        <DownloadIcon className="size-4" />
                       </TooltipTrigger>
                       <TooltipContent>在 vidl 中下载</TooltipContent>
                     </Tooltip>

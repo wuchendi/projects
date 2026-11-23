@@ -204,14 +204,16 @@ export function LocalInputPanel({
                   />
                   {savedKeys.length > 0 && (
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          title={tk('useSavedKey')}
-                        >
-                          <KeyRound className="size-4" />
-                        </Button>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            title={tk('useSavedKey')}
+                          />
+                        }
+                      >
+                        <KeyRound className="size-4" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="max-w-80">
                         {savedKeys.map((k) => (

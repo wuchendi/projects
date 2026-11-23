@@ -35,7 +35,6 @@
     "next-themes": "catalog:prod",
     "ogl": "catalog:prod",
     "qrcode": "catalog:prod",
-    "radix-ui": "catalog:prod",
     "react": "catalog:prod",
     "react-day-picker": "catalog:prod",
     "react-dom": "catalog:prod",
@@ -44,8 +43,7 @@
     "shadcn": "catalog:prod",
     "sonner": "catalog:prod",
     "tailwind-merge": "catalog:prod",
-    "tw-animate-css": "catalog:prod",
-    "vaul": "catalog:prod"
+    "tw-animate-css": "catalog:prod"
   },
   "devDependencies": {
     "@cdlab/tsconfig": "workspace:*",

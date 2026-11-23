@@ -288,11 +288,10 @@ export function VideoPlayer({
       <Card className="px-3 sm:px-4">
         <div className="flex items-center gap-2 flex-wrap">
           <ToggleGroup
-            type="single"
             size="sm"
             variant="outline"
-            value={String(playbackRate)}
-            onValueChange={(v) => v && setPlaybackRate(Number(v))}
+            value={[String(playbackRate)]}
+            onValueChange={(v) => v[0] && setPlaybackRate(Number(v[0]))}
             aria-label="播放速度"
             className="flex-nowrap"
           >
@@ -323,10 +322,16 @@ export function VideoPlayer({
             )}
 
             <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon-sm" aria-label="播放设置">
-                  <SettingsIcon className="size-4" />
-                </Button>
+              <PopoverTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label="播放设置"
+                  />
+                }
+              >
+                <SettingsIcon className="size-4" />
               </PopoverTrigger>
               <PopoverContent align="end" className="w-72 p-0">
                 <div className="px-4 py-3 border-b">
@@ -340,12 +345,11 @@ export function VideoPlayer({
                   <div className="flex items-center justify-between gap-2">
                     <Label className="text-xs">播放引擎</Label>
                     <ToggleGroup
-                      type="single"
                       size="sm"
                       variant="outline"
-                      value={playerEngine}
+                      value={[playerEngine]}
                       onValueChange={(v) =>
-                        v && switchEngine(v as typeof playerEngine)
+                        v[0] && switchEngine(v[0] as typeof playerEngine)
                       }
                       aria-label="播放引擎"
                     >
@@ -359,12 +363,11 @@ export function VideoPlayer({
                   <div className="flex items-center justify-between gap-2">
                     <Label className="text-xs">广告过滤</Label>
                     <ToggleGroup
-                      type="single"
                       size="sm"
                       variant="outline"
-                      value={adFilterMode}
+                      value={[adFilterMode]}
                       onValueChange={(v) =>
-                        v && setAdFilterMode(v as AdFilterMode)
+                        v[0] && setAdFilterMode(v[0] as AdFilterMode)
                       }
                       aria-label="广告过滤"
                     >
@@ -379,12 +382,11 @@ export function VideoPlayer({
                   <div className="flex items-center justify-between gap-2">
                     <Label className="text-xs">全屏方式</Label>
                     <ToggleGroup
-                      type="single"
                       size="sm"
                       variant="outline"
-                      value={fullscreenType}
+                      value={[fullscreenType]}
                       onValueChange={(v) =>
-                        v && setFullscreenType(v as 'native' | 'window')
+                        v[0] && setFullscreenType(v[0] as 'native' | 'window')
                       }
                       aria-label="全屏方式"
                     >

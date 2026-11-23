@@ -127,8 +127,8 @@ export function KeyManagerDialog({
                 {t('lock.unlock')}
               </Button>
               <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="ghost">{t('lock.forgot')}</Button>
+                <AlertDialogTrigger render={<Button variant="ghost" />}>
+                  {t('lock.forgot')}
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -312,14 +312,16 @@ function OwnerKeysTab() {
             </div>
             {k.mnemonic && (
               <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
-                    title={t('owner.view')}
-                  >
-                    <Eye className="size-4" />
-                  </Button>
+                <PopoverTrigger
+                  render={
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      title={t('owner.view')}
+                    />
+                  }
+                >
+                  <Eye className="size-4" />
                 </PopoverTrigger>
                 <PopoverContent className="w-72">
                   <div className="grid grid-cols-3 gap-2 font-mono text-xs">
@@ -546,14 +548,16 @@ function DeleteButton({
   const t = useTranslations('keys')
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          size="icon-sm"
-          variant="ghost"
-          className="text-muted-foreground hover:text-destructive"
-        >
-          <Trash2 className="size-4" />
-        </Button>
+      <AlertDialogTrigger
+        render={
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            className="text-muted-foreground hover:text-destructive"
+          />
+        }
+      >
+        <Trash2 className="size-4" />
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

@@ -94,7 +94,16 @@ export function PlaybackCard({
               </FieldDescription>
               <Select
                 value={String(state.currentLevel)}
-                onValueChange={(val) => onSetLevel(Number(val))}
+                items={[
+                  { label: t('auto'), value: '-1' },
+                  ...state.levels.map((level, i) => ({
+                    label: `${level.height}p - ${formatBitrate(level.bitrate)}${level.codec ? ` (${level.codec})` : ''}`,
+                    value: String(i),
+                  })),
+                ]}
+                onValueChange={(val) => {
+                  if (val !== null) onSetLevel(Number(val))
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('auto')} />

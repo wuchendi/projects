@@ -189,9 +189,8 @@ function MonthGroup({
       >
         <Checkbox
           id={`month-select-${group.month}`}
-          checked={
-            isAllSelected ? true : hasSomeSelected ? 'indeterminate' : false
-          }
+          checked={isAllSelected}
+          indeterminate={!isAllSelected && hasSomeSelected}
           onCheckedChange={(checked) => handleToggle(checked === true)}
         />
         <span className="text-sm font-medium text-muted-foreground">
@@ -276,9 +275,8 @@ function ProjectsToolbar({ projectIds }: { projectIds: string[] }) {
         >
           <Checkbox
             id="select-all-projects"
-            checked={
-              isAllSelected ? true : hasSomeSelected ? 'indeterminate' : false
-            }
+            checked={isAllSelected}
+            indeterminate={!isAllSelected && hasSomeSelected}
             onCheckedChange={(checked) =>
               handleSelectAll({ checked: checked === true })
             }
@@ -307,39 +305,43 @@ function ProjectsToolbar({ projectIds }: { projectIds: string[] }) {
         <SearchBar />
         <ButtonGroup>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-18">
-                {t(
-                  sortKey === 'createdAt'
-                    ? 'common.created'
-                    : sortKey === 'updatedAt'
-                      ? 'common.modified'
-                      : sortKey === 'name'
-                        ? 'common.name'
-                        : 'common.duration',
-                )}
-              </Button>
+            <DropdownMenuTrigger
+              render={<Button variant="outline" className="w-18" />}
+            >
+              {t(
+                sortKey === 'createdAt'
+                  ? 'common.created'
+                  : sortKey === 'updatedAt'
+                    ? 'common.modified'
+                    : sortKey === 'name'
+                      ? 'common.name'
+                      : 'common.duration',
+              )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center">
               <DropdownMenuCheckboxItem
+                closeOnClick
                 checked={sortKey === 'createdAt'}
                 onCheckedChange={() => setSortKey({ sortKey: 'createdAt' })}
               >
                 {t('common.created')}
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
+                closeOnClick
                 checked={sortKey === 'updatedAt'}
                 onCheckedChange={() => setSortKey({ sortKey: 'updatedAt' })}
               >
                 {t('common.modified')}
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
+                closeOnClick
                 checked={sortKey === 'name'}
                 onCheckedChange={() => setSortKey({ sortKey: 'name' })}
               >
                 {t('common.name')}
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
+                closeOnClick
                 checked={sortKey === 'duration'}
                 onCheckedChange={() => setSortKey({ sortKey: 'duration' })}
               >
@@ -615,25 +617,27 @@ function ProjectItem({
               open={isDropdownOpen}
               onOpenChange={setIsDropdownOpen}
             >
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label={t('editor.menu.title')}
-                  onClick={(event) => {
-                    event.preventDefault()
-                    event.stopPropagation()
-                  }}
-                  onMouseDown={(event) => event.stopPropagation()}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t('editor.menu.title')}
+                    onClick={(event) => {
                       event.preventDefault()
                       event.stopPropagation()
-                    }
-                  }}
-                >
-                  <EllipsisVertical className="size-4 text-foreground/50 transition-colors duration-300 group-hover:text-foreground/90" />
-                </Button>
+                    }}
+                    onMouseDown={(event) => event.stopPropagation()}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault()
+                        event.stopPropagation()
+                      }
+                    }}
+                  />
+                }
+              >
+                <EllipsisVertical className="size-4 text-foreground/50 transition-colors duration-300 group-hover:text-foreground/90" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-48"

@@ -150,7 +150,14 @@ export function AnalyticsView() {
           <h1 className="text-2xl font-semibold">{t('title')}</h1>
           <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
         </div>
-        <Select value={range} onValueChange={setRange}>
+        <Select
+          value={range}
+          onValueChange={(v) => v && setRange(v)}
+          items={Object.keys(RANGES).map((r) => ({
+            value: r,
+            label: t(`range.${r}`),
+          }))}
+        >
           <SelectTrigger className="w-full sm:w-40">
             <SelectValue />
           </SelectTrigger>

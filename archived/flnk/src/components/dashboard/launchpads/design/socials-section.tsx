@@ -174,10 +174,9 @@ export function SocialsSection({
           <div className="space-y-1.5">
             <Label className="text-xs">{t('design.socials.iconColor')}</Label>
             <ToggleGroup
-              type="single"
-              value={socials.iconColor ?? 'brand'}
+              value={[socials.iconColor ?? 'brand']}
               onValueChange={(v) =>
-                v && setSocials({ iconColor: v as 'brand' | 'mono' })
+                v[0] && setSocials({ iconColor: v[0] as 'brand' | 'mono' })
               }
               variant="outline"
             >
@@ -192,10 +191,9 @@ export function SocialsSection({
           <div className="space-y-1.5">
             <Label className="text-xs">{t('design.socials.placement')}</Label>
             <ToggleGroup
-              type="single"
-              value={socials.placement ?? 'top'}
+              value={[socials.placement ?? 'top']}
               onValueChange={(v) =>
-                v && setSocials({ placement: v as 'top' | 'bottom' })
+                v[0] && setSocials({ placement: v[0] as 'top' | 'bottom' })
               }
               variant="outline"
             >

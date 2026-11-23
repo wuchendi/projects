@@ -306,16 +306,20 @@ export default function LandingPage() {
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button asChild variant="outline" size="icon" aria-label="GitHub">
-            <a href={GITHUB_HREF} target="_blank" rel="noopener noreferrer">
-              <Github className="size-4" />
-            </a>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="GitHub"
+            nativeButton={false}
+            render={
+              <a href={GITHUB_HREF} target="_blank" rel="noopener noreferrer" />
+            }
+          >
+            <Github className="size-4" />
           </Button>
-          <Button asChild>
-            <Link href="/dashboard">
-              进入控制台
-              <ArrowRight className="size-3.5" />
-            </Link>
+          <Button nativeButton={false} render={<Link href="/dashboard" />}>
+            进入控制台
+            <ArrowRight className="size-3.5" />
           </Button>
         </div>
       </header>
@@ -369,17 +373,28 @@ export default function LandingPage() {
             </p>
 
             <div className="mt-9 flex items-center justify-center gap-3">
-              <Button asChild size="lg">
-                <Link href="/dashboard">
-                  进入控制台
-                  <ArrowRight className="size-4" />
-                </Link>
+              <Button
+                size="lg"
+                nativeButton={false}
+                render={<Link href="/dashboard" />}
+              >
+                进入控制台
+                <ArrowRight className="size-4" />
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <a href={GITHUB_HREF} target="_blank" rel="noopener noreferrer">
-                  <Github className="size-4" />
-                  查看源码
-                </a>
+              <Button
+                size="lg"
+                variant="outline"
+                nativeButton={false}
+                render={
+                  <a
+                    href={GITHUB_HREF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+              >
+                <Github className="size-4" />
+                查看源码
               </Button>
             </div>
           </div>
@@ -596,7 +611,7 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
-          <Accordion type="single" collapsible className="border-t">
+          <Accordion className="border-t">
             {FAQS.map((item) => (
               <AccordionItem key={item.q} value={item.q}>
                 <AccordionTrigger>{item.q}</AccordionTrigger>
@@ -619,17 +634,22 @@ export default function LandingPage() {
               进入控制台查看实时概览、配置接收人与模板，立即体验自动推送。
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button asChild size="lg">
-                <Link href="/dashboard">
-                  进入控制台
-                  <ArrowRight className="size-4" />
-                </Link>
+              <Button
+                size="lg"
+                nativeButton={false}
+                render={<Link href="/dashboard" />}
+              >
+                进入控制台
+                <ArrowRight className="size-4" />
               </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/dashboard">
-                  <BarChart3 className="size-4" />
-                  查看概览
-                </Link>
+              <Button
+                size="lg"
+                variant="outline"
+                nativeButton={false}
+                render={<Link href="/dashboard" />}
+              >
+                <BarChart3 className="size-4" />
+                查看概览
               </Button>
             </div>
           </div>

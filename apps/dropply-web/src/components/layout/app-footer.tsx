@@ -78,15 +78,20 @@ export function AppFooter({ crypto }: AppFooterProps) {
               </p>
               <ul className="space-y-2">
                 <li>
-                  <Button asChild variant="link" className={linkClass}>
-                    <a
-                      href={REPO_URL}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      <GitHubIcon className="size-4" />
-                      {t('github')}
-                    </a>
+                  <Button
+                    variant="link"
+                    className={linkClass}
+                    nativeButton={false}
+                    render={
+                      <a
+                        href={REPO_URL}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                      />
+                    }
+                  >
+                    <GitHubIcon className="size-4" />
+                    {t('github')}
                   </Button>
                 </li>
               </ul>

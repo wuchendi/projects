@@ -422,7 +422,7 @@ export function DateRangePicker({
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>{triggerElement}</PopoverTrigger>
+      <PopoverTrigger render={triggerElement} />
       <PopoverContent className="w-auto p-0" align="start">
         <div className="flex">
           {resolvedPresets.length > 0 && (

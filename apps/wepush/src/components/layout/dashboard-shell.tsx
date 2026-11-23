@@ -59,14 +59,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return (
       <SidebarMenuItem key={item.href}>
         <SidebarMenuButton
-          asChild
           isActive={isActive(pathname, item)}
           tooltip={item.label}
+          render={<Link href={item.href} />}
         >
-          <Link href={item.href}>
-            <Icon />
-            <span>{item.label}</span>
-          </Link>
+          <Icon />
+          <span>{item.label}</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     )
@@ -80,13 +78,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <SidebarMenuItem className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
               <SidebarMenuButton
                 size="lg"
-                asChild
                 className="flex-1 group-data-[collapsible=icon]:hidden"
+                render={<Link href="/dashboard" />}
               >
-                <Link href="/dashboard">
-                  <WepushLogo className="size-6 shrink-0 text-primary" />
-                  <span className="truncate font-semibold">wepush</span>
-                </Link>
+                <WepushLogo className="size-6 shrink-0 text-primary" />
+                <span className="truncate font-semibold">wepush</span>
               </SidebarMenuButton>
               <SidebarTrigger />
             </SidebarMenuItem>

@@ -176,11 +176,16 @@ export function Captions() {
           <Label>{t('common.model')}</Label>
           <Select
             value={selectedModelId}
-            onValueChange={(value) =>
+            items={TRANSCRIPTION_MODELS.map((model) => ({
+              value: model.id,
+              label: model.name,
+            }))}
+            onValueChange={(value) => {
+              if (value === null) return
               setSelectedModelId({
                 value: value as TranscriptionModelId,
               })
-            }
+            }}
             disabled={isProcessing}
           >
             <SelectTrigger>
@@ -204,7 +209,16 @@ export function Captions() {
           <Label>{t('common.language')}</Label>
           <Select
             value={selectedLanguage}
-            onValueChange={(value) => handleLanguageChange({ value })}
+            items={[
+              { value: 'auto', label: t('captions.autoDetect') },
+              ...TRANSCRIPTION_LANGUAGES.map((language) => ({
+                value: language.code,
+                label: language.name,
+              })),
+            ]}
+            onValueChange={(value) => {
+              if (value !== null) handleLanguageChange({ value })
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder={t('captions.selectLanguage')} />
@@ -224,7 +238,13 @@ export function Captions() {
           <Label>{t('properties.subtitleStyle')}</Label>
           <Select
             value={selectedTemplate.templateId}
-            onValueChange={(value) => handleTemplateChange({ value })}
+            items={SUBTITLE_TEMPLATES.map((template) => ({
+              value: template.templateId,
+              label: template.templateName,
+            }))}
+            onValueChange={(value) => {
+              if (value !== null) handleTemplateChange({ value })
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder={t('ai.selectStyle')} />

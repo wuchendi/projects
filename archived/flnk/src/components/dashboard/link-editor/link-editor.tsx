@@ -182,7 +182,7 @@ export function LinkEditor({ existing }: { existing?: LinkRow }) {
         <TagsField value={form.tags} onChange={(v) => set('tags', v)} />
       </div>
 
-      <Accordion type="multiple" className="w-full">
+      <Accordion multiple className="w-full">
         <AccordionItem value="link_settings">
           <AccordionTrigger>{t('section.settings')}</AccordionTrigger>
           <AccordionContent className="space-y-4 px-1">
@@ -205,17 +205,14 @@ export function LinkEditor({ existing }: { existing?: LinkRow }) {
               <Label>{t('expiration')}</Label>
               <div className="relative">
                 <Popover open={dateOpen} onOpenChange={setDateOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
+                  <PopoverTrigger render={<Button
                       type="button"
                       variant="outline"
-                      className={`w-full justify-start pr-9 font-normal ${expiryDate ? '' : 'text-muted-foreground'}`}
-                    >
-                      <CalendarIcon className="mr-2 size-4" />
-                      {expiryDate
-                        ? expiryDate.toLocaleDateString(locale)
-                        : t('pickDate')}
-                    </Button>
+                      className={`w-full justify-start pr-9 font-normal ${expiryDate ? '' : 'text-muted-foreground'}`} />}>
+                    <CalendarIcon className="mr-2 size-4" />
+                    {expiryDate
+                      ? expiryDate.toLocaleDateString(locale)
+                      : t('pickDate')}
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar

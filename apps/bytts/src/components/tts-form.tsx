@@ -103,6 +103,19 @@ export default function TTSForm() {
     )
   })()
 
+  // value -> label map so the Select trigger shows the API name, not its id
+  const apiItems: Record<string, string> = {
+    ...Object.fromEntries(
+      Object.entries(BUILTIN_APIS).map(([id, api]) => [id, api.label]),
+    ),
+    ...Object.fromEntries(
+      Object.values(customApis).map((api) => [
+        api.id,
+        `${api.name} (${api.format === 'openai' ? 'OpenAI' : 'Edge'})`,
+      ]),
+    ),
+  }
+
   const maxLength = (() => {
     if (isBuiltin)
       return getEffectiveBuiltin(selectedApiId as BuiltinApiId).maxLength
@@ -403,7 +416,13 @@ export default function TTSForm() {
             <Field>
               <Label>选择 API</Label>
               <div className="flex gap-2">
-                <Select value={selectedApiId} onValueChange={setSelectedApiId}>
+                <Select
+                  value={selectedApiId}
+                  items={apiItems}
+                  onValueChange={(v) => {
+                    if (v) setSelectedApiId(v)
+                  }}
+                >
                   <SelectTrigger size="sm" className="flex-1">
                     <SelectValue />
                   </SelectTrigger>
@@ -477,7 +496,13 @@ export default function TTSForm() {
                   }}
                 />
               ) : (
-                <Select value={speaker} onValueChange={setSpeaker}>
+                <Select
+                  value={speaker || null}
+                  items={activeSpeakers}
+                  onValueChange={(v) => {
+                    if (v) setSpeaker(v)
+                  }}
+                >
                   <SelectTrigger size="sm" className="w-full">
                     <SelectValue placeholder="选择语音" />
                   </SelectTrigger>
@@ -619,7 +644,9 @@ export default function TTSForm() {
                   </div>
                   <Slider
                     value={[pauseSeconds]}
-                    onValueChange={([value]) => setPauseSeconds(value)}
+                    onValueChange={(value) =>
+                      setPauseSeconds(Array.isArray(value) ? value[0] : value)
+                    }
                     min={0}
                     max={10}
                     step={1}
@@ -635,7 +662,9 @@ export default function TTSForm() {
                   </div>
                   <Slider
                     value={[rate]}
-                    onValueChange={([value]) => setRate(value)}
+                    onValueChange={(value) =>
+                      setRate(Array.isArray(value) ? value[0] : value)
+                    }
                     min={-100}
                     max={100}
                     step={1}
@@ -651,7 +680,9 @@ export default function TTSForm() {
                   </div>
                   <Slider
                     value={[pitch]}
-                    onValueChange={([value]) => setPitch(value)}
+                    onValueChange={(value) =>
+                      setPitch(Array.isArray(value) ? value[0] : value)
+                    }
                     min={-100}
                     max={100}
                     step={1}

@@ -73,7 +73,7 @@ export function LogDetailDrawer({ logId, onClose }: Props) {
 
   return (
     <Drawer
-      direction="right"
+      swipeDirection="right"
       open={!!logId}
       onOpenChange={(open) => {
         if (!open) onClose()

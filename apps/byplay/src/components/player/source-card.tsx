@@ -78,24 +78,26 @@ export function SourceCard({
           >
             {isLoading ? t('loading') : t('load')}
           </Button>
-          <Button
-            variant="outline"
-            disabled={!url.trim()}
-            asChild={!!url.trim()}
-            className="flex-1"
-          >
-            {url.trim() ? (
-              <a
-                href={`${VIDL_URL}/${locale}?url=${encodeURIComponent(url.trim())}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('downloadVideo')}
-              </a>
-            ) : (
-              t('downloadVideo')
-            )}
-          </Button>
+          {url.trim() ? (
+            <Button
+              variant="outline"
+              className="flex-1"
+              nativeButton={false}
+              render={
+                <a
+                  href={`${VIDL_URL}/${locale}?url=${encodeURIComponent(url.trim())}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+            >
+              {t('downloadVideo')}
+            </Button>
+          ) : (
+            <Button variant="outline" disabled className="flex-1">
+              {t('downloadVideo')}
+            </Button>
+          )}
         </div>
       </CardFooter>
     </Card>

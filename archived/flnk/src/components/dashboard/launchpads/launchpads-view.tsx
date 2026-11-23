@@ -288,21 +288,17 @@ function LaunchpadCard({
 
   const actions = (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t('actions')}>
-          <Rocket className="size-4" />
-        </Button>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon" aria-label={t('actions')} />}>
+        <Rocket className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-36" align="end">
         <DropdownMenuItem onClick={onEdit}>
           <Pencil className="size-4" />
           {tc('edit')}
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={publicUrl} target="_blank" rel="noreferrer">
-            <ExternalLink className="size-4" />
-            {tc('open')}
-          </a>
+        <DropdownMenuItem render={<a href={publicUrl} target="_blank" rel="noreferrer" />}>
+          <ExternalLink className="size-4" />
+          {tc('open')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onClick={onDelete}>

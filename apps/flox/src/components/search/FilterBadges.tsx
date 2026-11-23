@@ -58,7 +58,7 @@ export const FilterBadges = memo(function FilterBadges({
 
       <div className="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
         <ToggleGroup
-          type="multiple"
+          multiple
           variant="outline"
           spacing={1.5}
           size="sm"

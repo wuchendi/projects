@@ -206,7 +206,7 @@ Pure-browser stream download — `mux.js` + Streams API, near-zero memory footpr
 - `src/utils/cachedImages.ts` — Module-level cache around `cloudinary.v2.search.expression('folder:${CLOUDINARY_FOLDER}/*')`. Memoizes across requests within the same isolate; Edge cold-starts refetch.
 - `src/utils/generateBlurPlaceholder.ts` — Fetches an 8px-wide Cloudinary JPEG and inlines it as a base64 data URL using native `Uint8Array` + `btoa()` (no `node:buffer`, so it works on the Edge runtime).
 - `src/components/Gallery.tsx` — Masonry grid (`columns-1 sm:columns-2 xl:columns-3 2xl:columns-4`); clicking a photo pushes `?photoId=N` to open `Modal`.
-- `src/components/Modal.tsx` — Lightbox built on `@cdlab/ui/components/dialog` (`Dialog` + `DialogPortal` + `DialogOverlay`) plus `radix-ui` `Dialog.Content` for full-screen layout — the wrapper `DialogContent` hardcodes centered-card styling, so the primitive is used directly to satisfy the lightbox layout while still routing through the shared `Dialog` root.
+- `src/components/Modal.tsx` — Lightbox built entirely on `@cdlab/ui/components/dialog` (`Dialog` + `DialogContent` with `showCloseButton={false}`, `initialFocus={false}` and full-screen className overrides, plus an `sr-only` `DialogTitle`). It sits on the wrapper's default overlay.
 - `src/components/SharedModal.tsx` — Image swap with `motion`/`AnimatePresence`, `react-swipeable` for touch, bottom thumbnail strip filtered to ±15 around `index`. All icons are `lucide-react`.
 - `src/utils/useLastViewedPhoto.ts` — Zustand store powering scroll-restore after closing the lightbox.
 - `src/types/react-use-keypress.d.ts` — Local ambient declaration; `react-use-keypress` ships no types.

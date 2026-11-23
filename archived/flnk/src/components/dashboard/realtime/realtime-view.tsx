@@ -111,7 +111,14 @@ export function RealtimeView() {
           <h1 className="text-2xl font-semibold">{t('title')}</h1>
           <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
         </div>
-        <Select value={windowKey} onValueChange={setWindowKey}>
+        <Select
+          value={windowKey}
+          onValueChange={(v) => v && setWindowKey(v)}
+          items={Object.keys(WINDOWS).map((w) => ({
+            value: w,
+            label: t(`window.${w}`),
+          }))}
+        >
           <SelectTrigger className="w-full sm:w-32">
             <SelectValue />
           </SelectTrigger>

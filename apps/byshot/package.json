@@ -29,7 +29,6 @@
     "motion": "catalog:prod",
     "next": "catalog:prod",
     "next-themes": "catalog:prod",
-    "radix-ui": "catalog:prod",
     "react": "catalog:prod",
     "react-dom": "catalog:prod",
     "react-swipeable": "7.0.2",

@@ -57,11 +57,9 @@ export function LinkPicker({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5">
-          <Plus className="size-3.5" />
-          {multiple ? t('block.shortlink.add') : t('block.button.pickLink')}
-        </Button>
+      <PopoverTrigger render={<Button variant="outline" size="sm" className="gap-1.5" />}>
+        <Plus className="size-3.5" />
+        {multiple ? t('block.shortlink.add') : t('block.button.pickLink')}
       </PopoverTrigger>
       <PopoverContent align="start" className="w-72 p-0">
         <div className="border-b p-2">

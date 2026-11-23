@@ -9,7 +9,7 @@ import {
 
 export function Faq({ items }: { items: { q: string; a: string }[] }) {
   return (
-    <Accordion type="single" collapsible className="w-full">
+    <Accordion className="w-full">
       {items.map((item) => (
         <AccordionItem key={item.q} value={item.q}>
           <AccordionTrigger className="text-left text-base">

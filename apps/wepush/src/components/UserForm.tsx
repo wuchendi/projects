@@ -173,8 +173,14 @@ export function UserForm({
           </Field>
           <Field label="关联本地模板（code）">
             <Select
-              value={value.templateCode || undefined}
-              onValueChange={(v) => set('templateCode')(v)}
+              items={templates.map((t) => ({
+                value: t.code,
+                label: `${t.code} ${t.title ? `· ${t.title}` : ''}`,
+              }))}
+              value={value.templateCode || null}
+              onValueChange={(v) => {
+                if (v !== null) set('templateCode')(v)
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="选择模板..." />

@@ -1,12 +1,7 @@
 'use client'
 
-import {
-  Dialog,
-  DialogOverlay,
-  DialogPortal,
-} from '@cdlab/ui/components/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@cdlab/ui/components/dialog'
 import { useRouter } from 'next/navigation'
-import { Dialog as DialogPrimitive } from 'radix-ui'
 import { useState } from 'react'
 import useKeypress from 'react-use-keypress'
 import type { ImageProps } from '@/utils/types'
@@ -62,26 +57,21 @@ export default function Modal({
         if (!open) handleClose()
       }}
     >
-      <DialogPortal>
-        <DialogOverlay className="z-30 bg-black/70 backdrop-blur-2xl supports-backdrop-filter:backdrop-blur-2xl" />
-        <DialogPrimitive.Content
-          className="fixed inset-0 z-40 flex items-center justify-center outline-none"
-          onOpenAutoFocus={(e) => e.preventDefault()}
-          aria-describedby={undefined}
-        >
-          <DialogPrimitive.Title className="sr-only">
-            Photo viewer
-          </DialogPrimitive.Title>
-          <SharedModal
-            index={curIndex}
-            direction={direction}
-            images={images}
-            changePhotoId={changePhotoId}
-            closeModal={handleClose}
-            navigation={true}
-          />
-        </DialogPrimitive.Content>
-      </DialogPortal>
+      <DialogContent
+        showCloseButton={false}
+        initialFocus={false}
+        className="inset-0 top-0 left-0 flex max-w-none translate-x-0 translate-y-0 items-center justify-center gap-0 rounded-none bg-black/70 p-0 ring-0 backdrop-blur-2xl sm:max-w-none data-open:zoom-in-100 data-closed:zoom-out-100"
+      >
+        <DialogTitle className="sr-only">Photo viewer</DialogTitle>
+        <SharedModal
+          index={curIndex}
+          direction={direction}
+          images={images}
+          changePhotoId={changePhotoId}
+          closeModal={handleClose}
+          navigation={true}
+        />
+      </DialogContent>
     </Dialog>
   )
 }

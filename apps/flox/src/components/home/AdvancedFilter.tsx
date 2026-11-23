@@ -26,6 +26,8 @@ interface AdvancedFilterProps {
 }
 
 const DEFAULT_VISIBLE = 10
+// Base UI Toggle ignores an empty-string value, so "all" uses a sentinel
+const ALL_VALUE = '__all__'
 
 function FilterRow({
   label,
@@ -53,16 +55,18 @@ function FilterRow({
 
       <div className="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
         <ToggleGroup
-          type="single"
           variant="outline"
           spacing={1.5}
           size="sm"
-          value={value}
-          onValueChange={(v) => onChange(v ?? '')}
+          value={[value || ALL_VALUE]}
+          onValueChange={(v) => {
+            const next = v[0] ?? ''
+            onChange(next === ALL_VALUE ? '' : next)
+          }}
           className="flex items-center flex-wrap gap-1.5"
         >
           <ToggleGroupItem
-            value=""
+            value={ALL_VALUE}
             aria-label="全部"
             className="text-xs h-6 px-2"
           >
@@ -124,13 +128,12 @@ function ScoreFilter({
 
       <div className="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
         <ToggleGroup
-          type="single"
           variant="outline"
           spacing={1.5}
           size="sm"
-          value={currentKey}
-          onValueChange={(key) => {
-            const matched = ranges.find((r) => r.label === key)
+          value={[currentKey]}
+          onValueChange={(keys) => {
+            const matched = ranges.find((r) => r.label === keys[0])
             if (matched) onChange(matched.range)
           }}
           className="flex items-center flex-wrap gap-1.5"
@@ -206,13 +209,12 @@ export function AdvancedFilter({
 
           <div className="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
             <ToggleGroup
-              type="single"
               variant="outline"
               spacing={1.5}
               size="sm"
-              value={filter.sort}
+              value={[filter.sort]}
               onValueChange={(v) => {
-                if (v) onFilterChange({ sort: v as FilterState['sort'] })
+                if (v[0]) onFilterChange({ sort: v[0] as FilterState['sort'] })
               }}
               className="flex items-center flex-wrap gap-1.5"
             >

@@ -27,13 +27,13 @@ There are **no package-level scripts** (`"scripts": {}`) — do not invent
   `./postcss.config`. Import by leaf subpath (`@cdlab/ui/components/button`).
 - `IK/index.ts` and `icon/index.ts` are internal barrels **not in** the exports
   map — never import `@cdlab/ui/IK` or `@cdlab/ui/icon`.
-- Contents: 56 `components/` (shadcn/ui primitives), 10 `IK/` (app-shell parts),
+- Contents: 59 `components/` (shadcn/ui primitives), 10 `IK/` (app-shell parts),
   10 `reactbits/` (WebGL/motion effects), 2 `icon/`, 1 `hooks/` (`useIsMobile`),
   1 `lib/` (`cn`).
 
 ## Key files (paths)
 
-- `src/components/*.tsx` — shadcn/ui primitives, `style: radix-nova`.
+- `src/components/*.tsx` — shadcn/ui primitives, `style: base-nova`.
 - `src/IK/*.tsx` — app-shell kit composed from primitives (`IKHeader`,
   `IKFooter`, `IKAssetRenderer`, `IKConfirmDialog`, `IKVersionInfo`, …).
 - `src/reactbits/*.tsx` — `Aurora`/`Particles`/`Plasma`/`Threads` (ogl GLSL),
@@ -48,19 +48,19 @@ There are **no package-level scripts** (`"scripts": {}`) — do not invent
 
 ## Primitive ecosystems (important)
 
-- Most `components/*` use the **unified `radix-ui`** package
-  (`import { Dialog as DialogPrimitive } from "radix-ui"`), **not** per-component
-  `@radix-ui/*`. 27 components use it.
-- **Exactly one** component uses `@base-ui/react`: `combobox.tsx`. Check a
-  component's neighbors before choosing an ecosystem.
+- All interactive primitives use **`@base-ui/react`** (Base UI), imported per
+  primitive (`import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"`).
+  28 components use it.
+- Composition is via the **`render` prop** (`<DialogTrigger render={<Button />} />`);
+  there is no `asChild`.
 - Driver-backed wrappers: `chart`→recharts, `qr-code`→qrcode (imperative
-  `QRCodeHandle` ref), `sonner`→sonner, `drawer`→vaul, `command`→cmdk,
+  `QRCodeHandle` ref), `sonner`→sonner, `command`→cmdk,
   `calendar`→react-day-picker, `resizable`→react-resizable-panels,
   `input-otp`→input-otp.
 
 ## RSC boundary
 
-- Client components carry `'use client'`: 44 of 56 primitives, plus
+- Client components carry `'use client'`: 44 of 59 primitives, plus
   `IKAudioAssetPlayer`, `IKVersionInfo`, and all 10 reactbits.
 - Server-safe (no directive): `button`, `badge`, `card`, `alert`, `input`,
   `textarea`, `skeleton`, `spinner`, `breadcrumb`, `button-group`,

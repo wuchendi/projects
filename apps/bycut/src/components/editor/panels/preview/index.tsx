@@ -34,6 +34,7 @@ import type { RootNode } from '@/services/renderer/nodes/root-node'
 import { buildScene } from '@/services/renderer/scene-builder'
 import { useMediaPreviewStore } from '@/stores/media-preview-store'
 import type { MediaAsset } from '@/types/assets'
+import { firstSliderValue } from '@/utils/slider'
 import { PreviewInteractionOverlay } from './preview-interaction-overlay'
 
 function usePreviewSize() {
@@ -431,20 +432,22 @@ function VolumeControl() {
 
   return (
     <div className="flex items-center gap-1">
-      <TooltipProvider delayDuration={500}>
+      <TooltipProvider delay={500}>
         <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => editor.playback.toggleMute()}
-            >
-              {muted ? (
-                <VolumeX className="size-4" />
-              ) : (
-                <Volume2 className="size-4" />
-              )}
-            </Button>
+          <TooltipTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => editor.playback.toggleMute()}
+              />
+            }
+          >
+            {muted ? (
+              <VolumeX className="size-4" />
+            ) : (
+              <Volume2 className="size-4" />
+            )}
           </TooltipTrigger>
           <TooltipContent>
             <p>{muted ? t('common.unmute') : t('common.mute')}</p>
@@ -455,7 +458,7 @@ function VolumeControl() {
         className="w-20"
         value={[muted ? 0 : volume]}
         onValueChange={(values) =>
-          editor.playback.setVolume({ volume: values[0] })
+          editor.playback.setVolume({ volume: firstSliderValue(values) })
         }
         min={0}
         max={1}

@@ -102,7 +102,16 @@ export function TextSpeechPanel({
           <PropertyItem direction="column">
             <PropertyItemLabel>{t('tts.voice')}</PropertyItemLabel>
             <PropertyItemValue>
-              <Select value={selectedVoice} onValueChange={setSelectedVoice}>
+              <Select
+                value={selectedVoice}
+                items={VOICE_PACKS.map((voice) => ({
+                  value: voice.id,
+                  label: voice.name,
+                }))}
+                onValueChange={(value) => {
+                  if (value !== null) setSelectedVoice(value)
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={t('tts.selectVoice')} />
                 </SelectTrigger>

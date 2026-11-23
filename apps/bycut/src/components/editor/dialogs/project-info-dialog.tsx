@@ -80,7 +80,7 @@ export function ProjectInfoDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent onOpenAutoFocus={(event) => event.preventDefault()}>
+      <DialogContent initialFocus={false}>
         <DialogHeader>
           <DialogTitle className="truncate max-w-[350px]">
             {project.name}

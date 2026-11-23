@@ -78,17 +78,14 @@ export function TagInlineEditor({
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>
-        <button
+      <PopoverTrigger render={<button
           type="button"
           disabled={disabled}
           // Revealed only when the tag area is hovered (or the popover is open /
           // keyboard-focused), so the affordance stays out of the way at rest.
-          className="flex items-center gap-0.5 text-primary opacity-0 transition-opacity hover:text-primary/80 focus-visible:opacity-100 disabled:opacity-50 group-hover/tag:opacity-100 data-[state=open]:opacity-100"
-        >
-          <Plus className="size-3.5" />
-          {t('addTag')}
-        </button>
+          className="flex items-center gap-0.5 text-primary opacity-0 transition-opacity hover:text-primary/80 focus-visible:opacity-100 disabled:opacity-50 group-hover/tag:opacity-100 data-popup-open:opacity-100" />}>
+        <Plus className="size-3.5" />
+        {t('addTag')}
       </PopoverTrigger>
       <PopoverContent className="w-56 p-0" align="start">
         <Command shouldFilter={false}>

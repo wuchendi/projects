@@ -46,10 +46,20 @@ export function IKHeader({ brand, githubHref, children }: IKHeaderProps) {
 
           <div className="flex items-center gap-2">
             {children}
-            <Button asChild variant="outline" size="icon" aria-label="GitHub">
-              <a href={githubHref} target="_blank" rel="noopener noreferrer">
-                <Github className="size-4" />
-              </a>
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="GitHub"
+              nativeButton={false}
+              render={
+                <a
+                  href={githubHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+            >
+              <Github className="size-4" />
             </Button>
           </div>
         </div>

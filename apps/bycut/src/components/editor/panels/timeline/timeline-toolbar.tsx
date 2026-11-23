@@ -37,6 +37,7 @@ import type { TAction } from '@/lib/actions'
 import { invokeAction } from '@/lib/actions'
 import { sliderToZoom, zoomToSlider } from '@/lib/timeline/zoom-utils'
 import { useTimelineStore } from '@/stores/timeline-store'
+import { firstSliderValue } from '@/utils/slider'
 
 export function TimelineToolbar({
   zoomLevel,
@@ -93,7 +94,7 @@ function ToolbarLeftSection() {
 
   return (
     <div className="flex items-center gap-1">
-      <TooltipProvider delayDuration={500}>
+      <TooltipProvider delay={500}>
         <ToolbarButton
           icon={<Scissors />}
           tooltip={t('timeline.splitElement')}
@@ -192,7 +193,7 @@ function ToolbarRightSection({
 
   return (
     <div className="flex items-center gap-1">
-      <TooltipProvider delayDuration={500}>
+      <TooltipProvider delay={500}>
         <ToolbarButton
           icon={<Bookmark />}
           tooltip={t('timeline.addBookmark')}
@@ -217,7 +218,7 @@ function ToolbarRightSection({
 
       <Separator orientation="vertical" className="m-2" />
 
-      <TooltipProvider delayDuration={500}>
+      <TooltipProvider delay={500}>
         <ToolbarButton
           icon={<Magnet />}
           isActive={snappingEnabled}
@@ -236,16 +237,18 @@ function ToolbarRightSection({
       <Separator orientation="vertical" className="m-2" />
 
       <div className="flex items-center gap-1">
-        <TooltipProvider delayDuration={500}>
+        <TooltipProvider delay={500}>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onZoom({ direction: 'out' })}
-              >
-                <ZoomOut />
-              </Button>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onZoom({ direction: 'out' })}
+                />
+              }
+            >
+              <ZoomOut />
             </TooltipTrigger>
             <TooltipContent side="top">
               <p>{t('timeline.zoomOut')}</p>
@@ -256,34 +259,43 @@ function ToolbarRightSection({
           className="w-24"
           value={[zoomToSlider({ zoomLevel, minZoom })]}
           onValueChange={(values) =>
-            onZoomChange(sliderToZoom({ sliderPosition: values[0], minZoom }))
+            onZoomChange(
+              sliderToZoom({
+                sliderPosition: firstSliderValue(values),
+                minZoom,
+              }),
+            )
           }
           min={0}
           max={1}
           step={0.005}
         />
-        <TooltipProvider delayDuration={500}>
+        <TooltipProvider delay={500}>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onZoom({ direction: 'in' })}
-              >
-                <ZoomIn />
-              </Button>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onZoom({ direction: 'in' })}
+                />
+              }
+            >
+              <ZoomIn />
             </TooltipTrigger>
             <TooltipContent side="top">
               <p>{t('timeline.zoomIn')}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <TooltipProvider delayDuration={500}>
+        <TooltipProvider delay={500}>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" onClick={onZoomToFit}>
-                <Maximize2 />
-              </Button>
+            <TooltipTrigger
+              render={
+                <Button variant="ghost" size="icon" onClick={onZoomToFit} />
+              }
+            >
+              <Maximize2 />
             </TooltipTrigger>
             <TooltipContent side="top">
               <p>{t('timeline.zoomToFit')}</p>
@@ -312,20 +324,23 @@ function ToolbarButton({
   isActive?: boolean
 }) {
   return (
-    <Tooltip delayDuration={200}>
-      <TooltipTrigger asChild>
-        <Button
-          variant={isActive ? 'secondary' : 'ghost'}
-          size="icon"
-          type="button"
-          onClick={(event) => onClick({ event })}
-          className={cn(
-            'rounded-sm',
-            disabled ? 'cursor-not-allowed opacity-50' : '',
-          )}
-        >
-          {icon}
-        </Button>
+    <Tooltip>
+      <TooltipTrigger
+        delay={200}
+        render={
+          <Button
+            variant={isActive ? 'secondary' : 'ghost'}
+            size="icon"
+            type="button"
+            onClick={(event) => onClick({ event })}
+            className={cn(
+              'rounded-sm',
+              disabled ? 'cursor-not-allowed opacity-50' : '',
+            )}
+          />
+        }
+      >
+        {icon}
       </TooltipTrigger>
       <TooltipContent>{tooltip}</TooltipContent>
     </Tooltip>

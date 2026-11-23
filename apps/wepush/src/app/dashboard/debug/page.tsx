@@ -62,7 +62,13 @@ export default function DebugPage() {
       <div className="mb-6 space-y-4 rounded-lg bg-card p-5">
         <div className="space-y-1.5">
           <Label className="text-xs">数据源</Label>
-          <Select value={name} onValueChange={(v) => setName(v as SourceName)}>
+          <Select
+            items={SOURCES}
+            value={name}
+            onValueChange={(v) => {
+              if (v !== null) setName(v)
+            }}
+          >
             <SelectTrigger className="w-full sm:w-80">
               <SelectValue />
             </SelectTrigger>
