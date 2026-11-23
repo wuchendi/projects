@@ -1,5 +1,7 @@
 # byplay-log usage guide for AI agents
 
+> ARCHIVED (moved from apps/byplay-log to archived/byplay-log): no caller since byplay dropped its VePlayer reporting in March 2026. Frozen; excluded from root build/dev/lint and Biome. Deploy manually with `pnpm deploy:byplay-log`.
+
 `byplay-log` is a single-endpoint telemetry sink for the ByPlay video player: a
 Hono Cloudflare Worker that accepts a **batch (array) of playback events**,
 validates each with zod, enriches every row with edge-derived request metadata

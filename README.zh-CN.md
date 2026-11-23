@@ -25,7 +25,6 @@
 | --- | --- | --- |
 | [bycut](./apps/bycut) | 浏览器视频编辑器 —— 基于时间线,零上传 | [↗](https://bycut.pages.dev/) |
 | [byplay](./apps/byplay) | 在线 HLS / MP4 播放器 | [↗](https://byplay.pages.dev/) |
-| [byplay-log](./apps/byplay-log) | ByPlay 播放日志采集服务 | — |
 | [byshot](./apps/byshot) | 基于 Cloudinary 的摄影作品集 | [↗](https://byshot.pages.dev/) |
 | [bytts](./apps/bytts) | 基于 Azure Speech 的文本转语音(支持自定义服务商) | [↗](https://bytts.pages.dev/) |
 | [clearify](./apps/clearify) | 图像 / 视频工具箱(抠图 · 压缩 · 转码) | [↗](https://clearify.pages.dev/) |
@@ -47,6 +46,7 @@
 | 应用 | 简介 | 后继 |
 | --- | --- | --- |
 | [flnk](./archived/flnk) | 隐私优先短链服务,支持地域 / 设备路由 | [tinylink](https://github.com/wuchendi/tinylink-docs) · [↗](https://tinylink.cdlab.workers.dev/) |
+| [byplay-log](./archived/byplay-log) | ByPlay 播放日志采集 Worker(byplay 已不再上报,无调用方) | — |
 
 ## 共享包
 
