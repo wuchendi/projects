@@ -16,7 +16,7 @@ import { IKEmpty } from '@cdlab/ui/IK/IKEmpty'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { enUS, zhCN } from 'date-fns/locale'
 import { Inbox, Plus } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
@@ -30,7 +30,7 @@ import type { LinkRow } from '@/lib/platform/api'
 import { linkApi, statsApi } from '@/lib/platform/api'
 import { queryKeys } from '@/lib/platform/query-keys'
 import { useLinksFilterStore } from '@/stores/links-filter-store'
-import { ViewHeader } from '@/components/dashboard/view-header'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 
 const PAGE_SIZE = 20
 
@@ -83,6 +83,16 @@ export function LinksView() {
     setEditing(link)
     setDrawerOpen(true)
   }
+
+  // `?new=1` (the shell rail's "new" button and its C shortcut) opens the
+  // create drawer once, then leaves the URL clean so a reload does not reopen it.
+  const pathname = usePathname()
+  const wantsNew = useSearchParams().get('new') === '1'
+  useEffect(() => {
+    if (!wantsNew) return
+    openCreate()
+    router.replace(pathname)
+  }, [wantsNew, pathname, router])
 
   // Debounce the search box into the store.
   useEffect(() => {
@@ -295,7 +305,7 @@ export function LinksView() {
 
   return (
     <div className="space-y-4">
-      <ViewHeader
+      <IKPageHeader
         title={t('title')}
         description={t('subtitle')}
         actions={

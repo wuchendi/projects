@@ -1,8 +1,6 @@
 'use client'
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -10,9 +8,9 @@ import {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
 } from '@cdlab/ui/components/dropdown-menu'
 import { GitHubIcon } from '@cdlab/ui/icon/GitHubIcon'
+import { IKRailAccountMenu } from '@cdlab/ui/IK/IKRailAccountMenu'
 import {
   BookOpen,
   Languages,
@@ -91,76 +89,66 @@ export function NavUser() {
   if (isPending || !user) return null
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label={name || email || undefined}
-        className="grid size-9 place-items-center rounded-md outline-none hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-ring data-popup-open:bg-foreground/[0.07]"
-      >
-        <Avatar image={user.image} name={name} email={email} />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="min-w-56 rounded-lg"
-        side="right"
-        align="end"
-        sideOffset={8}
-      >
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <Palette className="size-4" />
-            {t('theme')}
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-              <DropdownMenuRadioItem value="light">
-                {t('light')}
+    <IKRailAccountMenu
+      label={name || email || ''}
+      avatar={<Avatar image={user.image} name={name} email={email} />}
+    >
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Palette className="size-4" />
+          {t('theme')}
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent>
+          <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+            <DropdownMenuRadioItem value="light">
+              {t('light')}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="dark">
+              {t('dark')}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="system">
+              {t('system')}
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Languages className="size-4" />
+          {t('language')}
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent>
+          <DropdownMenuRadioGroup
+            value={locale}
+            onValueChange={onLocaleChange}
+          >
+            {locales.map((l) => (
+              <DropdownMenuRadioItem key={l} value={l}>
+                {localeLabels[l]}
               </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="dark">
-                {t('dark')}
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="system">
-                {t('system')}
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
 
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <Languages className="size-4" />
-            {t('language')}
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup
-              value={locale}
-              onValueChange={onLocaleChange}
-            >
-              {locales.map((l) => (
-                <DropdownMenuRadioItem key={l} value={l}>
-                  {localeLabels[l]}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+      <DropdownMenuSeparator />
 
-        <DropdownMenuSeparator />
+      <DropdownMenuItem render={<Link href={DOCS_HREF} target="_blank" rel="noopener noreferrer" />}>
+        <BookOpen className="size-4" />
+        {t('docs')}
+      </DropdownMenuItem>
+      <DropdownMenuItem render={<Link href={REPO_HREF} target="_blank" rel="noopener noreferrer" />}>
+        <GitHubIcon className="size-4" />
+        {t('repo')}
+      </DropdownMenuItem>
 
-        <DropdownMenuItem render={<Link href={DOCS_HREF} target="_blank" rel="noopener noreferrer" />}>
-          <BookOpen className="size-4" />
-          {t('docs')}
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link href={REPO_HREF} target="_blank" rel="noopener noreferrer" />}>
-          <GitHubIcon className="size-4" />
-          {t('repo')}
-        </DropdownMenuItem>
+      <DropdownMenuSeparator />
 
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem onClick={() => void onSignOut()}>
-          <LogOut className="size-4" />
-          {t('signOut')}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <DropdownMenuItem onClick={() => void onSignOut()}>
+        <LogOut className="size-4" />
+        {t('signOut')}
+      </DropdownMenuItem>
+    </IKRailAccountMenu>
   )
 }

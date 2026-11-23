@@ -11,6 +11,7 @@ import {
 } from '@cdlab/ui/components/card'
 import { Skeleton } from '@cdlab/ui/components/skeleton'
 import { IKEmpty } from '@cdlab/ui/IK'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 import CountUp from '@cdlab/ui/reactbits/CountUp'
 import { useQuery } from '@tanstack/react-query'
 import type { LucideIcon } from 'lucide-react'
@@ -25,7 +26,6 @@ import {
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { SubHeader } from '@/components/layout/sub-header'
 
 // recharts is heavy and client-only — load TrendChart on the client (ssr: false)
 // so recharts stays out of the server (Worker) bundle, mirroring how flnk keeps
@@ -166,24 +166,30 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
-      <SubHeader title="wepush" description="微信公众号定时推送控制台">
-        <div className="flex items-center gap-2 pt-1">
-          <Button
-            variant="outline"
-            size="icon-sm"
-            onClick={() => void refetch()}
-            disabled={isFetching}
-            aria-label="刷新数据"
-          >
-            <RotateCw
-              className={`size-3.5 ${isFetching ? 'animate-spin' : ''}`}
-            />
-          </Button>
-          <Link href="/dashboard/users">
-            <Button size="sm">立即推送</Button>
-          </Link>
-        </div>
-      </SubHeader>
+      <IKPageHeader
+        title="wepush"
+        description="微信公众号定时推送控制台"
+        actions={
+          <>
+            <div className="flex items-center gap-2 pt-1">
+              <Button
+                variant="outline"
+                size="icon-sm"
+                onClick={() => void refetch()}
+                disabled={isFetching}
+                aria-label="刷新数据"
+              >
+                <RotateCw
+                  className={`size-3.5 ${isFetching ? 'animate-spin' : ''}`}
+                />
+              </Button>
+              <Link href="/dashboard/users">
+                <Button size="sm">立即推送</Button>
+              </Link>
+            </div>
+          </>
+        }
+      />
 
       {isLoading ? (
         <StatsSkeleton />

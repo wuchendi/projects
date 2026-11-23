@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@cdlab/ui/components/table'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { RotateCcw } from 'lucide-react'
 import Link from 'next/link'
@@ -18,7 +19,6 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { LogDetailDrawer } from '@/components/LogDetailDrawer'
-import { SubHeader } from '@/components/layout'
 import { retryBatchFromUi } from '@/lib/push-client'
 
 interface BatchSummary {
@@ -96,28 +96,32 @@ export default function BatchDetailPage() {
 
   return (
     <>
-      <SubHeader title="推送批次详情" description={`批次 ID: ${id}`}>
-        <>
-          {data?.batch.failedCount ? (
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={retry.isPending}
-              onClick={() => retry.mutate()}
-            >
-              <RotateCcw className="mr-1 size-3.5" />
-              {retry.isPending
-                ? '重推中...'
-                : `重推失败（${data.batch.failedCount}）`}
-            </Button>
-          ) : null}
-          <Link href="/dashboard/logs">
-            <Button variant="ghost" size="sm">
-              返回日志
-            </Button>
-          </Link>
-        </>
-      </SubHeader>
+      <IKPageHeader
+        title="推送批次详情"
+        description={`批次 ID: ${id}`}
+        actions={
+          <>
+            {data?.batch.failedCount ? (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={retry.isPending}
+                onClick={() => retry.mutate()}
+              >
+                <RotateCcw className="mr-1 size-3.5" />
+                {retry.isPending
+                  ? '重推中...'
+                  : `重推失败（${data.batch.failedCount}）`}
+              </Button>
+            ) : null}
+            <Link href="/dashboard/logs">
+              <Button variant="ghost" size="sm">
+                返回日志
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       {isLoading ? (
         <>

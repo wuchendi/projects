@@ -30,7 +30,7 @@ import { generateCsv } from '@/lib/format/csv'
 import { formatNumber } from '@/lib/format/format'
 import type { CheckResult, LinkRow } from '@/lib/platform/api'
 import { checkApi, linkApi } from '@/lib/platform/api'
-import { ViewHeader } from '@/components/dashboard/view-header'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 
 type Verdict = 'ok' | 'broken' | 'unsafe'
 
@@ -191,7 +191,7 @@ export function CheckView() {
 
   return (
     <div className="space-y-4">
-      <ViewHeader title={t('title')} description={t('subtitle')} />
+      <IKPageHeader title={t('title')} description={t('subtitle')} />
 
       <Card className="ring-1">
         <CardContent className="space-y-4">

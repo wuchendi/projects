@@ -27,7 +27,7 @@ import { useMemo, useState } from 'react'
 import { CountersCards } from '@/components/dashboard/analytics/counters'
 import { statsApi } from '@/lib/platform/api'
 import { queryKeys } from '@/lib/platform/query-keys'
-import { ViewHeader } from '@/components/dashboard/view-header'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 
 // Map lib is client-only (SVG, runtime topojson fetch) — skip SSR.
 const WorldMap = dynamic(
@@ -146,7 +146,7 @@ export function AnalyticsView() {
 
   return (
     <div className="space-y-6">
-      <ViewHeader
+      <IKPageHeader
         title={t('title')}
         description={t('subtitle')}
         actions={

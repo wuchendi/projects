@@ -21,7 +21,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { eventKey, localTime } from '@/lib/format/format'
 import { statsApi } from '@/lib/platform/api'
-import { ViewHeader } from '@/components/dashboard/view-header'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 
 // WebGL globe is client-only — skip SSR and lazy-load so it never blocks the page.
 const RealtimeGlobe = dynamic(
@@ -107,7 +107,7 @@ export function RealtimeView() {
 
   return (
     <div className="space-y-6">
-      <ViewHeader
+      <IKPageHeader
         title={t('title')}
         description={t('subtitle')}
         actions={

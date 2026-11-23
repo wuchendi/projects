@@ -3,7 +3,6 @@
 import { Badge } from '@cdlab/ui/components/badge'
 import { Button } from '@cdlab/ui/components/button'
 import { Input } from '@cdlab/ui/components/input'
-import { Label } from '@cdlab/ui/components/label'
 import {
   Select,
   SelectContent,
@@ -11,28 +10,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@cdlab/ui/components/select'
-import { Skeleton } from '@cdlab/ui/components/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@cdlab/ui/components/table'
 import { IKEmpty } from '@cdlab/ui/IK'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
+import { CollectionPager } from '@cdlab/ui/shell/collection/collection-pager'
+import { CollectionTable } from '@cdlab/ui/shell/collection/collection-table'
+import type { ShellColumn } from '@cdlab/ui/shell/collection/columns'
+import { Chips, FilterMenu, MenuSection } from '@cdlab/ui/shell/menus/menus'
 import { useQuery } from '@tanstack/react-query'
-import {
-  ChevronLeft,
-  ChevronRight,
-  FileSearchCorner,
-  RotateCw,
-} from 'lucide-react'
+import { FileSearchCorner, RotateCw } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DatePicker } from '@/components/DatePicker'
 import { LogDetailDrawer } from '@/components/LogDetailDrawer'
-import { SubHeader } from '@/components/layout'
 import { fetchUsers } from '@/lib/queries'
 
 interface LogRow {
@@ -64,7 +53,7 @@ interface Filters {
 
 const PAGE_SIZE = 50
 
-const STATUS_OPTIONS = [
+const STATUS_OPTIONS: { value: Filters['status']; label: string }[] = [
   { value: 'all', label: '全部' },
   { value: 'success', label: '成功' },
   { value: 'failed', label: '失败' },
@@ -114,11 +103,6 @@ export default function LogsPage() {
     queryFn: () => fetchLogs(filters, page),
   })
 
-  const totalPages = useMemo(() => {
-    if (!data) return 1
-    return Math.max(1, Math.ceil(data.total / PAGE_SIZE))
-  }, [data])
-
   const updateFilter = <K extends keyof Filters>(key: K, value: Filters[K]) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
     setPage(0)
@@ -139,13 +123,150 @@ export default function LogsPage() {
     router.replace(query ? `${pathname}?${query}` : pathname)
   }
 
+  // Status is in the URL (and the panel); the rest are filter-menu fields.
+  const activeFilters = [
+    filters.userId,
+    filters.status !== 'all',
+    filters.batchId,
+    filters.from,
+    filters.to,
+  ].filter(Boolean).length
+
+  const resetFilters = () => {
+    setFilters((prev) => ({
+      ...prev,
+      userId: '',
+      batchId: '',
+      from: '',
+      to: '',
+    }))
+    setPage(0)
+    setStatus('all')
+  }
+
+  const columns: ShellColumn<LogRow>[] = [
+    {
+      key: 'sentAt',
+      header: '时间',
+      width: '11rem',
+      cell: (row) => (
+        <span className="font-mono text-xs">
+          {new Date(row.sentAt).toLocaleString('zh-CN', { hour12: false })}
+        </span>
+      ),
+    },
+    {
+      key: 'user',
+      header: '用户',
+      width: 'minmax(6rem,0.8fr)',
+      cell: (row) => row.userName || row.userId,
+    },
+    {
+      key: 'template',
+      header: '模板',
+      width: 'minmax(6rem,0.8fr)',
+      cell: (row) => (
+        <span className="font-mono">{row.templateCode || '—'}</span>
+      ),
+    },
+    {
+      key: 'title',
+      header: '标题 / 错误',
+      width: 'minmax(12rem,2fr)',
+      cell: (row) => (
+        <span className="text-xs">
+          {row.status === 'failed' && row.errorMessage
+            ? row.errorMessage
+            : row.renderedTitle || '—'}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      header: '状态',
+      width: '5.5rem',
+      core: true,
+      cell: (row) =>
+        row.status === 'success' ? (
+          <Badge>success</Badge>
+        ) : (
+          <Badge variant="destructive">failed</Badge>
+        ),
+    },
+  ]
+
   return (
     <>
-      <SubHeader
+      <IKPageHeader
         title="推送日志"
         description="按时间倒序，所有推送记录持久保留。"
-      >
-        <>
+        tools={
+          <FilterMenu count={activeFilters} onReset={resetFilters}>
+            <MenuSection label="状态">
+              <Chips
+                value={[filters.status]}
+                options={STATUS_OPTIONS}
+                onChange={(next) => {
+                  // Single choice: the newest pick wins, an empty pick is 全部.
+                  const picked = next.find((v) => v !== filters.status)
+                  setStatus(picked ?? 'all')
+                }}
+              />
+            </MenuSection>
+            <MenuSection label="用户">
+              <Select
+                items={[
+                  { value: 'all', label: '全部用户' },
+                  ...(users ?? []).map((u) => ({
+                    value: u.id,
+                    label: u.name || u.id,
+                  })),
+                ]}
+                value={filters.userId || 'all'}
+                onValueChange={(v) =>
+                  updateFilter('userId', !v || v === 'all' ? '' : v)
+                }
+              >
+                <SelectTrigger size="sm" className="w-full">
+                  <SelectValue placeholder="全部" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部用户</SelectItem>
+                  {users?.map((u) => (
+                    <SelectItem key={u.id} value={u.id}>
+                      {u.name || u.id}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </MenuSection>
+            <MenuSection label="批次 ID">
+              <Input
+                value={filters.batchId}
+                onChange={(e) => updateFilter('batchId', e.target.value)}
+                placeholder="UUID"
+                className="h-8 font-mono"
+              />
+            </MenuSection>
+            <MenuSection label="日期">
+              <div className="grid grid-cols-2 gap-2">
+                <DatePicker
+                  value={filters.from}
+                  onChange={(v) => updateFilter('from', v)}
+                  className="w-full"
+                  placeholder="起始"
+                />
+                <DatePicker
+                  value={filters.to}
+                  onChange={(v) => updateFilter('to', v)}
+                  className="w-full"
+                  placeholder="结束"
+                />
+              </div>
+            </MenuSection>
+          </FilterMenu>
+        }
+        actions={
           <Button
             variant="outline"
             size="icon-sm"
@@ -157,186 +278,34 @@ export default function LogsPage() {
               className={`size-3.5 ${isFetching ? 'animate-spin' : ''}`}
             />
           </Button>
-        </>
-      </SubHeader>
+        }
+      />
 
-      <div className="mb-6 rounded-lg border bg-card p-4">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="space-y-1.5">
-            <Label className="text-xs">用户</Label>
-            <Select
-              items={[
-                { value: 'all', label: '全部用户' },
-                ...(users ?? []).map((u) => ({
-                  value: u.id,
-                  label: u.name || u.id,
-                })),
-              ]}
-              value={filters.userId || 'all'}
-              onValueChange={(v) =>
-                updateFilter('userId', !v || v === 'all' ? '' : v)
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="全部" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部用户</SelectItem>
-                {users?.map((u) => (
-                  <SelectItem key={u.id} value={u.id}>
-                    {u.name || u.id}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">状态</Label>
-            <Select
-              items={STATUS_OPTIONS}
-              value={filters.status}
-              onValueChange={(v) => {
-                if (v !== null) setStatus(v as Filters['status'])
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部</SelectItem>
-                <SelectItem value="success">成功</SelectItem>
-                <SelectItem value="failed">失败</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">批次 ID</Label>
-            <Input
-              value={filters.batchId}
-              onChange={(e) => updateFilter('batchId', e.target.value)}
-              placeholder="UUID"
-              className="font-mono"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">起始日期</Label>
-            <DatePicker
-              value={filters.from}
-              onChange={(v) => updateFilter('from', v)}
-              className="w-full"
-              placeholder="不限"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">结束日期</Label>
-            <DatePicker
-              value={filters.to}
-              onChange={(v) => updateFilter('to', v)}
-              className="w-full"
-              placeholder="不限"
-            />
-          </div>
-        </div>
-      </div>
+      <CollectionTable
+        label="推送日志"
+        columns={columns}
+        rows={data?.rows ?? []}
+        getRowId={(row) => row.id}
+        getRowLabel={(row) => row.renderedTitle || row.id}
+        loading={isLoading}
+        onOpen={(row) => setOpenLogId(row.id)}
+        empty={
+          <IKEmpty
+            icon={FileSearchCorner}
+            title="没有匹配的日志"
+            description="请尝试重新筛选条件"
+          />
+        }
+      />
 
-      {isLoading ? (
-        <div className="rounded-lg border bg-card">
-          <div className="divide-y">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex items-center gap-4 px-4 py-3">
-                <Skeleton className="h-3 w-36" />
-                <Skeleton className="h-3 w-16" />
-                <Skeleton className="h-3 w-14" />
-                <Skeleton className="h-3 flex-1" />
-                <Skeleton className="h-5 w-14 rounded-full" />
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : !data || data.rows.length === 0 ? (
-        <IKEmpty
-          icon={FileSearchCorner}
-          className="border border-dashed"
-          title="没有匹配的日志"
-          description="请尝试重新筛选条件"
+      {data && data.total > 0 && (
+        <CollectionPager
+          className="mt-4"
+          page={page + 1}
+          pageSize={PAGE_SIZE}
+          total={data.total}
+          onPageChange={(next) => setPage(next - 1)}
         />
-      ) : (
-        <>
-          <div className="rounded-lg border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-44">时间</TableHead>
-                  <TableHead>用户</TableHead>
-                  <TableHead>模板</TableHead>
-                  <TableHead>标题 / 错误</TableHead>
-                  <TableHead className="w-24">状态</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    onClick={() => setOpenLogId(row.id)}
-                    className="cursor-pointer"
-                  >
-                    <TableCell className="font-mono text-xs">
-                      {new Date(row.sentAt).toLocaleString('zh-CN', {
-                        hour12: false,
-                      })}
-                    </TableCell>
-                    <TableCell>{row.userName || row.userId}</TableCell>
-                    <TableCell className="font-mono">
-                      {row.templateCode || '—'}
-                    </TableCell>
-                    <TableCell className="max-w-md truncate text-xs">
-                      {row.status === 'failed' && row.errorMessage
-                        ? row.errorMessage
-                        : row.renderedTitle || '—'}
-                    </TableCell>
-                    <TableCell>
-                      {row.status === 'success' ? (
-                        <Badge>success</Badge>
-                      ) : (
-                        <Badge variant="destructive">failed</Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
-            <span>
-              共 {data.total} 条 · 当前 {page * PAGE_SIZE + 1}-
-              {Math.min((page + 1) * PAGE_SIZE, data.total)}
-            </span>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page === 0 || isFetching}
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-              >
-                <ChevronLeft className="size-4" />
-                上一页
-              </Button>
-              <span className="text-xs">
-                {page + 1} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page + 1 >= totalPages || isFetching}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                下一页
-                <ChevronRight className="size-4" />
-              </Button>
-            </div>
-          </div>
-        </>
       )}
 
       <LogDetailDrawer logId={openLogId} onClose={() => setOpenLogId(null)} />

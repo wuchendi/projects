@@ -39,6 +39,38 @@ grep -rlE '"@/(components/ui|shell)/' "$UI/src/shell" | xargs -r sed -i \
   -e 's#"@/components/ui/#"@cdlab/ui/components/#g' \
   -e 's#"@/shell/#"@cdlab/ui/shell/#g'
 
+# One exact export per shell file (they mix .ts and .tsx, so no single pattern fits).
+node - "$UI" <<'NODE'
+const fs = require('node:fs')
+const path = require('node:path')
+const ui = process.argv[2]
+const pkgPath = path.join(ui, 'package.json')
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+const files = []
+const walk = (dir) => {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, e.name)
+    if (e.isDirectory()) walk(p)
+    else if (/\.tsx?$/.test(e.name) && !/\.test\.tsx?$/.test(e.name)) files.push(p)
+  }
+}
+walk(path.join(ui, 'src/shell'))
+const shell = Object.fromEntries(
+  files.sort().map((f) => {
+    const rel = path.relative(path.join(ui, 'src'), f).replace(/\.tsx?$/, '')
+    return [`./${rel}`, `./${path.relative(ui, f)}`]
+  }),
+)
+const exports = {}
+for (const [k, v] of Object.entries(pkg.exports)) {
+  if (k.startsWith('./shell/')) continue
+  exports[k] = v
+  if (k === './IK/*') Object.assign(exports, shell)
+}
+pkg.exports = exports
+fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`)
+NODE
+
 if [ -n "$css_diff" ]; then
   echo
   echo "The registry wanted to add this CSS to $UI/src/styles/globals.css (restored);"
@@ -48,3 +80,4 @@ fi
 echo
 echo "Done. Check \`git status $UI/src/shell\`, new npm dependencies of the items"
 echo "(add them to $UI/package.json via the catalog), then build an app that uses the shell."
+echo "The $UI/package.json \"./shell/...\" exports were regenerated from src/shell."

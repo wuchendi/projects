@@ -22,7 +22,7 @@ import { eventKey, localTime } from '@/lib/format/format'
 import { flagEmoji, regionName } from '@/lib/geo/country'
 import { linkApi, statsApi } from '@/lib/platform/api'
 import { queryKeys } from '@/lib/platform/query-keys'
-import { ViewHeader } from '@/components/dashboard/view-header'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 
 const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
 
@@ -123,7 +123,7 @@ export function DashboardOverview() {
 
   return (
     <div className="space-y-6">
-      <ViewHeader title={t('title')} description={t('description')} />
+      <IKPageHeader title={t('title')} description={t('description')} />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => {

@@ -58,7 +58,7 @@ import type { LaunchpadRow } from '@/lib/platform/api'
 import { launchpadApi } from '@/lib/platform/api'
 import { useLaunchpadsViewStore } from '@/stores/launchpads-view-store'
 import { useLinkRefs } from './use-link-refs'
-import { ViewHeader } from '@/components/dashboard/view-header'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 
 const STATS_WINDOW_MS = 365 * 24 * 60 * 60 * 1000
 
@@ -109,7 +109,7 @@ export function LaunchpadsView() {
 
   return (
     <div className="space-y-4">
-      <ViewHeader
+      <IKPageHeader
         title={t('title')}
         description={t('subtitle')}
         actions={

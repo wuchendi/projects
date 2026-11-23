@@ -13,7 +13,7 @@ import { useTranslations } from 'next-intl'
 import { LocaleTabs } from '@/components/dashboard/settings/locale-tabs'
 import { ThemeTabs } from '@/components/dashboard/settings/theme-tabs'
 import { configApi } from '@/lib/platform/api'
-import { ViewHeader } from '@/components/dashboard/view-header'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 
 function StatusRow({ label, ok }: { label: string; ok: boolean }) {
   const t = useTranslations('settings.system')
@@ -37,7 +37,7 @@ export function SettingsView() {
 
   return (
     <div className="space-y-6">
-      <ViewHeader title={t('title')} description={t('subtitle')} />
+      <IKPageHeader title={t('title')} description={t('subtitle')} />
 
       <Card className="ring-1">
         <CardHeader>

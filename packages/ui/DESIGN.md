@@ -76,7 +76,7 @@ boundary between this package and each consumer:
       ▼
   src/
     components/*.tsx   59 shadcn/ui primitives   (@base-ui/react)
-    IK/*.tsx           10 app-shell parts        (composed from primitives)
+    IK/*.tsx           12 app-shell parts        (composed from primitives)
     reactbits/*.tsx    10 effects                (ogl / raw-WebGL / motion)
     icon/*.tsx         2 brand SVGs
     hooks/*.ts         useIsMobile
@@ -161,7 +161,7 @@ registries (§9) but have no upstream shadcn equivalent.
 
 ## 5. The asset kit (`IK/`)
 
-10 components (`IK/*.tsx`) plus the internal `IK/index.ts` barrel. Unlike
+12 components (`IK/*.tsx`) plus the internal `IK/index.ts` barrel. Unlike
 `components/`, these are **opinionated app-shell pieces composed *from* the
 primitives** — the shared chrome and lifecycle screens every app reuses.
 
@@ -176,9 +176,11 @@ primitives** — the shared chrome and lifecycle screens every app reuses.
 | `IKConfirmDialog` | Composes the `alert-dialog` primitive with `isPending`, `extraButton`, and custom confirm/cancel text. |
 | `IKAudioAssetPlayer` | `'use client'` — plays audio on mouse-enter (hover-preview). |
 | `IKVersionInfo` | `'use client'`, renders `null`; side-effect only — a styled `console` banner of `{ name, version, buildTime }`. |
+| `IKPageHeader` | Page header for apps on the shared app shell (`src/shell`): the sticky `PageHeader` (title, `tools`, `actions`) plus an optional description and a fixed `mb-6` gap. Must be the page's first element, unwrapped, or it stops sticking. |
+| `IKRailAccountMenu` | `'use client'` — the avatar account menu at the foot of the shell rail; the app passes the avatar, label and menu items. |
 
-Only `IKAudioAssetPlayer` and `IKVersionInfo` are client components; the rest are
-server-safe (§8).
+Only `IKAudioAssetPlayer`, `IKVersionInfo` and `IKRailAccountMenu` are client components; the rest are
+server-safe (§8) (`IKPageHeader` renders the shell's client `PageHeader`).
 
 ---
 
