@@ -3,6 +3,7 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
@@ -61,9 +62,12 @@ export function NavFooter() {
       >
         {user ? (
           <>
-            <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
-              {user.email}
-            </DropdownMenuLabel>
+            {/* Base UI: a menu label is a group label and needs a group. */}
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
+                {user.email}
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
           </>
         ) : null}
