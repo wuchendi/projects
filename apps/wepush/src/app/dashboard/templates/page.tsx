@@ -61,7 +61,7 @@ export default function TemplatesPage() {
       key: 'code',
       header: 'Code',
       width: 'minmax(8rem,0.8fr)',
-      cell: (t) => <span className="font-mono">{t.code}</span>,
+      cell: (t) => <span className="block truncate font-mono">{t.code}</span>,
     },
     {
       key: 'title',
@@ -74,7 +74,9 @@ export default function TemplatesPage() {
       header: '内容预览',
       width: 'minmax(12rem,2fr)',
       cell: (t) => (
-        <span className="text-muted-foreground">{t.desc || '—'}</span>
+        <span className="block truncate text-muted-foreground">
+          {t.desc || '—'}
+        </span>
       ),
     },
   ]

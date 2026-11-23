@@ -166,7 +166,9 @@ export default function LogsPage() {
       header: '模板',
       width: 'minmax(6rem,0.8fr)',
       cell: (row) => (
-        <span className="font-mono">{row.templateCode || '—'}</span>
+        <span className="block truncate font-mono" title={row.templateCode}>
+          {row.templateCode || '—'}
+        </span>
       ),
     },
     {
@@ -174,7 +176,7 @@ export default function LogsPage() {
       header: '标题 / 错误',
       width: 'minmax(12rem,2fr)',
       cell: (row) => (
-        <span className="text-xs">
+        <span className="block truncate text-xs">
           {row.status === 'failed' && row.errorMessage
             ? row.errorMessage
             : row.renderedTitle || '—'}
