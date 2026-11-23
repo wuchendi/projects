@@ -193,7 +193,7 @@ export default function UsersPage() {
       header: 'OpenID',
       width: 'minmax(12rem,1.4fr)',
       cell: (u) => (
-        <span className="font-mono text-xs text-muted-foreground">
+        <span className="block truncate font-mono text-xs text-muted-foreground">
           {u.wechatOpenId || '—'}
         </span>
       ),
@@ -202,7 +202,11 @@ export default function UsersPage() {
       key: 'template',
       header: '模板',
       width: 'minmax(8rem,1fr)',
-      cell: (u) => <span className="font-mono">{u.templateCode || '—'}</span>,
+      cell: (u) => (
+        <span className="block truncate font-mono" title={u.templateCode}>
+          {u.templateCode || '—'}
+        </span>
+      ),
     },
     { key: 'city', header: '城市', cell: (u) => u.city || '—' },
     {

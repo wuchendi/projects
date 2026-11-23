@@ -142,4 +142,14 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
+  /* Base UI scroll areas draw their own scrollbar; hide the native one.
+     Base UI injects this rule at runtime too, but a static copy keeps the
+     native bar hidden when that injected <style> does not apply. */
+  .base-ui-disable-scrollbar {
+    scrollbar-width: none;
+  }
+  .base-ui-disable-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
