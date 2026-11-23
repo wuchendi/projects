@@ -1,9 +1,11 @@
 'use client'
 
-import type { ShellLabels } from '@cdlab/ui/shell/core/labels'
+import { shellLabelsEn, shellLabelsZh } from '@cdlab/ui/shell/core/labels'
 import type { ShellPrefs } from '@cdlab/ui/shell/core/prefs'
 import type { ShellSpace } from '@cdlab/ui/shell/core/spaces'
 import { AppShell } from '@cdlab/ui/shell/layout/app-shell'
+import type { ShellSearchResult } from '@cdlab/ui/shell/search/search-dialog'
+import { SearchDialog } from '@cdlab/ui/shell/search/search-dialog'
 import type { LucideIcon } from 'lucide-react'
 import {
   Activity,
@@ -15,11 +17,14 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useMemo } from 'react'
+import { useRouter } from 'next/navigation'
+import { useLocale, useTranslations } from 'next-intl'
+import { useCallback, useMemo, useState } from 'react'
 import { NavUser } from '@/components/dashboard/nav-user'
 import { SPACE_PANELS } from '@/components/dashboard/space-panels'
 import { FlnkLogo } from '@/components/layout'
+import { buildShortUrl } from '@/lib/format/format'
+import { linkApi } from '@/lib/platform/api'
 
 interface NavItem {
   href: string
@@ -41,53 +46,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard/settings', key: 'settings', icon: Settings, footer: true },
 ]
 
-// Shell placeholders (`{count}` …) are filled in by the shell, so they are
-// passed through next-intl unchanged.
-const KEEP = {
-  count: '{count}',
-  total: '{total}',
-  page: '{page}',
-  pages: '{pages}',
-  size: '{size}',
-  name: '{name}',
-}
-
-function useShellLabels(): ShellLabels {
-  const t = useTranslations('dashboard.shell')
-  return useMemo(
-    () => ({
-      toggleSidebar: t('toggleSidebar'),
-      openMenu: t('openMenu'),
-      search: t('search'),
-      searchPlaceholder: t('searchPlaceholder'),
-      searchEmpty: t('searchEmpty'),
-      searchFailed: t('searchFailed'),
-      goTo: t('goTo'),
-      filter: t('filter'),
-      filterActive: t('filterActive', KEEP),
-      display: t('display'),
-      reset: t('reset'),
-      clearSearch: t('clearSearch'),
-      loading: t('loading'),
-      selectedCount: t('selectedCount', KEEP),
-      selectAll: t('selectAll'),
-      deselectAll: t('deselectAll'),
-      selectRow: t('selectRow', KEEP),
-      clearSelection: t('clearSelection'),
-      columns: t('columns'),
-      pagerTotal: t('pagerTotal', KEEP),
-      pagerSelected: t('pagerSelected', KEEP),
-      pagerPage: t('pagerPage', KEEP),
-      pageSize: t('pageSize', KEEP),
-      firstPage: t('firstPage'),
-      previousPage: t('previousPage'),
-      nextPage: t('nextPage'),
-      lastPage: t('lastPage'),
-    }),
-    [t],
-  )
-}
-
 // The dashboard chrome: the shared `@cdlab/ui/shell` (appshell registry) fed
 // with flnk's spaces, their panels and the account menu.
 export function DashboardShell({
@@ -100,7 +58,8 @@ export function DashboardShell({
 }) {
   const t = useTranslations('dashboard.nav')
   const tc = useTranslations('common')
-  const labels = useShellLabels()
+  // The shell ships its strings in English and Chinese; flnk's locales match.
+  const labels = useLocale() === 'zh' ? shellLabelsZh : shellLabelsEn
 
   const spaces: ShellSpace[] = useMemo(
     () =>
@@ -115,6 +74,28 @@ export function DashboardShell({
     [t],
   )
 
+  const router = useRouter()
+  const tl = useTranslations('links')
+  const [searchOpen, setSearchOpen] = useState(false)
+
+  // Cmd/Ctrl+K: server-side link search; a hit opens that link's analytics.
+  const search = useCallback(
+    async (query: string): Promise<ShellSearchResult[]> => {
+      const { links } = await linkApi.search(query)
+      return links.map((link) => ({
+        id: link.id,
+        label: link.title?.trim() || link.slug,
+        detail: buildShortUrl(link.slug, link.domain).replace(/^https?:\/\//, ''),
+        icon: Link2,
+        onSelect: () =>
+          router.push(
+            `/dashboard/analytics?slug=${encodeURIComponent(link.slug)}`,
+          ),
+      }))
+    },
+    [router],
+  )
+
   return (
     <AppShell
       spaces={spaces}
@@ -125,8 +106,20 @@ export function DashboardShell({
       account={<NavUser />}
       labels={labels}
       prefs={prefs}
+      newAction={{
+        label: tl('new'),
+        onSelect: () => router.push('/dashboard/links?new=1'),
+      }}
+      onSearch={() => setSearchOpen(true)}
     >
       {children}
+      <SearchDialog
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        spaces={spaces}
+        search={search}
+        resultsLabel={t('links')}
+      />
     </AppShell>
   )
 }

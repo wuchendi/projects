@@ -11,10 +11,10 @@ import {
   SelectValue,
 } from '@cdlab/ui/components/select'
 import { Spinner } from '@cdlab/ui/components/spinner'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 import { useMutation } from '@tanstack/react-query'
 import { Play } from 'lucide-react'
 import { useState } from 'react'
-import { SubHeader } from '@/components/layout'
 
 type SourceName = 'weather' | 'hitokoto' | 'iciba'
 
@@ -54,7 +54,7 @@ export default function DebugPage() {
 
   return (
     <>
-      <SubHeader
+      <IKPageHeader
         title="数据源探测"
         description="直接调用单个外部接口，查看原始返回。"
       />

@@ -35,7 +35,8 @@ There are **no package-level scripts** (`"scripts": {}`) — do not invent
 
 - `src/components/*.tsx` — shadcn/ui primitives, `style: base-nova`.
 - `src/IK/*.tsx` — app-shell kit composed from primitives (`IKHeader`,
-  `IKFooter`, `IKAssetRenderer`, `IKConfirmDialog`, `IKVersionInfo`, …).
+  `IKFooter`, `IKAssetRenderer`, `IKConfirmDialog`, `IKVersionInfo`, …), plus
+  `IKPageHeader` / `IKRailAccountMenu` for apps on the shared shell (`src/shell`).
 - `src/reactbits/*.tsx` — `Aurora`/`Particles`/`Plasma`/`Threads` (ogl GLSL),
   `SplashCursor` (raw WebGL), `BlurText`/`CountUp`/`GradientText`/`ShinyText`/
   `SpotlightCard` (DOM/motion). All `'use client'`.

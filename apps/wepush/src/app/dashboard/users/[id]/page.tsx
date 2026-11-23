@@ -2,13 +2,13 @@
 
 import { Button } from '@cdlab/ui/components/button'
 import { Spinner } from '@cdlab/ui/components/spinner'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Eye, Send } from 'lucide-react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { SubHeader } from '@/components/layout'
 import type { PreviewResult } from '@/components/PreviewDialog'
 import { PreviewDialog } from '@/components/PreviewDialog'
 import type { UserFormValue } from '@/components/UserForm'
@@ -114,39 +114,40 @@ export default function EditUserPage() {
 
   return (
     <>
-      <SubHeader
+      <IKPageHeader
         title="编辑接收人"
         description={userQ.data.name || userQ.data.id}
-      >
-        <>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={preview.isPending}
-            onClick={() => {
-              setPreviewOpen(true)
-              preview.mutate()
-            }}
-          >
-            <Eye className="mr-1 size-4" />
-            预览
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            disabled={push.isPending}
-            onClick={() => push.mutate()}
-          >
-            <Send className="mr-1 size-4" />
-            {push.isPending ? '推送中...' : '立即推送'}
-          </Button>
-          <Link href="/dashboard/users">
-            <Button variant="ghost" size="sm">
-              返回列表
+        actions={
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={preview.isPending}
+              onClick={() => {
+                setPreviewOpen(true)
+                preview.mutate()
+              }}
+            >
+              <Eye className="mr-1 size-4" />
+              预览
             </Button>
-          </Link>
-        </>
-      </SubHeader>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={push.isPending}
+              onClick={() => push.mutate()}
+            >
+              <Send className="mr-1 size-4" />
+              {push.isPending ? '推送中...' : '立即推送'}
+            </Button>
+            <Link href="/dashboard/users">
+              <Button variant="ghost" size="sm">
+                返回列表
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       <UserForm
         initial={userQ.data}

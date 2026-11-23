@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl'
 import { useRef } from 'react'
 import { toast } from 'sonner'
 import { configApi, migrateApi } from '@/lib/platform/api'
-import { ViewHeader } from '@/components/dashboard/view-header'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 
 export function MigrateView() {
   const t = useTranslations('migrate')
@@ -68,7 +68,7 @@ export function MigrateView() {
 
   return (
     <div className="space-y-4">
-      <ViewHeader title={t('title')} description={t('subtitle')} />
+      <IKPageHeader title={t('title')} description={t('subtitle')} />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="ring-1">

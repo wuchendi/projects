@@ -2,11 +2,11 @@
 
 import { Button } from '@cdlab/ui/components/button'
 import { Spinner } from '@cdlab/ui/components/spinner'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { SubHeader } from '@/components/layout'
 import type { UserFormValue } from '@/components/UserForm'
 import { UserForm } from '@/components/UserForm'
 import type { Template } from '@/database/schema'
@@ -59,13 +59,18 @@ export default function NewUserPage() {
 
   return (
     <>
-      <SubHeader title="新建接收人">
-        <Link href="/dashboard/users">
-          <Button variant="ghost" size="sm">
-            返回列表
-          </Button>
-        </Link>
-      </SubHeader>
+      <IKPageHeader
+        title="新建接收人"
+        actions={
+          <>
+            <Link href="/dashboard/users">
+              <Button variant="ghost" size="sm">
+                返回列表
+              </Button>
+            </Link>
+          </>
+        }
+      />
 
       <UserForm
         templates={templates ?? []}

@@ -1,26 +1,37 @@
 'use client'
 
 import { Button } from '@cdlab/ui/components/button'
-import { Skeleton } from '@cdlab/ui/components/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@cdlab/ui/components/table'
 import { IKEmpty } from '@cdlab/ui/IK'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
+import { CollectionTable } from '@cdlab/ui/shell/collection/collection-table'
+import type { ShellColumn } from '@cdlab/ui/shell/collection/columns'
+import {
+  FeatureIntro,
+  IntroArtArrow,
+  IntroArtCard,
+} from '@cdlab/ui/shell/intro/feature-intro'
+import { HeaderSearch } from '@cdlab/ui/shell/menus/menus'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FileSearchCorner, Pencil, Plus, RotateCw, Trash2 } from 'lucide-react'
+import {
+  FileSearchCorner,
+  FileText,
+  Pencil,
+  Plus,
+  RotateCw,
+  Trash2,
+} from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton'
-import { SubHeader } from '@/components/layout'
+import type { Template } from '@/database/schema'
 import { fetchTemplates } from '@/lib/queries'
 
 export default function TemplatesPage() {
   const qc = useQueryClient()
+  const router = useRouter()
+  const [search, setSearch] = useState('')
   const { data, isLoading } = useQuery({
     queryKey: ['templates'],
     queryFn: fetchTemplates,
@@ -38,108 +49,143 @@ export default function TemplatesPage() {
     onError: () => toast.error('删除失败'),
   })
 
+  const q = search.trim().toLowerCase()
+  const rows = data?.filter(
+    (t) =>
+      !q || [t.code, t.title, t.desc].some((v) => v.toLowerCase().includes(q)),
+  )
+  const hasTemplates = !!data && data.length > 0
+
+  const columns: ShellColumn<Template>[] = [
+    {
+      key: 'code',
+      header: 'Code',
+      width: 'minmax(8rem,0.8fr)',
+      cell: (t) => <span className="font-mono">{t.code}</span>,
+    },
+    {
+      key: 'title',
+      header: '标题',
+      width: 'minmax(8rem,1fr)',
+      cell: (t) => t.title || '—',
+    },
+    {
+      key: 'desc',
+      header: '内容预览',
+      width: 'minmax(12rem,2fr)',
+      cell: (t) => (
+        <span className="text-muted-foreground">{t.desc || '—'}</span>
+      ),
+    },
+  ]
+
   return (
     <>
-      <SubHeader
+      <IKPageHeader
         title="推送模板"
         description="支持 {{variable.DATA}} 模板变量，每位用户通过 code 关联模板。"
-      >
-        <>
-          <Button
-            variant="outline"
-            size="icon-sm"
-            aria-label="刷新"
-            onClick={() =>
-              void qc.invalidateQueries({ queryKey: ['templates'] })
-            }
-          >
-            <RotateCw className="size-3.5" />
-          </Button>
-          <Link href="/dashboard/templates/new">
-            <Button size="sm">
+        tools={
+          hasTemplates ? (
+            <HeaderSearch
+              value={search}
+              onChange={setSearch}
+              placeholder="搜索 code、标题、内容"
+            />
+          ) : undefined
+        }
+        actions={
+          <>
+            <Button
+              variant="outline"
+              size="icon-sm"
+              aria-label="刷新"
+              onClick={() =>
+                void qc.invalidateQueries({ queryKey: ['templates'] })
+              }
+            >
+              <RotateCw className="size-3.5" />
+            </Button>
+            <Button
+              size="sm"
+              render={<Link href="/dashboard/templates/new" />}
+              nativeButton={false}
+            >
               <Plus className="size-4" />
               新建模板
             </Button>
-          </Link>
-        </>
-      </SubHeader>
+          </>
+        }
+      />
 
-      {isLoading ? (
-        <div className="rounded-lg border bg-card">
-          <div className="divide-y">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between px-4 py-3"
-              >
-                <div className="flex items-center gap-4">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-3 w-48" />
-                </div>
-                <div className="flex gap-1">
-                  <Skeleton className="h-7 w-7" />
-                  <Skeleton className="h-7 w-7" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : !data || data.length === 0 ? (
-        <IKEmpty
-          icon={FileSearchCorner}
-          className="border border-dashed"
-          title="还没有模板"
-          description="每位用户通过 code 关联模板，支持 {{variable.DATA}} 模板变量。"
-        >
-          <Link href="/dashboard/templates/new" className="mt-4 inline-block">
-            <Button size="sm">
-              <Plus className="mr-1 size-4" />
-              新建第一个模板
+      {!isLoading && !hasTemplates ? (
+        <FeatureIntro
+          icon={FileText}
+          label="模板"
+          title="创建第一个推送模板"
+          description="模板对应微信测试号里的模板消息，正文用 {{variable.DATA}} 引用天气、纪念日、每日一句等变量。接收人通过 code 关联模板。"
+          action={
+            <Button
+              render={<Link href="/dashboard/templates/new" />}
+              nativeButton={false}
+            >
+              <Plus className="size-4" />
+              新建模板
             </Button>
-          </Link>
-        </IKEmpty>
+          }
+          art={
+            <>
+              <IntroArtCard>
+                <p className="font-mono text-xs">daily</p>
+                <p className="text-muted-foreground">
+                  {'今天{{city.DATA}}{{weather.DATA}}'}
+                </p>
+              </IntroArtCard>
+              <IntroArtArrow />
+              <IntroArtCard>
+                <p className="text-muted-foreground">今天上海 多云 18°C</p>
+              </IntroArtCard>
+            </>
+          }
+        />
       ) : (
-        <div className="rounded-lg border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>标题</TableHead>
-                <TableHead>内容预览</TableHead>
-                <TableHead className="w-32 text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((t) => (
-                <TableRow key={t.id}>
-                  <TableCell className="font-mono">{t.code}</TableCell>
-                  <TableCell>{t.title || '—'}</TableCell>
-                  <TableCell className="max-w-md truncate text-muted-foreground">
-                    {t.desc || '—'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="inline-flex gap-1">
-                      <Link href={`/dashboard/templates/${t.id}`}>
-                        <Button variant="ghost" size="icon" aria-label="编辑">
-                          <Pencil className="size-4" />
-                        </Button>
-                      </Link>
-                      <ConfirmDeleteButton
-                        title="删除模板"
-                        message={`确认删除模板 "${t.code}" ？此操作不可撤销。`}
-                        onConfirm={() => del.mutate(t.id)}
-                        disabled={del.isPending}
-                      >
-                        <Trash2 className="size-4" />
-                      </ConfirmDeleteButton>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <CollectionTable
+          label="推送模板"
+          columns={columns}
+          rows={rows ?? []}
+          getRowId={(t) => t.id}
+          getRowLabel={(t) => t.code}
+          loading={isLoading}
+          onOpen={(t) => router.push(`/dashboard/templates/${t.id}`)}
+          rowActions={(t) => (
+            <>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="编辑"
+                title="编辑"
+                render={<Link href={`/dashboard/templates/${t.id}`} />}
+                nativeButton={false}
+              >
+                <Pencil />
+              </Button>
+              <ConfirmDeleteButton
+                title="删除模板"
+                message={`确认删除模板 "${t.code}" ？此操作不可撤销。`}
+                onConfirm={() => del.mutate(t.id)}
+                disabled={del.isPending}
+              >
+                <Trash2 className="size-4" />
+              </ConfirmDeleteButton>
+            </>
+          )}
+          empty={
+            <IKEmpty
+              icon={FileSearchCorner}
+              title="没有匹配的模板"
+              description="换个关键词试试。"
+            />
+          }
+        />
       )}
     </>
   )

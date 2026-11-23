@@ -8,12 +8,12 @@ import { Label } from '@cdlab/ui/components/label'
 import { Separator } from '@cdlab/ui/components/separator'
 import { Skeleton } from '@cdlab/ui/components/skeleton'
 import { Switch } from '@cdlab/ui/components/switch'
+import { IKPageHeader } from '@cdlab/ui/IK/IKPageHeader'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Copy, RefreshCcw } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { SubHeader } from '@/components/layout'
 import type { User, UserConfig } from '@/database/schema'
 
 // GET /api/settings masks secrets and adds presence flags; PATCH on regenerate
@@ -162,7 +162,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <SubHeader
+      <IKPageHeader
         title="全局配置"
         description="微信 / 节流参数 / 推送触发 token"
       />
