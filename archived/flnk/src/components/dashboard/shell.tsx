@@ -18,6 +18,7 @@ import {
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { NavUser } from '@/components/dashboard/nav-user'
+import { SPACE_PANELS } from '@/components/dashboard/space-panels'
 import { FlnkLogo } from '@/components/layout'
 
 interface NavItem {
@@ -88,7 +89,7 @@ function useShellLabels(): ShellLabels {
 }
 
 // The dashboard chrome: the shared `@cdlab/ui/shell` (appshell registry) fed
-// with flnk's spaces and account menu.
+// with flnk's spaces, their panels and the account menu.
 export function DashboardShell({
   prefs,
   children,
@@ -117,6 +118,7 @@ export function DashboardShell({
   return (
     <AppShell
       spaces={spaces}
+      panels={SPACE_PANELS}
       homeHref="/dashboard"
       logo={<FlnkLogo className="size-[18px]" />}
       logoLabel={tc('appName')}
