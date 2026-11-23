@@ -11,6 +11,16 @@
       "tailwindDirectives": true
     }
   },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    }
+  },
+  "yaml": {
+    "formatter": {
+      "enabled": false
+    }
+  },
   "assist": {
     "actions": {
       "source": {
@@ -126,8 +136,6 @@
       "!**/.turbo",
       "!**/.cache",
       "!apps/repo-changelog/**",
-      "!apps/byplay-log/src/database/**/*.json",
-      "!apps/byplay-log/src/database/**/*.sql",
       "!apps/dropply-api/src/database/**/*.json",
       "!apps/dropply-api/src/database/**/*.sql",
       "!apps/wepush/src/database/**/*.json",

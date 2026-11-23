@@ -26,7 +26,6 @@ there for depth.
 | --- | --- | --- |
 | [bycut](./apps/bycut) | Browser video editor — timeline-based, zero uploads | [↗](https://bycut.pages.dev/) |
 | [byplay](./apps/byplay) | Online HLS / MP4 player | [↗](https://byplay.pages.dev/) |
-| [byplay-log](./apps/byplay-log) | ByPlay playback-log ingest service | — |
 | [byshot](./apps/byshot) | Cloudinary-backed photography gallery | [↗](https://byshot.pages.dev/) |
 | [bytts](./apps/bytts) | Text-to-speech via Azure Speech (+ custom providers) | [↗](https://bytts.pages.dev/) |
 | [clearify](./apps/clearify) | Image / video toolbox (bg removal · compress · transcode) | [↗](https://clearify.pages.dev/) |
@@ -48,6 +47,7 @@ Frozen — no further development. Still deployable, but excluded from the root
 | App | What it is | Successor |
 | --- | --- | --- |
 | [flnk](./archived/flnk) | Privacy-first link shortener with geo / device routing | [tinylink](https://github.com/wuchendi/tinylink-docs) · [↗](https://tinylink.cdlab.workers.dev/) |
+| [byplay-log](./archived/byplay-log) | ByPlay playback-log ingest Worker (no longer called — byplay stopped reporting) | — |
 
 ## Packages
 

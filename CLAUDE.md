@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Workspace layout:
 
-- `apps/*` — 15 deployable products (Next.js, Nuxt, Cloudflare Workers)
+- `apps/*` — 14 deployable products (Next.js, Nuxt, Cloudflare Workers)
 - `archived/*` — frozen apps kept for reference and occasional deploys, not developed further (see *Archived apps*)
 - `packages/*` — 6 shared libraries (`ui`, `utils`, `cipher`, `uncrypto`, `db`, `tsconfig`)
 
@@ -17,7 +17,7 @@ Apps fall into three runtime families with different toolchains:
 | Family                        | Apps                                                                                                                             | Build tool                      | Deploy target                                                                                        |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | **Next.js (App Router)**      | `bycut`, `byplay`, `byshot`, `bytts`, `clearify`, `dropply-web`, `flox`, `text2img`, `values`, `vidl`, `wepush` | `next build` (some `--webpack`) | Cloudflare Pages (build command `NEXT_ENABLE_ADAPTER=0 npx --legacy-peer-deps @cloudflare/next-on-pages@1`, output `.vercel/output/static`; not a dependency); `text2img` and `wepush` use `@opennextjs/cloudflare` |
-| **Cloudflare Workers (Hono)** | `byplay-log`, `dropply-api`, `live-user`                                                                            | `wrangler deploy --minify`      | Cloudflare Workers + Durable Objects / D1                                                            |
+| **Cloudflare Workers (Hono)** | `dropply-api`, `live-user`                                                                                          | `wrangler deploy --minify`      | Cloudflare Workers + Durable Objects / D1                                                            |
 | **Nuxt 4 (Vue 3)**            | `repo-changelog`                                                                                                                 | `nuxt build`/`generate`         | Vercel                                                                                               |
 
 ## Commands
@@ -41,17 +41,17 @@ pnpm dev:dropply                             # filters apps/dropply-* (web + api
 pnpm --filter @cdlab/<name> dev|build|typecheck|lint
 pnpm --filter ./apps/<dir> dev|build         # path-based filter
 
-# Cloudflare Workers (byplay-log, dropply-api, live-user)
+# Cloudflare Workers (dropply-api, live-user)
 pnpm --filter @cdlab/<worker> dev         # nsl run wrangler dev
 pnpm --filter @cdlab/<worker> deploy      # wrangler deploy --minify
 pnpm --filter @cdlab/<worker> cf-typegen  # regenerate CloudflareBindings type
 
-# Drizzle (dropply-api, byplay-log, wepush)
+# Drizzle (dropply-api, wepush)
 pnpm --filter @cdlab/<worker> db:gen      # generate migration from schema
 pnpm --filter @cdlab/<worker> db:migrate  # apply (LibSQL)
 pnpm --filter @cdlab/<worker> cf:localdb  # apply to local D1
 pnpm --filter @cdlab/<worker> cf:remotedb # apply to remote D1
-pnpm --filter @cdlab/<worker> db:studio   # drizzle-kit studio (port 3015 / 3018 / 3019 / 3020)
+pnpm --filter @cdlab/<worker> db:studio   # drizzle-kit studio (port 3015 / 3019 / 3020)
 
 # Workspace package tests (vitest)
 pnpm --filter @cdlab/utils  test          # one-shot
@@ -79,14 +79,6 @@ Entry: `src/index.ts`. Hono + Drizzle (D1 / LibSQL) + Resend (email). Server **n
 - `src/cron/cleanup.ts` — Runs from the worker's `scheduled()` handler; deletes expired sessions/files via `cleanupExpiredContent(env)`.
 - `src/global.ts` — Sets a global `logger` (winston) and `isDebug` flag. Imported for side effects from `index.ts`.
 - Validation: `@hono/zod-validator` + `src/lib/validationSchemas.ts`.
-
-#### `byplay-log` — ByPlay player log ingest
-
-Entry: `src/index.ts`. Single route `POST /monitor?bury_content=…`. CORS locked to `https://byplay.pages.dev` + localhost.
-
-- `src/database/schema.ts` — `playerLogs` table (auto-increment id) with JSON columns (`feature`, `playerConfig`, `vplayerRuntime`, `executeProgressInfos`) for flexible event shapes. Index on `userId`, `streamId`, `time`.
-- `src/routes/monitor.ts` — Accepts the player's monitoring payload; the `bury_content` query param tags the event type.
-- Same `global.ts` / winston logger pattern as `dropply-api`.
 
 #### `live-user` — Real-time online user counter
 
@@ -184,7 +176,7 @@ Pure-browser stream download — `mux.js` + Streams API, near-zero memory footpr
 #### `byplay` — Online HLS/MP4 player
 
 - `src/components/player/` — HLS.js wrapper with ABR config, retry/buffer settings.
-- Reports playback events to `byplay-log` worker (configurable endpoint).
+- No telemetry: playback logs stay on the page (the old `byplay-log` reporting went away with the VePlayer page in March 2026; the worker is archived).
 - Has a "jump to vidl" quick-action for downloading the current video.
 
 #### `bytts` — Text-to-speech tool
@@ -281,6 +273,7 @@ Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `lib
 
 `archived/*` holds apps that are frozen — no new features, no refactors, no dependency-compat fixes unless a deploy actually needs one. They stay in the pnpm workspace so they still install and deploy, but root `pnpm build` / `dev` / `lint` filter them out (`--filter='!./archived/*'`) and Biome ignores `archived/**`. Shared catalog bumps may break them; that is accepted.
 
+- `byplay-log` — the former ByPlay playback-log ingest Worker (Hono + Drizzle/D1, single `POST /monitor?bury_content=…` route, `playerLogs` table). No caller since byplay dropped its VePlayer reporting in March 2026. Deploy manually via `pnpm deploy:byplay-log` / `pnpm dev:byplay-log`; its Drizzle scripts still work through `pnpm --filter ./archived/byplay-log <script>` (studio port 3018).
 - `flnk` — the former link shortener (Next.js + OpenNext, D1/KV/Analytics Engine). Superseded by TinyLink ([docs](https://github.com/wuchendi/tinylink-docs)), live at https://tinylink.cdlab.workers.dev/. Deploy manually via the `deploy-flnk.yml` workflow or `pnpm deploy:flnk` / `pnpm dev:flnk`.
 
 ## Conventions
@@ -288,6 +281,7 @@ Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `lib
 ### Lint & format (Biome, not ESLint/Prettier)
 
 - Single quotes, no semicolons, 2-space indent, `organizeImports: on`, formatter on by default in `.vscode/settings.json`.
+- Biome 2.6+ also parses Markdown and YAML; their **formatter is disabled** in `biome.json` (lint only) so docs tables and workflow files are not reflowed.
 - Non-default rules **at error level**:
   - `useImportType` (separated) — write `import type { X }` not `import { type X }`
   - `noFloatingPromises`, `noMisusedPromises` (nursery) — every async call must be awaited or explicitly handled
@@ -296,7 +290,7 @@ Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `lib
   - `useDateNow` — `Date.now()` not `new Date().getTime()`
   - `noRestrictedImports` for zod — **`import * as z from 'zod'`** is mandatory; `import { z } from 'zod'` will fail lint
 - Per-app linter "domains" are scoped via `biome.json` `overrides`: `next` + `react` for the Next apps listed in `overrides[1].includes`, `vue` for `repo-changelog`. Other apps get the recommended-off baseline.
-- `repo-changelog`, `byplay-log/src/database/**/*.{json,sql}`, `dropply-api/src/database/**/*.{json,sql}`, `wepush/src/database/**/*.{json,sql}`, and parts of `packages/ui/src/{components,reactbits}/**/*.tsx` are **excluded from Biome** entirely, as is everything under `archived/`.
+- `repo-changelog`, `dropply-api/src/database/**/*.{json,sql}`, `wepush/src/database/**/*.{json,sql}`, and parts of `packages/ui/src/{components,reactbits}/**/*.tsx` are **excluded from Biome** entirely, as is everything under `archived/`.
 
 ### Dependency versions live in pnpm catalogs
 
@@ -315,7 +309,7 @@ Built with `tsdown`. The single source of truth for the dual-driver (`d1` / `lib
 ### IDs
 
 - `@cdlab/driftflake` (catalog dep) is the standard ID generator across apps.
-- Database tables in `dropply-api`, `byplay-log`, and `wepush` use UUID v4 (or auto-increment for `playerLogs`).
+- Database tables in `dropply-api` and `wepush` use UUID v4 (archived `byplay-log` uses auto-increment for `playerLogs`).
 
 ### Soft delete
 

@@ -1,5 +1,11 @@
 # byplay-log
 
+> [!WARNING]
+> **Archived — no longer called.** byplay stopped reporting playback telemetry
+> when its VePlayer page was removed (March 2026), so this Worker has no caller.
+> The code is kept for reference and can still be deployed manually with
+> `pnpm deploy:byplay-log` from the repo root.
+
 Single-endpoint telemetry sink for the [ByPlay](https://byplay.pages.dev/) video
 player — a **Hono Cloudflare Worker** that validates a batch of client-side
 playback events, enriches them with server-side request metadata, and

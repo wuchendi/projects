@@ -2,7 +2,7 @@
   "name": "@cdlab/projects-monorepo",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@11.21.0",
+  "packageManager": "pnpm@12.21.0",
   "description": "A monorepo for my projects.",
   "author": "wudi <wuchendi96@gmail.com>",
   "license": "MIT",
@@ -24,7 +24,8 @@
     "dev": "turbo dev --filter='!./archived/*'",
     "dev:bycut": "turbo dev --filter=./apps/bycut",
     "dev:byplay": "turbo dev --filter=./apps/byplay",
-    "dev:byplay-log": "turbo dev --filter=./apps/byplay-log",
+    "dev:byplay-log": "pnpm --filter ./archived/byplay-log run dev",
+    "deploy:byplay-log": "pnpm --filter ./archived/byplay-log run deploy",
     "dev:byshot": "turbo dev --filter=./apps/byshot",
     "dev:bytts": "turbo dev --filter=./apps/bytts",
     "dev:clearify": "turbo dev --filter=./apps/clearify",
@@ -52,10 +53,10 @@
     "prepare": "turbo run build --filter=./packages/*"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
+    "@biomejs/biome": "^2.6.8",
     "@cdlab/tsconfig": "workspace:*",
     "@types/node": "catalog:dev",
-    "turbo": "^2.11.9",
+    "turbo": "^2.11.13",
     "typescript": "catalog:dev"
   }
 }
