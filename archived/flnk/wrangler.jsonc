@@ -112,7 +112,12 @@
   // Scheduled cleanup — handled by the `scheduled()` handler in src/worker/index.ts.
   // Default: daily at 00:00 UTC. Soft-deletes expired links + purges their KV cache.
   "triggers": {
-    "crons": ["0 0 * * *"]
+    // Disabled: the Cloudflare account reached the Workers Free limit of 5 cron
+    // triggers, which failed the deploy. flnk is archived, so its daily cleanup
+    // (scheduled() in src/worker/index.ts) is switched off; restore
+    // ["0 0 * * *"] once a cron slot is free. An empty list also removes any
+    // cron previously registered for this Worker.
+    "crons": []
   },
   "observability": {
     "enabled": true,
