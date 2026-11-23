@@ -30,6 +30,7 @@ import { generateCsv } from '@/lib/format/csv'
 import { formatNumber } from '@/lib/format/format'
 import type { CheckResult, LinkRow } from '@/lib/platform/api'
 import { checkApi, linkApi } from '@/lib/platform/api'
+import { ViewHeader } from '@/components/dashboard/view-header'
 
 type Verdict = 'ok' | 'broken' | 'unsafe'
 
@@ -190,10 +191,7 @@ export function CheckView() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-semibold">{t('title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-      </div>
+      <ViewHeader title={t('title')} description={t('subtitle')} />
 
       <Card className="ring-1">
         <CardContent className="space-y-4">

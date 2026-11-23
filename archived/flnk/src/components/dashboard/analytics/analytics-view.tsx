@@ -27,6 +27,7 @@ import { useMemo, useState } from 'react'
 import { CountersCards } from '@/components/dashboard/analytics/counters'
 import { statsApi } from '@/lib/platform/api'
 import { queryKeys } from '@/lib/platform/query-keys'
+import { ViewHeader } from '@/components/dashboard/view-header'
 
 // Map lib is client-only (SVG, runtime topojson fetch) — skip SSR.
 const WorldMap = dynamic(
@@ -145,31 +146,31 @@ export function AnalyticsView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-        </div>
-        <Select
-          value={range}
-          onValueChange={(v) => v && setRange(v)}
-          items={Object.keys(RANGES).map((r) => ({
-            value: r,
-            label: t(`range.${r}`),
-          }))}
-        >
-          <SelectTrigger className="w-full sm:w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.keys(RANGES).map((r) => (
-              <SelectItem key={r} value={r}>
-                {t(`range.${r}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <ViewHeader
+        title={t('title')}
+        description={t('subtitle')}
+        actions={
+          <Select
+            value={range}
+            onValueChange={(v) => v && setRange(v)}
+            items={Object.keys(RANGES).map((r) => ({
+              value: r,
+              label: t(`range.${r}`),
+            }))}
+          >
+            <SelectTrigger size="sm" className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.keys(RANGES).map((r) => (
+                <SelectItem key={r} value={r}>
+                  {t(`range.${r}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        }
+      />
 
       {notConfigured && (
         <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">

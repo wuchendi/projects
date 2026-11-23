@@ -19,6 +19,7 @@
   },
   "registries": {
     "@react-bits": "https://reactbits.dev/r/{name}.json",
-    "@ikui": "https://ik-ui.pages.dev/r/{name}.json"
+    "@ikui": "https://ik-ui.pages.dev/r/{name}.json",
+    "@cdlab": "https://wuchendi.github.io/appshell/r/{name}.json"
   }
 }

@@ -12,16 +12,9 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@cdlab/ui/components/dropdown-menu'
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@cdlab/ui/components/sidebar'
 import { GitHubIcon } from '@cdlab/ui/icon/GitHubIcon'
 import {
   BookOpen,
-  ChevronsUpDown,
   Languages,
   LogOut,
   Palette,
@@ -58,7 +51,7 @@ function Avatar({
   email?: string | null
 }) {
   return (
-    <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary/10 text-xs font-medium text-primary">
+    <span className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-xs font-medium text-primary">
       {image ? (
         // eslint-disable-next-line @next/next/no-img-element -- small remote OAuth avatar; next/image adds no value (images.unoptimized)
         // biome-ignore lint/performance/noImgElement: small remote OAuth avatar; next/image adds no value (images.unoptimized)
@@ -70,10 +63,10 @@ function Avatar({
   )
 }
 
+// The account control at the foot of the shell rail.
 export function NavUser() {
   const t = useTranslations('userMenu')
   const router = useRouter()
-  const { isMobile } = useSidebar()
   const { theme, setTheme } = useTheme()
   const locale = useLocale()
   const [, startTransition] = useTransition()
@@ -98,86 +91,76 @@ export function NavUser() {
   if (isPending || !user) return null
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger render={<SidebarMenuButton
-              size="lg"
-              className="data-popup-open:bg-sidebar-accent data-popup-open:text-sidebar-accent-foreground" />}>
-            <Avatar image={user.image} name={name} email={email} />
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{name || email}</span>
-              <span className="truncate text-xs text-muted-foreground">
-                {email}
-              </span>
-            </div>
-            <ChevronsUpDown className="ml-auto size-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'top'}
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Palette className="size-4" />
-                {t('theme')}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-                  <DropdownMenuRadioItem value="light">
-                    {t('light')}
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="dark">
-                    {t('dark')}
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="system">
-                    {t('system')}
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label={name || email || undefined}
+        className="grid size-9 place-items-center rounded-md outline-none hover:bg-foreground/5 focus-visible:ring-2 focus-visible:ring-ring data-popup-open:bg-foreground/[0.07]"
+      >
+        <Avatar image={user.image} name={name} email={email} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="min-w-56 rounded-lg"
+        side="right"
+        align="end"
+        sideOffset={8}
+      >
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Palette className="size-4" />
+            {t('theme')}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+              <DropdownMenuRadioItem value="light">
+                {t('light')}
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="dark">
+                {t('dark')}
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="system">
+                {t('system')}
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
 
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Languages className="size-4" />
-                {t('language')}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup
-                  value={locale}
-                  onValueChange={onLocaleChange}
-                >
-                  {locales.map((l) => (
-                    <DropdownMenuRadioItem key={l} value={l}>
-                      {localeLabels[l]}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Languages className="size-4" />
+            {t('language')}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuRadioGroup
+              value={locale}
+              onValueChange={onLocaleChange}
+            >
+              {locales.map((l) => (
+                <DropdownMenuRadioItem key={l} value={l}>
+                  {localeLabels[l]}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
 
-            <DropdownMenuSeparator />
+        <DropdownMenuSeparator />
 
-            <DropdownMenuItem render={<Link href={DOCS_HREF} target="_blank" rel="noopener noreferrer" />}>
-              <BookOpen className="size-4" />
-              {t('docs')}
-            </DropdownMenuItem>
-            <DropdownMenuItem render={<Link href={REPO_HREF} target="_blank" rel="noopener noreferrer" />}>
-              <GitHubIcon className="size-4" />
-              {t('repo')}
-            </DropdownMenuItem>
+        <DropdownMenuItem render={<Link href={DOCS_HREF} target="_blank" rel="noopener noreferrer" />}>
+          <BookOpen className="size-4" />
+          {t('docs')}
+        </DropdownMenuItem>
+        <DropdownMenuItem render={<Link href={REPO_HREF} target="_blank" rel="noopener noreferrer" />}>
+          <GitHubIcon className="size-4" />
+          {t('repo')}
+        </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
+        <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => void onSignOut()}>
-              <LogOut className="size-4" />
-              {t('signOut')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+        <DropdownMenuItem onClick={() => void onSignOut()}>
+          <LogOut className="size-4" />
+          {t('signOut')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

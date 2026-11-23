@@ -58,6 +58,7 @@ import type { LaunchpadRow } from '@/lib/platform/api'
 import { launchpadApi } from '@/lib/platform/api'
 import { useLaunchpadsViewStore } from '@/stores/launchpads-view-store'
 import { useLinkRefs } from './use-link-refs'
+import { ViewHeader } from '@/components/dashboard/view-header'
 
 const STATS_WINDOW_MS = 365 * 24 * 60 * 60 * 1000
 
@@ -108,16 +109,16 @@ export function LaunchpadsView() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="flex-1">
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-        </div>
-        <Button onClick={() => router.push('/dashboard/launchpads/new')}>
-          <Plus />
-          {t('new')}
-        </Button>
-      </div>
+      <ViewHeader
+        title={t('title')}
+        description={t('subtitle')}
+        actions={
+          <Button size="sm" onClick={() => router.push('/dashboard/launchpads/new')}>
+            <Plus />
+            {t('new')}
+          </Button>
+        }
+      />
 
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-0 flex-1 md:min-w-[14rem] md:max-w-md">

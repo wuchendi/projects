@@ -18,6 +18,10 @@
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
     "./IK/*": "./src/IK/*.tsx",
+    "./shell/router": "./src/shell/router.tsx",
+    "./shell/core/*": "./src/shell/core/*.ts",
+    "./shell/layout/page-context": "./src/shell/layout/page-context.ts",
+    "./shell/layout/*": "./src/shell/layout/*.tsx",
     "./icon/*": "./src/icon/*.tsx",
     "./reactbits/*": "./src/reactbits/*.tsx",
     "./hooks/*": "./src/hooks/*.ts"
@@ -28,6 +32,7 @@
     "class-variance-authority": "catalog:prod",
     "clsx": "catalog:prod",
     "cmdk": "catalog:prod",
+    "cn": "catalog:prod",
     "date-fns": "catalog:prod",
     "input-otp": "catalog:prod",
     "lucide-react": "catalog:prod",
@@ -52,7 +57,11 @@
     "@types/qrcode": "catalog:dev",
     "@types/react": "catalog:dev",
     "@types/react-dom": "catalog:dev",
+    "next": "catalog:prod",
     "tailwindcss": "catalog:dev",
     "typescript": "catalog:dev"
+  },
+  "peerDependencies": {
+    "next": "catalog:prod"
   }
 }

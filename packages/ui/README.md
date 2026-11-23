@@ -80,6 +80,7 @@ subpath maps directly to one file (`/*` wildcards, so `./components/button` →
 | `./postcss.config` | `postcss.config.mjs` | Shared PostCSS config (`@tailwindcss/postcss`) |
 | `./components/<name>` | `src/components/<name>.tsx` | 59 shadcn/ui primitives (`button`, `dialog`, `sidebar`, `table`, `chart`, `qr-code`, …) |
 | `./IK/<name>` | `src/IK/<name>.tsx` | App-shell "asset kit" — headers, footers, empty/loading/failed states, confirm dialog, version banner |
+| `./shell/core/<name>`, `./shell/layout/<name>`, `./shell/router` | `src/shell/**` | Dashboard app shell (`AppShell`, `PageHeader`, rail spaces, panels, prefs cookie) — a copy of the [`@cdlab` appshell registry](https://github.com/wuchendi/appshell) with the Next.js router adapter, shared by wepush and flnk. Upgrade with `bash ./scripts/appshell-sync.sh` from the repo root; never edit by hand. |
 | `./icon/<name>` | `src/icon/<name>.tsx` | Brand icon SVGs (`GitHubIcon`, `XIcon`) |
 | `./reactbits/<name>` | `src/reactbits/<name>.tsx` | 10 animated visual effects (`Aurora`, `Particles`, `Plasma`, `Threads`, `SpotlightCard`, …) |
 | `./hooks/<name>` | `src/hooks/<name>.ts` | React hooks (`use-mobile` → `useIsMobile`) |

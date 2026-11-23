@@ -13,6 +13,7 @@ import { useTranslations } from 'next-intl'
 import { LocaleTabs } from '@/components/dashboard/settings/locale-tabs'
 import { ThemeTabs } from '@/components/dashboard/settings/theme-tabs'
 import { configApi } from '@/lib/platform/api'
+import { ViewHeader } from '@/components/dashboard/view-header'
 
 function StatusRow({ label, ok }: { label: string; ok: boolean }) {
   const t = useTranslations('settings.system')
@@ -36,10 +37,7 @@ export function SettingsView() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">{t('title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-      </div>
+      <ViewHeader title={t('title')} description={t('subtitle')} />
 
       <Card className="ring-1">
         <CardHeader>

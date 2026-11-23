@@ -30,6 +30,7 @@ import type { LinkRow } from '@/lib/platform/api'
 import { linkApi, statsApi } from '@/lib/platform/api'
 import { queryKeys } from '@/lib/platform/query-keys'
 import { useLinksFilterStore } from '@/stores/links-filter-store'
+import { ViewHeader } from '@/components/dashboard/view-header'
 
 const PAGE_SIZE = 20
 
@@ -294,16 +295,16 @@ export function LinksView() {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-3 flex-row items-center">
-        <div className="flex-1">
-          <h1 className="text-2xl font-semibold">{t('title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-        </div>
-        <Button onClick={openCreate}>
-          <Plus />
-          {t('new')}
-        </Button>
-      </div>
+      <ViewHeader
+        title={t('title')}
+        description={t('subtitle')}
+        actions={
+          <Button size="sm" onClick={openCreate}>
+            <Plus />
+            {t('new')}
+          </Button>
+        }
+      />
 
       <LinksFilterBar
         input={input}
