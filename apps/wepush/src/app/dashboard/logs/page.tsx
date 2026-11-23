@@ -28,11 +28,12 @@ import {
   FileSearchCorner,
   RotateCw,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 import { DatePicker } from '@/components/DatePicker'
 import { LogDetailDrawer } from '@/components/LogDetailDrawer'
 import { SubHeader } from '@/components/layout'
-import type { User } from '@/database/schema'
+import { fetchUsers } from '@/lib/queries'
 
 interface LogRow {
   id: string
@@ -86,17 +87,20 @@ async function fetchLogs(
   return res.json()
 }
 
-async function fetchUsers(): Promise<User[]> {
-  const res = await fetch('/api/users?limit=200&offset=0')
-  if (!res.ok) throw new Error('Failed to load users')
-  const data = (await res.json()) as { rows: User[] }
-  return data.rows
+function statusParam(value: string | null): Filters['status'] {
+  return value === 'success' || value === 'failed' ? value : 'all'
 }
 
 export default function LogsPage() {
+  // `?status=` is shared with the 日志 space panel: the panel links set it,
+  // and the status filter below writes it back.
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const urlStatus = statusParam(searchParams.get('status'))
   const [filters, setFilters] = useState<Filters>({
     userId: '',
-    status: 'all',
+    status: urlStatus,
     batchId: '',
     from: '',
     to: '',
@@ -118,6 +122,21 @@ export default function LogsPage() {
   const updateFilter = <K extends keyof Filters>(key: K, value: Filters[K]) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
     setPage(0)
+  }
+
+  useEffect(() => {
+    setFilters((prev) =>
+      prev.status === urlStatus ? prev : { ...prev, status: urlStatus },
+    )
+    setPage(0)
+  }, [urlStatus])
+
+  const setStatus = (status: Filters['status']) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (status === 'all') params.delete('status')
+    else params.set('status', status)
+    const query = params.toString()
+    router.replace(query ? `${pathname}?${query}` : pathname)
   }
 
   return (
@@ -177,7 +196,7 @@ export default function LogsPage() {
               items={STATUS_OPTIONS}
               value={filters.status}
               onValueChange={(v) => {
-                if (v !== null) updateFilter('status', v as Filters['status'])
+                if (v !== null) setStatus(v as Filters['status'])
               }}
             >
               <SelectTrigger className="w-full">

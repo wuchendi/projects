@@ -7,6 +7,7 @@ import { AppShell } from '@cdlab/ui/shell/layout/app-shell'
 import { Bug, FileText, Home, ListChecks, Settings, Users } from 'lucide-react'
 import { WepushLogo } from '@/components/layout/logo'
 import { NavFooter } from '@/components/layout/nav-footer'
+import { SPACE_PANELS } from '@/components/layout/space-panels'
 
 // Rail entries: the core console features, then the tooling / configuration
 // entries pinned to the rail foot.
@@ -43,7 +44,7 @@ const SPACES: ShellSpace[] = [
 ]
 
 // The console chrome: the shared `@cdlab/ui/shell` (appshell registry, `packages/ui/src/shell`) fed with
-// wepush's spaces and account menu.
+// wepush's spaces, their panels and the account menu.
 export function DashboardShell({
   prefs,
   children,
@@ -55,6 +56,7 @@ export function DashboardShell({
   return (
     <AppShell
       spaces={SPACES}
+      panels={SPACE_PANELS}
       homeHref="/dashboard"
       logo={<WepushLogo className="size-[18px]" />}
       logoLabel="wepush"

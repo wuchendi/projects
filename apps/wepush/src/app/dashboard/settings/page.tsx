@@ -168,6 +168,7 @@ export default function SettingsPage() {
       />
 
       <Section
+        id="wechat"
         title="微信测试号"
         desc="申请测试号后填写 APP_ID 与 APP_SECRET，并指定默认模板 ID。"
       >
@@ -194,7 +195,7 @@ export default function SettingsPage() {
 
       <Separator className="my-8" />
 
-      <Section title="节流参数" desc="控制推送速率与重试策略。">
+      <Section id="throttle" title="节流参数" desc="控制推送速率与重试策略。">
         <div className="grid grid-cols-2 gap-4">
           <NumberField
             label="每分钟最大推送数"
@@ -227,6 +228,7 @@ export default function SettingsPage() {
       <Separator className="my-8" />
 
       <Section
+        id="token"
         title="HTTP 触发 token"
         desc="调用 POST /api/push/run 时通过 Authorization: Bearer <token> 鉴权。生成后仅本次会话可见，刷新页面后将再次隐藏。"
       >
@@ -263,6 +265,7 @@ export default function SettingsPage() {
       <Separator className="my-8" />
 
       <Section
+        id="cron"
         title="定时触发"
         desc="由 Worker scheduled() 在 wrangler.jsonc 配置的 cron 时间触发。"
       >
@@ -363,16 +366,20 @@ export default function SettingsPage() {
 }
 
 function Section({
+  id,
   title,
   desc,
   children,
 }: {
+  /** Anchor the 设置 space panel links to (`/dashboard/settings#<id>`). */
+  id: string
   title: string
   desc?: string
   children: React.ReactNode
 }) {
   return (
-    <section>
+    // scroll-mt clears the sticky page header when jumping to the anchor.
+    <section id={id} className="scroll-mt-16">
       <h2 className="text-lg font-semibold">{title}</h2>
       {desc ? (
         <p className="mt-1 mb-4 text-sm text-muted-foreground">{desc}</p>

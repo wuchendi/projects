@@ -25,8 +25,8 @@ import {
   Zap,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton'
 import { DryRunDialog } from '@/components/DryRunDialog'
@@ -34,18 +34,7 @@ import { SubHeader } from '@/components/layout'
 import type { User } from '@/database/schema'
 import type { DryRunUserResult } from '@/lib/push-client'
 import { dryRunFromUi, runPushFromUi } from '@/lib/push-client'
-
-async function fetchUsers(): Promise<User[]> {
-  const res = await fetch('/api/users?limit=200&offset=0')
-  if (!res.ok) throw new Error('Failed to load users')
-  const data = (await res.json()) as {
-    rows: User[]
-    total: number
-    limit: number
-    offset: number
-  }
-  return data.rows
-}
+import { fetchUsers } from '@/lib/queries'
 
 async function patchUser(id: string, patch: Partial<User>): Promise<void> {
   const res = await fetch(`/api/users/${id}`, {
@@ -68,6 +57,12 @@ export default function UsersPage() {
     queryKey: ['users'],
     queryFn: fetchUsers,
   })
+  // `?template=<code>` comes from the 接收人 space panel: only recipients bound
+  // to that template are listed (and selectable).
+  const template = useSearchParams().get('template')
+  const rows = template
+    ? data?.filter((u) => u.templateCode === template)
+    : data
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [dryRunOpen, setDryRunOpen] = useState(false)
@@ -75,12 +70,16 @@ export default function UsersPage() {
     DryRunUserResult[] | undefined
   >()
 
+  // A selection made under another template filter is not visible any more.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset on filter change only
+  useEffect(() => setSelectedIds(new Set()), [template])
+
   const allSelected =
-    !!data && data.length > 0 && selectedIds.size === data.length
+    !!rows && rows.length > 0 && selectedIds.size === rows.length
   const someSelected = selectedIds.size > 0 && !allSelected
 
   const toggleAll = (checked: boolean) => {
-    setSelectedIds(checked && data ? new Set(data.map((u) => u.id)) : new Set())
+    setSelectedIds(checked && rows ? new Set(rows.map((u) => u.id)) : new Set())
   }
 
   const toggleOne = (id: string, checked: boolean) => {
@@ -171,7 +170,7 @@ export default function UsersPage() {
   return (
     <>
       <SubHeader
-        title="接收人"
+        title={template ? `接收人 · ${template}` : '接收人'}
         description="微信测试号订阅者，含城市、纪念日、累计日配置。"
       >
         <Button
@@ -292,7 +291,14 @@ export default function UsersPage() {
             ))}
           </div>
         </div>
-      ) : !data || data.length === 0 ? (
+      ) : template && rows?.length === 0 ? (
+        <IKEmpty
+          icon={FileSearchCorner}
+          className="border border-dashed"
+          title="该模板下没有接收人"
+          description={`没有接收人使用模板 ${template}。`}
+        />
+      ) : !rows || rows.length === 0 ? (
         <IKEmpty
           icon={FileSearchCorner}
           className="border border-dashed"
@@ -328,7 +334,7 @@ export default function UsersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((u) => (
+              {rows.map((u) => (
                 <TableRow
                   key={u.id}
                   data-state={selectedIds.has(u.id) ? 'selected' : undefined}

@@ -17,13 +17,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton'
 import { SubHeader } from '@/components/layout'
-import type { Template } from '@/database/schema'
-
-async function fetchTemplates(): Promise<Template[]> {
-  const res = await fetch('/api/templates')
-  if (!res.ok) throw new Error('Failed to load templates')
-  return res.json()
-}
+import { fetchTemplates } from '@/lib/queries'
 
 export default function TemplatesPage() {
   const qc = useQueryClient()
