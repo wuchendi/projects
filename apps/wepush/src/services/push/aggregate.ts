@@ -115,6 +115,11 @@ export async function aggregateUserData(
   for (const [key, days] of Object.entries(specialDays)) {
     data[key] = { value: String(days) }
   }
+  for (const item of user.customDates) {
+    if (item.keyword in specialDays) {
+      data[`${item.keyword}_date`] = { value: item.date }
+    }
+  }
 
   const { ciba, hitokoto } = shared
   if (ciba.ok) {
