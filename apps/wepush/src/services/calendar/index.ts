@@ -18,6 +18,7 @@ export interface BirthdayInfo {
   date: string
   diffDay: number
   isLunar: boolean
+  targetDate: string // YYYY-MM-DD, solar date of the next occurrence
 }
 
 // Cloudflare Workers run in UTC; all "today / current date" derivations must be
@@ -88,6 +89,7 @@ export function sortBirthdayTime(list: FestivalInput[]): BirthdayInfo[] {
         date: item.date,
         diffDay: differenceInCalendarDays(target, today),
         isLunar: !!item.isLunar,
+        targetDate: format(target, 'yyyy-MM-dd'),
       }
     })
     .filter((x): x is BirthdayInfo => x !== null)
@@ -96,8 +98,9 @@ export function sortBirthdayTime(list: FestivalInput[]): BirthdayInfo[] {
 
 function formatBirthday(item: BirthdayInfo): string {
   const tag = item.isLunar ? '(农历)' : ''
-  if (item.diffDay === 0) return `今天是${item.name}${tag}`
-  return `距离${item.name}${tag}还有${item.diffDay}天`
+  const when = `（${item.targetDate}）`
+  if (item.diffDay === 0) return `今天是${item.name}${tag}${when}`
+  return `距离${item.name}${tag}还有${item.diffDay}天${when}`
 }
 
 export function nextBirthdayMessage(

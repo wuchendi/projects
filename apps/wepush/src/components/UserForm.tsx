@@ -359,7 +359,7 @@ export function UserForm({
         {value.customDates.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             如 love_day = 2020-01-01，可在模板中用 {`{{love_day.DATA}}`}{' '}
-            显示天数
+            显示天数，{`{{love_day_date.DATA}}`} 显示日期
           </p>
         ) : (
           <div className="space-y-2">
