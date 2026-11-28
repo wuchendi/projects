@@ -63,22 +63,49 @@ export function renderTemplate(
     wechatData[key] = { value, color }
   }
 
-  // The whole rendered body as one variable, so the WeChat-side template can
-  // be just `{{content.DATA}}` and stay under its 600-character limit no
-  // matter how long the wepush template grows. Set last so it always wins.
-  wechatData.content = { value: toWechatLines(desc), color: '#000000' }
+  // The rendered body split into `c1`..`c10`, so the WeChat-side template can
+  // be just those ten placeholders: it stays under WeChat's 600-character
+  // template limit however long the wepush template grows, and each value
+  // stays short enough for WeChat to show (a ~400-character value rendered
+  // blank). Set last so these keys always win over same-named variables.
+  const chunks = toWechatChunks(desc)
+  for (let i = 0; i < CONTENT_SLOTS; i++) {
+    wechatData[`c${i + 1}`] = { value: chunks[i] ?? '', color: '#000000' }
+  }
 
   return { title, desc, wechatData }
 }
 
-// WeChat only keeps a line break inside a variable value when the line ends
-// with two spaces; without them the whole value renders blank. Pad every
-// non-empty line (except the last) and leave blank lines empty.
-function toWechatLines(text: string): string {
+const CONTENT_SLOTS = 10
+const CONTENT_CHUNK_CHARS = 100
+
+// Packs whole lines into chunks of at most CONTENT_CHUNK_CHARS characters (a
+// single longer line becomes its own chunk). Lines inside a chunk end with two
+// spaces so WeChat keeps the line breaks; blank lines stay empty. Lines past
+// the last slot are appended to it.
+function toWechatChunks(text: string): string[] {
   const lines = text.split(/\r?\n/).map((line) => line.trimEnd())
-  return lines
-    .map((line, i) => (line && i < lines.length - 1 ? `${line}  ` : line))
-    .join('\n')
+  const chunks: string[][] = []
+  let current: string[] = []
+  let length = 0
+  for (const line of lines) {
+    const size = [...line].length + 3 // + "  \n"
+    if (current.length > 0 && length + size > CONTENT_CHUNK_CHARS) {
+      chunks.push(current)
+      current = []
+      length = 0
+    }
+    current.push(line)
+    length += size
+  }
+  if (current.length > 0) chunks.push(current)
+  const overflow = chunks.splice(CONTENT_SLOTS).flat()
+  chunks[CONTENT_SLOTS - 1]?.push(...overflow)
+  return chunks.map((chunk) =>
+    chunk
+      .map((line, i) => (line && i < chunk.length - 1 ? `${line}  ` : line))
+      .join('\n'),
+  )
 }
 
 export function extractVariableNames(text: string): string[] {
