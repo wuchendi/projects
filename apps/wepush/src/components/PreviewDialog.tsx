@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@cdlab/ui/components/dialog'
+import { ScrollArea } from '@cdlab/ui/components/scroll-area'
 import { Spinner } from '@cdlab/ui/components/spinner'
 
 export interface PreviewResult {
@@ -41,7 +42,7 @@ export function PreviewDialog({
         if (!v) onClose()
       }}
     >
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>模板预览</DialogTitle>
           <DialogDescription>
@@ -58,28 +59,30 @@ export function PreviewDialog({
             {error}
           </pre>
         ) : result ? (
-          <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-            <Section title="标题">
-              <p className="text-sm">{result.title || '—'}</p>
-            </Section>
-            <Section title="正文">
-              <pre className="whitespace-pre-wrap rounded-md border bg-muted/30 p-3 text-xs">
-                {result.desc || '—'}
-              </pre>
-            </Section>
-            {Object.keys(result.sourceErrors).length > 0 ? (
-              <Section title="数据源警告">
-                <pre className="whitespace-pre-wrap rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-xs">
-                  {JSON.stringify(result.sourceErrors, null, 2)}
+          <ScrollArea className="-mr-3 min-w-0 *:data-[slot=scroll-area-viewport]:max-h-[60vh]">
+            <div className="space-y-4 pr-3">
+              <Section title="标题">
+                <p className="text-sm wrap-break-word">{result.title || '—'}</p>
+              </Section>
+              <Section title="正文">
+                <pre className="whitespace-pre-wrap wrap-break-word rounded-md border bg-muted/30 p-3 text-xs">
+                  {result.desc || '—'}
                 </pre>
               </Section>
-            ) : null}
-            <Section title="变量">
-              <pre className="overflow-x-auto rounded-md border bg-muted/30 p-3 text-xs">
-                {JSON.stringify(result.variables, null, 2)}
-              </pre>
-            </Section>
-          </div>
+              {Object.keys(result.sourceErrors).length > 0 ? (
+                <Section title="数据源警告">
+                  <pre className="whitespace-pre-wrap break-all rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-xs">
+                    {JSON.stringify(result.sourceErrors, null, 2)}
+                  </pre>
+                </Section>
+              ) : null}
+              <Section title="变量">
+                <pre className="whitespace-pre-wrap break-all rounded-md border bg-muted/30 p-3 text-xs">
+                  {JSON.stringify(result.variables, null, 2)}
+                </pre>
+              </Section>
+            </div>
+          </ScrollArea>
         ) : null}
 
         <DialogFooter>
