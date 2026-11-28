@@ -154,6 +154,10 @@ export function TemplateForm({
             className="font-mono text-sm"
             placeholder={'今天是：{{date.DATA}}\n城市：{{city.DATA}}\n...'}
           />
+          <p className="text-xs text-muted-foreground">
+            渲染后的整段内容会作为 {'{{content.DATA}}'}{' '}
+            一并发送：测试号后台模板只写这一个变量，就不受 600 字限制。
+          </p>
         </div>
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">

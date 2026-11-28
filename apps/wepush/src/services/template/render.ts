@@ -63,6 +63,11 @@ export function renderTemplate(
     wechatData[key] = { value, color }
   }
 
+  // The whole rendered body as one variable, so the WeChat-side template can
+  // be just `{{content.DATA}}` and stay under its 600-character limit no
+  // matter how long the wepush template grows. Set last so it always wins.
+  wechatData.content = { value: desc, color: '#000000' }
+
   return { title, desc, wechatData }
 }
 
