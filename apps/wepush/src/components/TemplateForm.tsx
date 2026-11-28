@@ -155,9 +155,10 @@ export function TemplateForm({
             placeholder={'今天是：{{date.DATA}}\n城市：{{city.DATA}}\n...'}
           />
           <p className="text-xs text-muted-foreground">
-            渲染后的内容会按行拆成 {'{{c1.DATA}}'} 到 {'{{c10.DATA}}'}{' '}
-            一并发送（每段不超过 100 字）：测试号后台模板只写这 10
-            个变量，每个一行，就不受 600 字限制。
+            渲染后的内容每一行作为一个变量 {'{{c1.DATA}}'} 到 {'{{c30.DATA}}'}{' '}
+            一并发送（最多 30
+            行）：测试号后台模板每行写一个，再加上固定的开头或结尾文字（微信不允许模板只有变量），就不受
+            600 字限制。
           </p>
         </div>
         <div className="space-y-1.5">

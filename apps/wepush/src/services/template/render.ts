@@ -63,49 +63,29 @@ export function renderTemplate(
     wechatData[key] = { value, color }
   }
 
-  // The rendered body split into `c1`..`c10`, so the WeChat-side template can
-  // be just those ten placeholders: it stays under WeChat's 600-character
-  // template limit however long the wepush template grows, and each value
-  // stays short enough for WeChat to show (a ~400-character value rendered
-  // blank). Set last so these keys always win over same-named variables.
-  const chunks = toWechatChunks(desc)
+  // The rendered body, one line per variable `c1`..`c30`, so the WeChat-side
+  // template can be those placeholders plus some fixed text: it stays under
+  // WeChat's 600-character template limit however the wepush template
+  // changes, and every value stays as short as a single line (long or
+  // multi-line values rendered the whole message blank). Set last so these
+  // keys always win over same-named variables.
+  const lines = toWechatLines(desc)
   for (let i = 0; i < CONTENT_SLOTS; i++) {
-    wechatData[`c${i + 1}`] = { value: chunks[i] ?? '', color: '#000000' }
+    wechatData[`c${i + 1}`] = { value: lines[i] ?? '', color: '#000000' }
   }
 
   return { title, desc, wechatData }
 }
 
-const CONTENT_SLOTS = 10
-const CONTENT_CHUNK_CHARS = 100
+const CONTENT_SLOTS = 30
 
-// Packs whole lines into chunks of at most CONTENT_CHUNK_CHARS characters (a
-// single longer line becomes its own chunk). Lines inside a chunk end with two
-// spaces so WeChat keeps the line breaks; blank lines stay empty. Lines past
-// the last slot are appended to it.
-function toWechatChunks(text: string): string[] {
-  const lines = text.split(/\r?\n/).map((line) => line.trimEnd())
-  const chunks: string[][] = []
-  let current: string[] = []
-  let length = 0
-  for (const line of lines) {
-    const size = [...line].length + 3 // + "  \n"
-    if (current.length > 0 && length + size > CONTENT_CHUNK_CHARS) {
-      chunks.push(current)
-      current = []
-      length = 0
-    }
-    current.push(line)
-    length += size
-  }
-  if (current.length > 0) chunks.push(current)
-  const overflow = chunks.splice(CONTENT_SLOTS).flat()
-  chunks[CONTENT_SLOTS - 1]?.push(...overflow)
-  return chunks.map((chunk) =>
-    chunk
-      .map((line, i) => (line && i < chunk.length - 1 ? `${line}  ` : line))
-      .join('\n'),
-  )
+// One entry per rendered line, trailing whitespace trimmed; lines past the
+// last slot are dropped.
+function toWechatLines(text: string): string[] {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trimEnd())
+    .slice(0, CONTENT_SLOTS)
 }
 
 export function extractVariableNames(text: string): string[] {
