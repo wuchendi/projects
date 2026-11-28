@@ -66,9 +66,19 @@ export function renderTemplate(
   // The whole rendered body as one variable, so the WeChat-side template can
   // be just `{{content.DATA}}` and stay under its 600-character limit no
   // matter how long the wepush template grows. Set last so it always wins.
-  wechatData.content = { value: desc, color: '#000000' }
+  wechatData.content = { value: toWechatLines(desc), color: '#000000' }
 
   return { title, desc, wechatData }
+}
+
+// WeChat only keeps a line break inside a variable value when the line ends
+// with two spaces; without them the whole value renders blank. Pad every
+// non-empty line (except the last) and leave blank lines empty.
+function toWechatLines(text: string): string {
+  const lines = text.split(/\r?\n/).map((line) => line.trimEnd())
+  return lines
+    .map((line, i) => (line && i < lines.length - 1 ? `${line}  ` : line))
+    .join('\n')
 }
 
 export function extractVariableNames(text: string): string[] {
